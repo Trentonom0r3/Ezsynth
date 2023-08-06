@@ -105,7 +105,6 @@ pip install ezsynth
 > For a Single Pair of Guide Images:
 
 ```
-# Import the EBSynth class from its module (assuming it's in the same directory)
 import ebsynth
 import cv2
 # Define the paths to the images
@@ -128,7 +127,6 @@ cv2.destroyAllWindows()
 
 > For Multiple Pairs of Guide Images:
 ```
-# Import the EBSynth class from its module (assuming it's in the same directory)
 import ebsynth
 import cv2
 
