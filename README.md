@@ -205,4 +205,4 @@ cv2.destroyAllWindows()
 
 - Add more detailed documentation, examples for different use cases.
 - Add some extra error handling just to be safe.
-- Refactor my [stylizing-video](#https://github.com/Trentonom0r3/Stylizing-Video-by-Example) into classes, and provide the functionality with EZSYNTH (for use with video)
+- Refactor my [stylizing-video](https://github.com/Trentonom0r3/Stylizing-Video-by-Example) project into classes, and provide the functionality with EZSYNTH (for use with video)
