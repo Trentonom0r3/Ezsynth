@@ -12,12 +12,14 @@ pip install ezsynth
 ## Notes
 - Default usage is with CUDA. Pass CPU to backend if you don't have CUDA.
 - I compiled the .dll to be compatible with compute 6.0 GPUs and up, let me know if you have any issues please.
+- Pass file paths OR numpy arrays directly!
 
 ## Class Definition:
 
 
 
-```class ebsynth:
+```
+class ebsynth:
     """
     EBSynth class provides a wrapper around the ebsynth style transfer method.
 
@@ -29,6 +31,33 @@ pip install ezsynth
     def __init__(self, style, guides=[], weight=None, uniformity=3500.0, 
                  patchsize=5, pyramidlevels=6, searchvoteiters=12, 
                  patchmatchiters=6, extrapass3x3=False, backend='cuda'):
+        # Handling the style image
+        if isinstance(style, str):
+            self.style = cv2.imread(style)
+        elif isinstance(style, np.ndarray):
+            self.style = style
+        else:
+            raise ValueError("style should be either a file path or a numpy array.")
+
+        # Handling the guide images
+        self.guides = []
+        for source, target in guides:
+            if isinstance(source, str):
+                source_img = cv2.imread(source)
+            elif isinstance(source, np.ndarray):
+                source_img = source
+            else:
+                raise ValueError("source should be either a file path or a numpy array.")
+
+            if isinstance(target, str):
+                target_img = cv2.imread(target)
+            elif isinstance(target, np.ndarray):
+                target_img = target
+            else:
+                raise ValueError("target should be either a file path or a numpy array.")
+
+            self.guides.append((source_img, target_img))
+
         """
         Initialize the EBSynth wrapper.
         
@@ -98,6 +127,7 @@ pip install ezsynth
                      extraPass3x3=self.extrapass3x3
                     )
         return result
+
 ```
 
 ## Example Usage:
