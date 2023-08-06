@@ -24,7 +24,7 @@ class ebsynth:
     EBSynth class provides a wrapper around the ebsynth style transfer method.
 
     Usage:
-        ebsynth = EBSynth(style='style.png', guides=[('source1.png', 'target1.png')])
+        ebsynth = ebsynth.ebsynth(style='style.png', guides=[('source1.png', 'target1.png')])
         result_img = ebsynth.run()
     """
     
