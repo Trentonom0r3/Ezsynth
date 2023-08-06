@@ -106,7 +106,7 @@ pip install ezsynth
 
 ```
 # Import the EBSynth class from its module (assuming it's in the same directory)
-from ebsynth import ebsynth
+import ebsynth
 import cv2
 # Define the paths to the images
 style_image_path = "STYLE_IMAGE_PATH"
@@ -114,7 +114,7 @@ source_guide_path = "SOURCE_GUIDE_PATH"
 target_guide_path = "TARGET_GUIDE_PATH"
 
 # Create an instance of the EBSynth class
-ebsynth = ebsynth(style=style_image_path, guides=[(source_guide_path, target_guide_path)])
+ebsynth = ebsynth.ebsynth(style=style_image_path, guides=[(source_guide_path, target_guide_path)])
 
 # Run the style transfer
 result_img = ebsynth.run()
@@ -129,7 +129,7 @@ cv2.destroyAllWindows()
 > For Multiple Pairs of Guide Images:
 ```
 # Import the EBSynth class from its module (assuming it's in the same directory)
-from ebsynth import ebsynth
+import ebsynth
 import cv2
 
 # Define the paths to the images
@@ -140,7 +140,7 @@ guide_pairs = [
 ]
 
 # Create an instance of the EBSynth class with multiple guide pairs
-ebsynth = ebsynth(style=style_image_path, guides=guide_pairs)
+ebsynth = ebsynth.ebsynth(style=style_image_path, guides=guide_pairs)
 
 # Run the style transfer
 result_img = ebsynth.run()
