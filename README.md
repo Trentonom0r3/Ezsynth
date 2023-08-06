@@ -3,6 +3,16 @@ Ebsynth as an importable python library!
 
 This is quite a simple implementation. I'll be working to add more complex classes and options in the future.
 
+Using the class provided, you can perform things like style transfer, color transfer, inpainting, superimposition, and more!
+I will be providing some examples of te different use cases in coming days, for now Ive included a few example scripts for a basic stylization.
+
+# Table of Contents
+- [Table of Contents](#table-of-contents)
+- [Installation](#installation)
+- [Notes](#notes)
+- [Class Definition](#class-definition)
+- [Example Usage](#example-usage)
+
 ## Installation!
 
 ```
@@ -10,13 +20,20 @@ pip install ezsynth
 ```
 
 ## Notes
-- Default usage is with CUDA. Pass CPU to backend if you don't have CUDA.
+- Default usage is set to 'Auto'. Pass CPU to backend if you don't have CUDA.
 - I compiled the .dll to be compatible with compute 6.0 GPUs and up, let me know if you have any issues please.
 - Pass file paths OR numpy arrays directly!
+- <Style> should be the image style you're trying to achieve.
+- In the context of frame stylization, this should be the stylized version of a certain frame.
+  > You could then stylize the next frame using your single style frame. A simple example is as follows:
+
+    ```
+    ebsynth = ebsynth.ebsynth(style='frame1_stylized.png', guides=[('frame1.png', 'frame2.png')])
+        result_img = ebsynth.run()
+    ```
+
 
 ## Class Definition:
-
-
 
 ```
 class ebsynth:
@@ -163,8 +180,10 @@ import cv2
 # Define the paths to the images
 style_image_path = "style.png"
 guide_pairs = [
-    ("guide1.png", "target2.png"),
-    ("guide2.png", "Target2.png")
+    ("guide1.png", "target1.png"),
+    ("guide2.png", "target2.png"),
+    ("guide3.png", "target3.png"),
+    ("guide4.png", "target4.png")
 ]
 
 # Create an instance of the EBSynth class with multiple guide pairs
@@ -178,4 +197,5 @@ cv2.imwrite("output.png", result_img)
 cv2.imshow("Styled Image with Multiple Guides", result_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
 ```

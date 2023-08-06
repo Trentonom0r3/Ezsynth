@@ -1,0 +1,12 @@
+MANIFEST.in
+README.md
+setup.py
+ebsynth/__init__.py
+ebsynth/_ebsynth.py
+ebsynth/ebsynth.dll
+ebsynth/ebsynth.py
+ezsynth.egg-info/PKG-INFO
+ezsynth.egg-info/SOURCES.txt
+ezsynth.egg-info/dependency_links.txt
+ezsynth.egg-info/requires.txt
+ezsynth.egg-info/top_level.txt
