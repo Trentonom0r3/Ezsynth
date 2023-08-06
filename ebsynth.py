@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 from ._ebsynth import run, EBSYNTH_BACKEND_CPU, EBSYNTH_BACKEND_CUDA, EBSYNTH_BACKEND_AUTO
 
 class ebsynth:
@@ -13,6 +14,33 @@ class ebsynth:
     def __init__(self, style, guides=[], weight=None, uniformity=3500.0, 
                  patchsize=5, pyramidlevels=6, searchvoteiters=12, 
                  patchmatchiters=6, extrapass3x3=False, backend='cuda'):
+        # Handling the style image
+        if isinstance(style, str):
+            self.style = cv2.imread(style)
+        elif isinstance(style, np.ndarray):
+            self.style = style
+        else:
+            raise ValueError("style should be either a file path or a numpy array.")
+
+        # Handling the guide images
+        self.guides = []
+        for source, target in guides:
+            if isinstance(source, str):
+                source_img = cv2.imread(source)
+            elif isinstance(source, np.ndarray):
+                source_img = source
+            else:
+                raise ValueError("source should be either a file path or a numpy array.")
+
+            if isinstance(target, str):
+                target_img = cv2.imread(target)
+            elif isinstance(target, np.ndarray):
+                target_img = target
+            else:
+                raise ValueError("target should be either a file path or a numpy array.")
+
+            self.guides.append((source_img, target_img))
+
         """
         Initialize the EBSynth wrapper.
         
