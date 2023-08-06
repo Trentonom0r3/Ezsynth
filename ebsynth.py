@@ -91,13 +91,22 @@ class ebsynth:
         
         :return: styled image as a numpy array.
         """
-        img_style = cv2.imread(self.style)
+        if isinstance(self.style, np.ndarray):
+            img_style = self.style
+        else:
+            img_style = cv2.imread(self.style)
 
         # Prepare the guides
         guides_processed = []
         for idx, (source, target) in enumerate(self.guides):
-            source_img = cv2.imread(source)
-            target_img = cv2.imread(target)
+            if isinstance(source, np.ndarray):
+                source_img = source
+            else:
+                source_img = cv2.imread(source)
+            if isinstance(target, np.ndarray):
+                target_img = target
+            else:
+                target_img = cv2.imread(target)
             guides_processed.append((source_img, target_img, self.weight[idx]))
 
         # Call the run function with the provided arguments
