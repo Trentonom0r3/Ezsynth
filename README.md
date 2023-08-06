@@ -12,7 +12,8 @@ I will be providing some examples of te different use cases in coming days, for 
 - [Notes](#notes)
 - [Class Definition](#class-definition)
 - [Example Usage](#example-usage)
-
+- [Future Additions/TODO](#future-additions/todo)
+- 
 ## Installation!
 
 ```
@@ -199,3 +200,9 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 ```
+
+# Future Additions/TODO
+
+- Add more detailed documentation, examples for different use cases.
+- Add some extra error handling just to be safe.
+- Refactor my [stylizing-video](#https://github.com/Trentonom0r3/Stylizing-Video-by-Example) into classes, and provide the functionality with EZSYNTH (for use with video)
