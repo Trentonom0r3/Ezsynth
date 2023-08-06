@@ -10,3 +10,5 @@
 
 #The Build Folder from building
 /build/
+
+/ezsynth.egg-info/
