@@ -32,7 +32,7 @@ pip install ezsynth
     ebsynth = ebsynth.ebsynth(style='frame1_stylized.png', guides=[('frame1.png', 'frame2.png')])
         result_img = ebsynth.run()
     ```
-
+- Numpy Arrays are expected to be in the format (height, width, channels) 
 
 ## Class Definition:
 
