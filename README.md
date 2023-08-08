@@ -1,4 +1,4 @@
-# Ebsynth.py
+# Ezsynth -- Ebsynth for Python!
 Ebsynth as an importable python library! 
 
 This is quite a simple implementation. I'll be working to add more complex classes and options in the future.
