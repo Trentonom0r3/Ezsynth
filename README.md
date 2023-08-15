@@ -4,7 +4,7 @@ Ebsynth as an importable python library!
 This is quite a simple implementation. I'll be working to add more complex classes and options in the future.
 
 Using the class provided, you can perform things like style transfer, color transfer, inpainting, superimposition, and more!
-I will be providing some examples of the different use cases in coming days, for now Ive included a few example scripts for a basic stylization.
+I will be providing some examples of the different use cases in coming days, for now I've included a few example scripts for a basic stylization.
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
