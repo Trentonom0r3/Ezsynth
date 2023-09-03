@@ -1,10 +1,11 @@
 # Ezsynth -- Ebsynth for Python!
 Ebsynth as an importable python library! 
 
-This is quite a simple implementation. I'll be working to add more complex classes and options in the future.
+Welcome to the dev branch! This is where I'll be posting my Works in Progress.
 
-Using the class provided, you can perform things like style transfer, color transfer, inpainting, superimposition, and more!
-I will be providing some examples of the different use cases in coming days, for now I've included a few example scripts for a basic stylization.
+If you'd like to test it out, you need to download opencv_world480.dll, and add it to the same directory as 'ebsynth.pyd'
+
+I'll be adding more detailed documentation once this is finalized. This branch is mainly for my own records.
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
