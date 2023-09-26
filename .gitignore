@@ -12,3 +12,5 @@
 /build/
 
 /ezsynth.egg-info/
+
+/.vscode/
