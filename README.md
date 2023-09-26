@@ -13,12 +13,23 @@ I will be providing some examples of the different use cases in coming days, for
 - [Example Usage](#example-usage)
 - [FAQ](#faq)
 - [TODO](#todo)
+- [Contributing](#contributing)
 
 ## Installation!
+
+- Simplest way is pip installation.
 
 ```
 pip install ezsynth
 ```
+
+- To build from source:
+    - 1. Clone the Repo.
+    - 2. Download ```opencv_world480.dll```, and place it into the ```ezsynth``` folder.
+    - 3. In the main parent folder, run ```py setup.py sdist bdist_wheel```
+    - 4. After that has built, run ```pip install C:\Ebsynth.py\dist\ezsynth-1.2.0.1.tar.gz``` 
+        - Change path as needed.
+    - 5. You should have access to ezsynth and its associated classes now!
 
 ## Class Definitions:
 Both classes have inline docstrings. If you use VScode, you'll see hints on usage. 

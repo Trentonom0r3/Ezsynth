@@ -3,11 +3,10 @@ import torch
 import numpy as np
 import torch.nn.functional as F
 
-from .utils import _create_selection_mask, final_blend
+from .utils import _create_selection_mask, _histogram_preserving_blending, _poisson_fusion
 from .optical_flow import OpticalFlowProcessor
 from .guide_classes import Guides
 from . import ebsynth as eb
-from concurrent.futures import ThreadPoolExecutor
 
 
 def warp(x, flo):
@@ -44,11 +43,14 @@ def perform_warping(last_stylized_img, step, i, flow_guides):
     stylized_image_bgr = cv2.cvtColor(last_stylized_img, cv2.COLOR_BGR2RGB)
     stylized_image = torch.from_numpy(stylized_image_bgr).permute(2, 0, 1).float() / 255.0
     stylized_image = stylized_image.unsqueeze(0)  # Removed .to('cuda')
-    flow = torch.from_numpy(flow_guides[i-1]).permute(2, 0, 1).float().unsqueeze(0)  # Removed .to('cuda')
+    
     if step == 1:
-
+        flow_up = cv2.resize(flow_guides[i-1], (stylized_image.shape[1::-1]))
+        flow = torch.from_numpy(flow_up).permute(2, 0, 1).float().unsqueeze(0)  # Removed .to('cuda')
         flow *= -1
-
+    elif step == -1:
+        flow_up = cv2.resize(flow_guides[i], (stylized_image.shape[1::-1]))
+        flow = torch.from_numpy(flow_up).permute(2, 0, 1).float().unsqueeze(0)
         
     warped_stylized = warp(stylized_image, flow)
     warped_stylized_np = warped_stylized.squeeze(0).permute(1, 2, 0).cpu().detach().numpy()
@@ -69,9 +71,9 @@ def _stylize(start_idx, end_idx, style_start, style_end, g_pos_guides,
     step = 1 if start_idx < end_idx else -1
     end_idx = end_idx + 1 if step == 1 else end_idx - 1  # Adjust the end index
 
-    ebsynth = eb.Ebsynth(style=style_start, guides=[])
+    #ebsynth = eb.Ebsynth(style=style_start, guides=[])
     for i in range(start_idx, end_idx, step):
-        ebsynth.clear_guides()
+        ebsynth = eb.Ebsynth(style=style_start, guides=[])
             
         ebsynth.add_guide(imgsequence[start_idx], imgsequence[i], 6.0)
 
@@ -82,7 +84,11 @@ def _stylize(start_idx, end_idx, style_start, style_end, g_pos_guides,
         elif step == -1:
             ebsynth.add_guide(g_pos_reverse[start_idx], g_pos_reverse[i], 2.0)
 
-        if i != start_idx:  # Skip the first and last iterations
+        if step == 1 and i != start_idx:
+            last_stylized_img = stylized_imgs[-1]
+            warped_stylized_np = perform_warping(last_stylized_img, step, i, flow_guides)
+            ebsynth.add_guide(style_start, warped_stylized_np, 0.5)
+        elif step == -1 and i != start_idx:
             last_stylized_img = stylized_imgs[-1]
             warped_stylized_np = perform_warping(last_stylized_img, step, i, flow_guides)
             ebsynth.add_guide(style_start, warped_stylized_np, 0.5)
@@ -216,57 +222,53 @@ class Stylizer:
         """
 
         img_sequences = []  # list of stylized sequences, ascending order
-          
+
     # if there is only one sequence, this loop will only run once
         for i, sequence in enumerate(self.sequences):
-            print(f"Processing Sequence {i+1} of {len(self.sequences)}")
             start_idx = sequence.begFrame
             end_idx = sequence.endFrame
             style_start = sequence.style_start
             style_end = sequence.style_end
-            gpos = self.g_pos_guides
-            gpos_rev = self.g_pos_reverse
-            imgseq = self.imgsequence
-            edge = self.edge_guides
-            flow = self.flow_guides
+
             if style_start is not None and style_end is not None:  # if both style attributes are provided
 
-                with ThreadPoolExecutor(max_workers=2) as executor:
-                    future_forward = executor.submit(_stylize, start_idx, end_idx, style_start, style_end, gpos,
-                                                        gpos_rev, imgseq, edge, flow)
-                    future_backward = executor.submit(_stylize, end_idx, start_idx, style_end, style_start, gpos,
-                                                        gpos_rev, imgseq, edge, flow)
-                    
-                    style_forward, err_forward = future_forward.result()
-                    style_backward, err_backward = future_backward.result()
+                # Call the _stylize method directly for forward stylization
+                style_forward, err_forward = self._stylize(start_idx, end_idx, style_start, style_end)
+
+                # Call the _stylize method directly for backward stylization
+                style_backward, err_backward = self._stylize(end_idx, start_idx, style_end, style_start)
+
                 # reverse the list, so that it's in ascending order
                 style_backward = style_backward[::-1]
                 err_backward = err_backward[::-1]
                 SB = style_backward
-                print("Stylization Complete, Blending...")
+
                 selection_masks = _create_selection_mask(
                     err_forward, err_backward)
-                
-                selection_masks = Guides.warp_masks(self, self.flow_guides, selection_masks) 
-                
-                final_blends = final_blend(style_forward, style_backward, selection_masks)
-                print("Finalizing Sequence...")
+
+                selection_masks = Guides.warp_masks(self, self.flow_guides, selection_masks)
+
+                hpblended = _histogram_preserving_blending(style_forward, SB, selection_masks)
+
+                final_blends = _poisson_fusion(hpblended, style_forward, SB, selection_masks)
+
                 img_sequences.append(final_blends)
-                
+
             elif style_start is not None and style_end is None:
 
-                style_forward, _ = _stylize(
-                    start_idx, end_idx, style_start, style_start, gpos, gpos_rev, imgseq, edge, flow)
-                print("Stylization Complete, finalizing sequence...")
+                style_forward, _ = self._stylize(
+                    start_idx, end_idx, style_start, style_start)  # list of stylized images
+
                 img_sequences.append(style_forward)
 
-            elif style_end is not None and style_start is None:
+            elif style_start is None and style_end is not None:
 
-                style_backward, _ = _stylize(
-                    end_idx, start_idx, style_end, style_end, gpos, gpos_rev, imgseq, edge, flow)
-        
+                style_backward, _ = self._stylize(
+                    end_idx, start_idx, style_end, style_end)
+
+
                 style_backward = style_backward[::-1]
-                print("Stylization Complete, finalizing sequence...")
+
                 img_sequences.append(style_backward)
 
             elif style_start is None and style_end is None:
@@ -274,9 +276,141 @@ class Stylizer:
                 raise ValueError(
                     "At least one style attribute should be provided.")
 
+
         flattened_img_sequences = [img for sequence in img_sequences for img in sequence]
 
         return flattened_img_sequences  # single list containing all stylized images, ascending order
+    
+    def _stylize(self, start_idx, end_idx, style_start, style_end):
+        """
+        Internal Method for Stylizing a Sequence.
+
+        Parameters
+        ----------
+        start_idx : int
+            Index of the first frame in the sequence.
+        end_idx : int
+            Index of the last frame in the sequence.
+        style_start : str
+            File path to the first style image in the sequence.
+        style_end : str
+            File path to the last style image in the sequence.
+
+        Returns
+        -------
+        stylized_imgs : List of stylized images as numpy arrays.
+        nnf_list : List of nearest neighbor fields as numpy arrays.
+
+        """
+
+        stylized_imgs = []
+        nnf_list = []
+
+        style = style_start  # Set the style image to the first style image in the sequence
+
+        if start_idx == end_idx:
+            raise ValueError("Start and End Indexes cannot be the same.")
+
+        step = 1 if start_idx < end_idx else -1
+
+        start = start_idx
+
+        # Adjust the end index to make sure it is included in the loop
+        if step == 1:
+            end_idx = end_idx + 1  # Add 1 to include end_idx when counting up
+        else:
+            end_idx = end_idx - 1  # Subtract 1 to include end_idx when counting down
+
+        # Special case to make sure we don't go below zero when counting down
+        if end_idx == 0 and step == -1:
+            end_idx = -1  # This makes sure the loop includes 0 but doesn't go into negative numbers
+
+        for i in range(start, end_idx, step):
+
+            # Initialize ebsynth
+            ebsynth = eb.Ebsynth(style=style, guides=[])
+
+            ebsynth.add_guide(
+                self.imgsequence[start], self.imgsequence[i], 6.0)
+
+            ebsynth.add_guide(
+                self.edge_guides[start], self.edge_guides[i], 0.5)
+
+            if step == 1:
+                ebsynth.add_guide(
+                    self.g_pos_guides[start], self.g_pos_guides[i], 2.0)
+            elif step == -1:
+                ebsynth.add_guide(
+                    self.g_pos_reverse[start], self.g_pos_reverse[i], 2.0)
+
+            if i > (start) and i < (end_idx):
+
+                stylized_image_bgr = cv2.cvtColor(
+                    stylized_imgs[-1], cv2.COLOR_BGR2RGB)
+
+                stylized_image = torch.from_numpy(
+                    stylized_image_bgr).permute(2, 0, 1).float() / 255.0
+
+                stylized_image = stylized_image.unsqueeze(0).to(self.DEVICE)
+
+                flow = torch.from_numpy(
+                    self.flow_guides[i-1]).permute(2, 0, 1).float().unsqueeze(0).to(self.DEVICE)
+
+                flow *= -1
+
+                warped_stylized = self.flow.warp(stylized_image, flow)
+
+                warped_stylized_np = warped_stylized.squeeze(
+                    0).permute(1, 2, 0).cpu().detach().numpy()
+
+
+                warped_stylized_np = np.clip(warped_stylized_np, 0, 1)
+
+                warped_stylized_np = (
+                    warped_stylized_np * 255).astype(np.uint8)
+
+                warped_stylized_np = cv2.cvtColor(
+                    warped_stylized_np, cv2.COLOR_RGB2BGR)
+
+                ebsynth.add_guide(style, warped_stylized_np, 0.5)
+
+
+            elif i < (start) and i > (end_idx):
+                #reverse works as expected, not sure why forward doesn't
+                stylized_image_bgr = cv2.cvtColor(
+                    stylized_imgs[-1], cv2.COLOR_BGR2RGB)
+                stylized_image = torch.from_numpy(
+                    stylized_image_bgr).permute(2, 0, 1).float() / 255.0
+
+                stylized_image = stylized_image.unsqueeze(0).to(self.DEVICE)
+
+                flow = torch.from_numpy(
+                    self.flow_guides[i]).permute(2, 0, 1).float().unsqueeze(0).to(self.DEVICE)
+
+                warped_stylized = self.flow.warp(stylized_image, flow)
+
+                warped_stylized_np = warped_stylized.squeeze(
+                    0).permute(1, 2, 0).cpu().detach().numpy()
+
+                warped_stylized_np = np.clip(warped_stylized_np, 0, 1)
+
+                warped_stylized_np = (
+                    warped_stylized_np * 255).astype(np.uint8)
+
+                warped_stylized_np = cv2.cvtColor(
+                    warped_stylized_np, cv2.COLOR_RGB2BGR)
+
+                ebsynth.add_guide(style, warped_stylized_np, 0.5)
+
+
+            stylized_image, nnf = ebsynth.run(output_nnf=True)
+
+            stylized_imgs.append(stylized_image)
+
+            nnf_list.append(nnf)
+
+
+        return stylized_imgs, nnf_list
     
     def run(self):
         """

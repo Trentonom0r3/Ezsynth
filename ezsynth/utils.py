@@ -87,10 +87,3 @@ def _poisson_fusion(hpblended, style_forward, style_backward, selection_masks):
             blended_result.extend(blended_chunk)
     
     return blended_result
-
-def final_blend(style_fwd, style_bwd, selection_masks):
-    hpblended = _histogram_preserving_blending(style_fwd, style_bwd, selection_masks)
-                    
-    final_blends = _poisson_fusion(hpblended, style_fwd, style_bwd, selection_masks)
-    
-    return final_blends
