@@ -14,7 +14,8 @@ I will be providing some examples of the different use cases in coming days, for
 - [FAQ](#faq)
 - [TODO](#todo)
 - [Contributing](#contributing)
-
+- [Examples](#examples)
+- 
 ## Installation!
 
 - Simplest way is pip installation.
@@ -266,3 +267,13 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
 ## TODO:
 - Profile and optimize the process. 
     - Takes much longer than I'd like in its current state. (Though it does work quite well.)
+
+## Contributing:
+- TODO
+
+## Examples:
+
+
+https://github.com/Trentonom0r3/Ezsynth/assets/130304830/2937cb02-597b-4f9b-a218-340b124dcd84
+
+
