@@ -44,12 +44,12 @@ def perform_warping(last_stylized_img, step, i, flow_guides):
     stylized_image_bgr = cv2.cvtColor(last_stylized_img, cv2.COLOR_BGR2RGB)
     stylized_image = torch.from_numpy(stylized_image_bgr).permute(2, 0, 1).float() / 255.0
     stylized_image = stylized_image.unsqueeze(0)  # Removed .to('cuda')
-
+    flow = torch.from_numpy(flow_guides[i-1]).permute(2, 0, 1).float().unsqueeze(0)  # Removed .to('cuda')
     if step == 1:
-        flow = torch.from_numpy(flow_guides[i-1]).permute(2, 0, 1).float().unsqueeze(0)  # Removed .to('cuda')
+
         flow *= -1
-    else:
-        flow = torch.from_numpy(flow_guides[i]).permute(2, 0, 1).float().unsqueeze(0)
+
+        
     warped_stylized = warp(stylized_image, flow)
     warped_stylized_np = warped_stylized.squeeze(0).permute(1, 2, 0).cpu().detach().numpy()
     warped_stylized_np = np.clip(warped_stylized_np, 0, 1)
@@ -82,7 +82,7 @@ def _stylize(start_idx, end_idx, style_start, style_end, g_pos_guides,
         elif step == -1:
             ebsynth.add_guide(g_pos_reverse[start_idx], g_pos_reverse[i], 2.0)
 
-        if i != start_idx and i != end_idx:  # Skip the first and last iterations
+        if i != start_idx:  # Skip the first and last iterations
             last_stylized_img = stylized_imgs[-1]
             warped_stylized_np = perform_warping(last_stylized_img, step, i, flow_guides)
             ebsynth.add_guide(style_start, warped_stylized_np, 0.5)
