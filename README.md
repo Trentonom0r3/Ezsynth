@@ -15,7 +15,7 @@ I will be providing some examples of the different use cases in coming days, for
 - [TODO](#todo)
 - [Contributing](#contributing)
 - [Examples](#examples)
-- 
+  
 ## Installation!
 
 - Simplest way is pip installation.
