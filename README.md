@@ -9,7 +9,7 @@ I will be providing some examples of the different use cases in coming days, for
 # Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
-- [Class Definition](#class-definition)
+- [Class Definitions](#class-definitions)
 - [Example Usage](#example-usage)
 - [FAQ](#faq)
 - [TODO](#todo)
