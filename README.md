@@ -1,18 +1,11 @@
 # ezsynth -- Ebsynth for Python!
 Ebsynth as an importable python library! 
-This is a python library built to make the use of ebsynth easier.
-Two main methods are provided, one for image stylization, and another for video stylization.
-Ezsynth, the video stylization class, makes use of several features not present in the original ebsynth.exe program.
-Ezsynth makes use of phycv physics based edge detection and RAFT optical flow for its computations, leading to a higher degree of accuracy.
-The goal of this project is to create a simple interface for using ebsynth for video stylization, and ultimately integrate this into larger
-pipelines, including those involving stable diffusion. Cheers!
 
-## Major Changes:
-- Use of pybind11 wrapper instead of ctypes.
-  - Much faster, easier use, thread safe, and more deeply integrated. 
-- Video Stylization class. This is ebsynth as most people know it. (With some extra bells and whistles)
-  - Two main Classes; Imagesynth for single images, and Ezsynth for your familiar ebsynth experience.
-  
+This is quite a simple implementation. I'll be working to add more complex classes and options in the future.
+
+Using the class provided, you can perform things like style transfer, color transfer, inpainting, superimposition, and more!
+I will be providing some examples of the different use cases in coming days, for now I've included a few example scripts for a basic stylization.
+
 # Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
