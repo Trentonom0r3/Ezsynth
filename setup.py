@@ -2,13 +2,18 @@ from setuptools import setup, find_packages
 
 setup(
     name='ezsynth',
-    version='1.0.2.1',
+    version='1.2.1.0',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=[
-    'opencv-python',
+install_requires=[
+    'torch',
+    'Pillow', 
     'numpy',
-    ],
+    'phycv',  
+    'opencv-contrib-python',  
+    'scipy'
+],
+
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

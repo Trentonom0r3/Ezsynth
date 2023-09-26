@@ -1,1 +1,2 @@
-include ebsynth/ebsynth.dll
+include ezsynth/*
+include ezsynth/models/*
