@@ -28,7 +28,7 @@ pip install ezsynth
     - 1. Clone the Repo.
     - 2. Download ```opencv_world480.dll```, and place it into the ```ezsynth``` folder.
     - 3. In the main parent folder, run ```py setup.py sdist bdist_wheel```
-    - 4. After that has built, run ```pip install C:\Ebsynth.py\dist\ezsynth-1.2.0.1.tar.gz``` 
+    - 4. After that has built, run ```pip install C:\Ebsynth.py\dist\ezsynth-1.2.1.0.tar.gz``` 
         - Change path as needed.
     - 5. You should have access to ezsynth and its associated classes now!
 
