@@ -8,6 +8,7 @@ I will be providing some examples of the different use cases in coming days, for
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Class Definitions](#class-definitions)
 - [Example Usage](#example-usage)
@@ -15,7 +16,11 @@ I will be providing some examples of the different use cases in coming days, for
 - [TODO](#todo)
 - [Contributing](#contributing)
 - [Examples](#examples)
-  
+
+## Requirements
+- Python 3.11
+- Windows x64 system with a cuda compatible GPU.
+- ....
 ## Installation!
 
 - Simplest way is pip installation.
