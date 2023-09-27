@@ -139,7 +139,7 @@ class Ezsynth:
             
         >>> flow_model : str, optional
             Optical flow model, by default 'sintel'
-            >>> options: 'sintel', 'kitti', 'things', 'chairs'
+            >>> options: 'sintel', 'kitti'
 
         Example
         -------
