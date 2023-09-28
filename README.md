@@ -296,7 +296,11 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
     - Inline comments for things that seem unusual, or where you tried something else that didn't work vice/versa.
     - Refactoring existing code is fine, but removing functionality (unless discussed and approved) is not.
     - For changes, create a fork, make changes, and submit a PR for review.
-
+      
+- ### Main Points of work:
+  - Simplification and Optimization. I Know it can be sped up, it will just take a lot of testing.
+  - Possible refinement of pybind11 wrapper itself.
+    
 - If I missed anything or you have any questions, feel free to start a new issue or discussion!
         
 ## Examples:
