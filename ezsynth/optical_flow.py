@@ -206,10 +206,6 @@ class OpticalFlowProcessor:
                 max(H - 1, 1) - 1.0
             vgrid = vgrid.permute(0, 2, 3, 1)
             output = F.grid_sample(x, vgrid)
-            mask = torch.ones(x.size()).to(DEVICE)
-            mask = F.grid_sample(mask, vgrid)
-            mask[mask < 0.999] = 0
-            mask[mask > 0] = 1
 
             return output
 

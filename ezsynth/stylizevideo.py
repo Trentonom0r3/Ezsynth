@@ -196,7 +196,7 @@ class Ezsynth:
                                 self.flow_guides, self.edge_guides, self.g_pos_guides,
                                 self.g_pos_guides_rev, self.DEVICE)
 
-            stylized_imgs = stylizer.run()
+            stylized_imgs = stylizer.run(output_path)
 
             if output_path:
                 for i, img in enumerate(stylized_imgs):
