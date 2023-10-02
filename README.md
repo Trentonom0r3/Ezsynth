@@ -290,7 +290,7 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
 
 - ### Guidelines:
   - Outside of the Ground-Truth Comparison, there isnt much in terms of Guidelines.
-  - Where possible, try to write Obect Oriented Code (refactoring existing code is fine, as long as the final output isn't negatively altered)
+  - Where possible, try to write Object Oriented Code (refactoring existing code is fine, as long as the final output isn't negatively altered)
     - For public methods, detailed, numpy style doc-strings. See existing Core Classes for examples.
     - For private methods, a brief description. If the method is more than a simple utility method, an example or additional annotation would be appreciated.
     - Inline comments for things that seem unusual, or where you tried something else that didn't work vice/versa.
