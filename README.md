@@ -8,7 +8,10 @@ Using the classes provided, you can perform things like style transfer, color tr
 The ```Ezsynth``` class provides a simple python method for running the ebsynth video stylization you are probably familiar with. 
 This does not require or use ebsynth.exe, and is a custom implementation of the same paper and method used by ebsynth.exe.
 This implementation makes use of advanced physics based edge detection and RAFT optical flow, which leads to more accurate results during synthesis. 
-
+## CHANGELOG
+- [10.3.23]
+  - Linked to Ebsynth Source Code w/ Wrapper
+  
 # Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Requirements](#requirements)
