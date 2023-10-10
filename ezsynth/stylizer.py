@@ -1,9 +1,9 @@
+import time
 import cv2
-from .utils import _create_selection_mask, _stylize, final_blend, batch, overlap
+from .utils import _create_selection_mask, _stylize, final_blend
 from .optical_flow import OpticalFlowProcessor
 from .guide_classes import Guides
-from concurrent.futures import ProcessPoolExecutor
-from .sequences import AdvancedSequenceListManager, Sequence, AdvancedSequence
+from .sequences import Sequence
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +25,7 @@ class Stylizer:
 
         """
 
-        self.imgsequence = imgsequence
+        self.imgsequence = [cv2.imread(img) for img in imgsequence]
         self.styles = styles
 
         self.style_indexes = style_indexes
@@ -99,7 +99,7 @@ class Stylizer:
 
         return sequences
            
-    def _process_sequences(self, output_dir):
+    def _process_sequences(self, output_dir = None):
         """
         Create Guides for Entire Sequence, using the data from Sequence objects.
         Sequence Objects contain information about the style images and the frames they will be applied to.
@@ -112,7 +112,7 @@ class Stylizer:
 
         img_sequences = []  # list of stylized sequences, ascending order
         
-        advanced_manager = AdvancedSequenceListManager()
+        #advanced_manager = AdvancedSequenceListManager()
     # if there is only one sequence, this loop will only run once
         for i, sequence in enumerate(self.sequences):
             print(f"Processing Sequence {i+1} of {len(self.sequences)}")
@@ -121,36 +121,6 @@ class Stylizer:
             end_idx = sequence.endFrame
             style_start = sequence.style_start
             style_end = sequence.style_end
-
-            advanced_manager.add_advanced_sequence("list1", AdvancedSequence(start_idx, end_idx, 
-                                                                             style_start, style_end, self.guides))
-            
-            advanced_subsequences = advanced_manager.get_advanced_subsequences("list1")
-            # Make sure advanced_subsequences is a list or is converted to a list
-            if not isinstance(advanced_subsequences, list):
-                advanced_subsequences = list(advanced_subsequences)
-
-            # Check if advanced_subsequences has at least 2 elements for overlapping
-            if len(advanced_subsequences) < 2:
-                print("Not enough subsequences for overlapping.")
-
-            img_chunks = []
-            nnf_chunks = []
-            # Print advanced subsequences and their guides
-            for idx in range(len(advanced_subsequences) - 1):  # -1 to prevent IndexError
-                current_subseq = advanced_subsequences[idx]
-                next_subseq = advanced_subsequences[idx + 1]
-
-                o = overlap(current_subseq.style_start, current_subseq.guides, 
-                            next_subseq.guides, current_subseq.original_guides,
-                            next_subseq.original_guides)
-                            
-                imgs, nnf = o.run()
-                img_chunks.append(imgs)
-                nnf_chunks.append(nnf)
-                
-                for img_idx, img in enumerate(imgs):
-                    cv2.imwrite(f"{output_dir}/img_{idx}_{img_idx}.png", img)
                 
             gpos = self.g_pos_guides
             gpos_rev = self.g_pos_reverse
@@ -160,15 +130,12 @@ class Stylizer:
             
             if style_start is not None and style_end is not None:  # if both style attributes are provided
 
-                with ProcessPoolExecutor(max_workers=2) as executor:
-                    future_forward = executor.submit(_stylize, start_idx, end_idx, style_start, style_end, gpos,
-                                                        gpos_rev, imgseq, edge, flow)
+                style_forward, err_forward = _stylize(start_idx, end_idx, style_start, style_end, gpos,
+                                                                        gpos_rev, imgseq, edge, flow, output_path=output_dir)
+                                    
+                style_backward, style_forward = _stylize( end_idx, start_idx, style_end, style_start, gpos,
+                                                                        gpos_rev, imgseq, edge, flow, output_path=output_dir)
                     
-                    future_backward = executor.submit(_stylize, end_idx, start_idx, style_end, style_start, gpos,
-                                                        gpos_rev, imgseq, edge, flow)
-                    
-                    style_forward, err_forward = future_forward.result()
-                    style_backward, err_backward = future_backward.result()
 
                 style_backward = style_backward[::-1]
                 err_backward = err_backward[::-1]

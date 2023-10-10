@@ -196,11 +196,11 @@ class Ezsynth:
                                 self.flow_guides, self.edge_guides, self.g_pos_guides,
                                 self.g_pos_guides_rev, self.DEVICE)
 
-            stylized_imgs = stylizer.run(output_path)
+            stylized_imgs = stylizer.run(output_path)  # If not None, writes images while stylization is occuring.
 
             if output_path:
                 for i, img in enumerate(stylized_imgs):
-                    cv2.imwrite(f"{output_path}/output{i}.png", img)
+                    cv2.imwrite(f"{output_path}/final_output{i}.png", img)
             end = time.time()
             logging.info(f"Stylization complete. Time taken: {end-start} seconds.")
             return stylized_imgs
