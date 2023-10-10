@@ -9,6 +9,8 @@ The ```Ezsynth``` class provides a simple python method for running the ebsynth 
 This does not require or use ebsynth.exe, and is a custom implementation of the same paper and method used by ebsynth.exe.
 This implementation makes use of advanced physics based edge detection and RAFT optical flow, which leads to more accurate results during synthesis. 
 ## CHANGELOG
+- [10.10.23]
+  - ezsynth.run(output_path) now results in both final images AND in-between images being saved. 
 - [10.3.23]
   - Linked to Ebsynth Source Code w/ Wrapper
   
