@@ -46,7 +46,8 @@ class Stylizer:
 
         self.num_styles = len(self.styles)
         self.num_frames = len(self.imgsequence)
-
+        self.imgindexes = set(range(self.num_frames))
+        
         self.begFrame = 0
         self.endFrame = self.num_frames - 1
 
@@ -133,7 +134,7 @@ class Stylizer:
                 style_forward, err_forward = _stylize(start_idx, end_idx, style_start, style_end, gpos,
                                                                         gpos_rev, imgseq, edge, flow, output_path=output_dir)
                                     
-                style_backward, style_forward = _stylize( end_idx, start_idx, style_end, style_start, gpos,
+                style_backward, err_backward = _stylize( end_idx, start_idx, style_end, style_start, gpos,
                                                                         gpos_rev, imgseq, edge, flow, output_path=output_dir)
                     
 
