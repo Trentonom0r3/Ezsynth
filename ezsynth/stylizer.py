@@ -46,7 +46,8 @@ class Stylizer:
 
         self.num_styles = len(self.styles)
         self.num_frames = len(self.imgsequence)
-
+        self.imgindexes = set(range(self.num_frames))
+        
         self.begFrame = 0
         self.endFrame = self.num_frames - 1
 
