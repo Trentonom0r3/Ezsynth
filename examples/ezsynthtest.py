@@ -9,7 +9,9 @@ STYLE_PATHS = [
 IMAGE_FOLDER = "C:/Input"
 OUTPUT_FOLDER = "C:/Output"
 
-ez = Ezsynth(styles=STYLE_PATHS, imgsequence=IMAGE_FOLDER, flow_model='sintel')
-ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
-# results = ez.set_guides().stylize() # returns a list of images as numpy arrays
+ez = Ezsynth(styles=STYLE_PATHS, imgsequence=IMAGE_FOLDER, edge_method = "Classic",
+             flow_method = "RAFT", model='sintel', output_folder=OUTPUT_FOLDER) # Create an Ezsynth object
+
+ez.run() # Run the stylization process
+results = ez.results # The results are stored in the results variable
 
