@@ -10,25 +10,6 @@ The ```Ezsynth``` class provides a simple python method for running the ebsynth 
 This does not require or use ebsynth.exe, and is a custom implementation of the same paper and method used by ebsynth.exe.
 This implementation makes use of advanced physics based edge detection and RAFT optical flow, which leads to more accurate results during synthesis. 
 ## CHANGELOG
-- [10.17.23]
-  - Merge https://github.com/Trentonom0r3/Ezsynth/pull/19
-  - Re-build and distribute to PyPi
-- [10.10.23]
-  - ezsynth.run(output_path) now results in both final images AND in-between images being saved. 
-- [10.3.23]
-  - Linked to Ebsynth Source Code w/ Wrapper
-  
-# Table of Contents
-- [ChangeLog](#changelog)
-- [Installation](#installation)
-- [Class Definitions](#class-definitions)
-- [Example Usage](#example-usage)
-- [FAQ](#faq)
-- [TODO](#todo)
-- [Contributing](#contributing)
-- [Examples](#examples)
-
-## ChangeLog
 - [12.31.23]
     - Significant Refactoring of the Library. (In My opinion, easier to follow).
         - Various Refactorings, separations, etc to classes. 
@@ -39,6 +20,22 @@ This implementation makes use of advanced physics based edge detection and RAFT 
     - Went back to `.dll` usage over `.pyd`. 
         - Perhaps it was how I was setting up the `.pyd`, perhaps its was something else, but using the `.dll` and utilizing multithreading leads to huge performance gains I can't ignore, so I scrapped the `.pyd`.
     - Upload new version to `pypi`.
+- [10.17.23]
+  - Merge https://github.com/Trentonom0r3/Ezsynth/pull/19
+  - Re-build and distribute to PyPi
+- [10.10.23]
+  - ezsynth.run(output_path) now results in both final images AND in-between images being saved. 
+- [10.3.23]
+  - Linked to Ebsynth Source Code w/ Wrapper
+  
+# Table of Contents
+- [Installation](#installation)
+- [Class Definitions](#class-definitions)
+- [Example Usage](#example-usage)
+- [FAQ](#faq)
+- [TODO](#todo)
+- [Contributing](#contributing)
+- [Examples](#examples)
 
 ## Installation!
 
