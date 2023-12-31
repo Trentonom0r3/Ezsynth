@@ -3,7 +3,8 @@ Ebsynth as an importable python library!
 
 This is quite a simple implementation. I'll be working to add more complex classes and options in the future.
 
-Using the classes provided, you can perform things like style transfer, color transfer, inpainting, superimposition, and video stylization!
+Using the class provided, you can perform things like style transfer, color transfer, inpainting, superimposition, and more!
+
 
 The ```Ezsynth``` class provides a simple python method for running the ebsynth video stylization you are probably familiar with. 
 This does not require or use ebsynth.exe, and is a custom implementation of the same paper and method used by ebsynth.exe.
@@ -18,8 +19,7 @@ This implementation makes use of advanced physics based edge detection and RAFT 
   - Linked to Ebsynth Source Code w/ Wrapper
   
 # Table of Contents
-- [Table of Contents](#table-of-contents)
-- [Requirements](#requirements)
+- [ChangeLog](#changelog)
 - [Installation](#installation)
 - [Class Definitions](#class-definitions)
 - [Example Usage](#example-usage)
@@ -28,10 +28,18 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 - [Contributing](#contributing)
 - [Examples](#examples)
 
-## Requirements
-- Python 3.11
-- Windows x64 system with a cuda compatible GPU.
-- ....
+## ChangeLog
+- [12.31.23]
+    - Significant Refactoring of the Library. (In My opinion, easier to follow).
+        - Various Refactorings, separations, etc to classes. 
+        - Utilization of `opencv` for warping vs using `torch.`
+    - Improved computation time, down to ~4 minutes. (Still not great, but much better than previously ~10 minutes).
+    - Implemented multithreading in `Ezsynth`, `ImageSynth` remains the same. 
+    - Added logic for usage of `.so` with Linux. If someone can build and contribute the `.so`, would be much appreciated.
+    - Went back to `.dll` usage over `.pyd`. 
+        - Perhaps it was how I was setting up the `.pyd`, perhaps its was something else, but using the `.dll` and utilizing multithreading leads to huge performance gains I can't ignore, so I scrapped the `.pyd`.
+    - Upload new version to `pypi`.
+
 ## Installation!
 
 - Simplest way is pip installation.
@@ -39,184 +47,114 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 ```
 pip install ezsynth
 ```
+**OR**
+```
+pip install ezsynth==2.0.0
+```
 
 - To build from source:
     - 1. Clone the Repo.
-    - 2. Download ```opencv_world480.dll```, and place it into the ```ezsynth``` folder.
-    - 3. In the main parent folder, run ```py setup.py sdist bdist_wheel```
-    - 4. After that has built, run ```pip install C:\Ebsynth.py\dist\ezsynth-1.2.1.0.tar.gz``` 
+    - 2. In the main parent folder, run ```py setup.py sdist bdist_wheel```
+    - 3. After that has built, run ```pip install C:\Ebsynth.py\dist\ezsynth-1.2.0.1.tar.gz``` 
         - Change path as needed.
-    - 5. You should have access to ezsynth and its associated classes now!
+    - 4. You should have access to ezsynth and its associated classes now!
+
+# FOR LINUX:
+    I'd need some help with this, can update logic if I have the .so file, anyways--
+    - Go to my Fork of Ebsynth, clone it, and run this [file](https://github.com/Trentonom0r3/ebsynth/blob/master/build-linux-cpu%2Bcuda.sh)
+    - This will build the .so for ebsynth. (cuda+CPU). You can then place this in the `ezsynth/utils` directory alongside `ezsynth.dll`, enabling usage with linux. (In theory, untested on my end though.)
 
 ## Class Definitions:
 Both classes have inline docstrings. If you use VScode, you'll see hints on usage. 
 
-```
+```py
 
 class Imagesynth:
-    def __init__(self, style_img):
-        """
-        Initialize the ebsynth object for image stylization.
-        
-        Parameters
-        ----------
-        style_img: str or numpy array
-        >>> str leading to file path, or numpy array
-        
-        guides: tuple of lists
-        >>> [[guide 1, guide 2, weight], [guide 1, guide 2, weight], ...]
-        >>> guide 1: str leading to file path, or numpy array
-        >>> guide 2: str leading to file path, or numpy array
-        >>> weight: float
-        
-        Example
-        -------
-        from ezsynth import imagesynth
-        
-        >>> STYLE_PATH = "Style.jpg" or np.array
-        >>> SOURCE_IMG = "Source.jpg" or np.array
-        >>> TARGET_IMG = "Target.jpg" or np.array
-        >>> OUTPUT_PATH = "Output.jpg" or None
-        
-        >>> eb = imagesynth(style_img = STYLE_PATH)
-        >>> eb.add_guide(source = SOURCE_IMG, target = TARGET_IMG, weight = 1.0)
-        >>> eb.run(output_path = OUTPUT_PATH)
-        >>> or to do something else result = eb.run()
-        
-        """
-    
+    """
+    Imagesynth class for image synthesis with style transfer.
+
+    Parameters
+    ----------
+    style_img : str or numpy array
+        Path to the style image file or a numpy array representing the style image.
+    guides : list of lists, optional
+        Guides for style transfer in the format [[guide 1, guide 2, weight], ...].
+    uniformity : float, optional
+        Uniformity parameter for ebsynth.
+    patchsize : int, optional
+        Patch size parameter for ebsynth.
+    pyramidlevels : int, optional
+        Pyramid levels parameter for ebsynth.
+    searchvoteiters : int, optional
+        Search vote iterations parameter for ebsynth.
+    patchmatchiters : int, optional
+        Patch match iterations parameter for ebsynth.
+    extrapass3x3 : bool, optional
+        Extra pass 3x3 parameter for ebsynth.
+    backend : str, optional
+        Backend to use, default is 'cuda'.
+    """
+    def __init__(self, style_img, guides=[], uniformity=3500.0,
+                 patchsize=5, pyramidlevels=6, searchvoteiters=12,
+                 patchmatchiters=6, extrapass3x3=True, backend='cuda'):
+        pass
+
     def add_guide(self, source, target, weight):
         """
         Add a guide to the ebsynth object.
-        
-        Parameters
-        ----------
-        source: str or numpy array
-        >>> str leading to file path, or numpy array
-        
-        target: str or numpy array
-        >>> str leading to file path, or numpy array
-        
-        weight: float
         """
-        
+        pass
+
     def clear_guides(self):
         """
-        Clears the Guides list.
+        Clear all guides from the ebsynth object.
         """
-        self.eb.clear_guides()   
+        pass
 
-    def run(self, output_path = None):
+    def run(self, output_path=None):
         """
-        Run ebsynth.
-        
-        Parameters
-        ----------
-        output_path: str(optional)
-        >>> str leading to file path
-        
-        returns: numpy array
-        
-        """         
-        return result
-
+        Run the ebsynth process and optionally save the output.
+        """
+        pass
 
 class Ezsynth:
     """
-    Specialized subclass of ebsynth for video stylization.
-    Provides methods to process sequences of images.
-  
+    `Ezsynth` is the main class for the ezsynth package.
+
+    Parameters
+    ----------
+    styles : list
+        The paths to the style images.
+    imgsequence : str
+        The path to the folder containing the input images.
+    edge_method : str, optional
+        The method for edge detection, default is "PAGE".
+        Options are "PAGE", "PST", and "Classic".
+    flow_method : str, optional
+        The method for optical flow computation, default is "RAFT".
+        Options are "RAFT" and "DeepFlow".
+    model : str, optional
+        The model name for optical flow, default is "sintel".
+        Options are "sintel" and "kitti".
+    output_folder : str, optional
+        The path to the folder where output images will be saved.
     """
 
-    def __init__(self, styles: Union[str, List[str]], imgsequence: str,
-                 flow_method: str = 'RAFT', edge_method: str = 'PAGE', flow_model: str = 'sintel'):
-        """
-        Initialize the Ezsynth instance for video stylization.
-        
-        Parameters
-        ----------
-        >>> styles : Union[str, List[str]]
-            Path to style image(s).
-            (In the form of Style1.jpg, Style2.jpg, Style01.png, Style02.png etc.)
-            >>> 3-Channel, 8-bit RGB images only.
-            
-        >>> imgsequence : str
-            Folder Path to image sequence. 
-            (In the form of 0001.png, 0002.png, image01.jpg, image02.jpg, etc.)
-            >>> 3-Channel, 8-bit RGB images only.
-            
-        >>> flow_method : str, optional
-            Optical flow method, by default 'RAFT'
-            >>> options: 'RAFT', 'DeepFlow'
-            
-        >>> edge_method : str, optional
-            Edge method, by default 'PAGE'
-            >>> options: 'PAGE', 'PST', 'Classic'
-            
-        >>> flow_model : str, optional
-            Optical flow model, by default 'sintel'
-            >>> options: 'sintel', 'kitti'
+    def __init__(self, styles, imgsequence, edge_method="PAGE",
+                 flow_method="RAFT", model="sintel", output_folder=None):
+        pass
 
-        Example
-        -------
-        >>> from ezsynth import Ezsynth
-        
-        >>> STYLE_PATHS = ["Style1.jpg", "Style2.jpg"]
-        >>> IMAGE_FOLDER = "C:/Input"
-        >>> OUTPUT_FOLDER = "C:/Output"
-        
-        >>> ez = Ezsynth(styles=STYLE_PATHS, imgsequence=IMAGE_FOLDER)
-        >>> ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
-        >>> or to do something else results = ez.set_guides().stylize()
-        
-        Example (For custom Processing Options)
-        ---------------------------------------
-        >>> from ezsynth import Ezsynth
-        
-        >>> STYLE_PATHS = ["Style1.jpg", "Style2.jpg"]
-        >>> IMAGE_FOLDER = "Input"
-        >>> OUTPUT_FOLDER = "Output"
-        
-        >>> ez = Ezsynth(styles=STYLE_PATHS, imgsequence=IMAGE_FOLDER, flow_method='DeepFlow',
-                        edge_method='PST')
-    
-        >>> ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
-        >>> or to do something else, results = ez.set_guides().stylize()
+    def run(self):
         """
-
-    def set_guides(self) -> None:
+        Execute the stylization process.
         """
-        Set the guides for the image sequence initialized with the Ezsynth class.
-        
-        Accesible Parameters
-        --------------------
-        >>> flow_guides : List
-            Optical flow guides.
-        >>> edge_guides : List
-            Edge guides.
-        >>> g_pos_guides : List
-            Dense Correspondence guides.
-            
-        
+        pass
+
+    def save(self, base_name="output", extension=".png"):
         """
-        return self
-
-    def stylize(self, output_path: Optional[str] = None) -> Optional[List]:
+        Save the results to the specified directory.
         """
-        Stylize an image sequence initialized with the Ezsynth class.
-
-        Parameters
-        ----------
-        output_path : Optional[str], optional
-            Path to save the stylized images, by default None
-
-        Returns
-        -------
-        [list]
-            List of stylized images.
-        """
-            return stylized_imgs
-
+        pass
 
 ```
 
