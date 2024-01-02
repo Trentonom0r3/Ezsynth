@@ -1,2 +1,3 @@
 include ezsynth/*
-include ezsynth/models/*
+include ezsynth/utils/*
+include ezsynth/utils/flow_utils/models/*

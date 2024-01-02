@@ -6,16 +6,15 @@ This is quite a simple implementation. I'll be working to add more complex class
 Using the class provided, you can perform things like style transfer, color transfer, inpainting, superimposition, and more!
 
 
-# Table of Contents
-- [ChangeLog](#changelog)
-- [Installation](#installation)
-- [Class Definition](#class-definition)
-- [Example Usage](#example-usage)
-- [FAQ](#faq)
-- [TODO](#todo)
-- [Contributing](#contributing)
-
-## ChangeLog
+The ```Ezsynth``` class provides a simple python method for running the ebsynth video stylization you are probably familiar with. 
+This does not require or use ebsynth.exe, and is a custom implementation of the same paper and method used by ebsynth.exe.
+This implementation makes use of advanced physics based edge detection and RAFT optical flow, which leads to more accurate results during synthesis. 
+## CHANGELOG
+- [1.02.24]
+    - Slight Refactorings, moved `ebsynth.py` into `_ebsynth.py` to avoid naming issues when importing module.
+    - Adjusted function signature for ctypes function.
+    - Kept `.dll` & `.so` named as `ebsynth`.
+    - Release version `2.1.0`.
 - [12.31.23]
     - Significant Refactoring of the Library. (In My opinion, easier to follow).
         - Various Refactorings, separations, etc to classes. 
@@ -26,6 +25,22 @@ Using the class provided, you can perform things like style transfer, color tran
     - Went back to `.dll` usage over `.pyd`. 
         - Perhaps it was how I was setting up the `.pyd`, perhaps its was something else, but using the `.dll` and utilizing multithreading leads to huge performance gains I can't ignore, so I scrapped the `.pyd`.
     - Upload new version to `pypi`.
+- [10.17.23]
+  - Merge https://github.com/Trentonom0r3/Ezsynth/pull/19
+  - Re-build and distribute to PyPi
+- [10.10.23]
+  - ezsynth.run(output_path) now results in both final images AND in-between images being saved. 
+- [10.3.23]
+  - Linked to Ebsynth Source Code w/ Wrapper
+  
+# Table of Contents
+- [Installation](#installation)
+- [Class Definitions](#class-definitions)
+- [Example Usage](#example-usage)
+- [FAQ](#faq)
+- [TODO](#todo)
+- [Contributing](#contributing)
+- [Examples](#examples)
 
 ## Installation!
 
@@ -36,7 +51,7 @@ pip install ezsynth
 ```
 **OR**
 ```
-pip install ezsynth==2.0.0
+pip install ezsynth==2.0.3
 ```
 
 - To build from source:
@@ -208,3 +223,37 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
 ## TODO:
 - Profile and optimize the process. 
     - Takes much longer than I'd like in its current state. (Though it does work quite well.)
+
+## Contributing:
+- Chances are, if you're willing to contribute, you're more experienced with python and programming in general than I am.
+  - Though I did the vast majority of ideas behind logic and setting things up, I used GPT4 and Copilot X to write the actual code.
+  - This being said, changes to the codebase are super flexible and all I require is that any changes made either match, or exceed the quality of the ground-truth sequence.
+    
+- Ground Truth Sequence:
+  - Found in the ```Output``` Folder. These are the stylized frames you can compare with.
+    - ```Styles``` This folder contains the keyrames used for generating the ground-truth sequence.
+    - ```Input``` This folder contains the input image sequence used for stylization.
+  
+  - You can create new Ground-Truth Sequences, but please do so with the unaltered library, and post any and all comparisons.
+
+- ### Guidelines:
+  - Outside of the Ground-Truth Comparison, there isnt much in terms of Guidelines.
+  - Where possible, try to write Object Oriented Code (refactoring existing code is fine, as long as the final output isn't negatively altered)
+    - For public methods, detailed, numpy style doc-strings. See existing Core Classes for examples.
+    - For private methods, a brief description. If the method is more than a simple utility method, an example or additional annotation would be appreciated.
+    - Inline comments for things that seem unusual, or where you tried something else that didn't work vice/versa.
+    - Refactoring existing code is fine, but removing functionality (unless discussed and approved) is not.
+    - For changes, create a fork, make changes, and submit a PR for review.
+      
+- ### Main Points of work:
+  - Simplification and Optimization. I Know it can be sped up, it will just take a lot of testing.
+  - Possible refinement of pybind11 wrapper itself.
+    
+- If I missed anything or you have any questions, feel free to start a new issue or discussion!
+        
+## Examples:
+
+
+https://github.com/Trentonom0r3/Ezsynth/assets/130304830/2937cb02-597b-4f9b-a218-340b124dcd84
+
+

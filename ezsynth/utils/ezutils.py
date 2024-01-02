@@ -11,7 +11,7 @@ from .blend.blender import Blend
 
 from .sequences import SequenceManager
 from .guides.guides import GuideFactory
-from .ebsynth import ebsynth
+from ._ebsynth import ebsynth
 from .flow_utils.warp import Warp
 """
 HELPER CLASSES CONTAINED WITHIN THIS FILE:

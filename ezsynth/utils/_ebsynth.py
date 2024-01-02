@@ -1,215 +1,131 @@
-import os
-import sys
-from ctypes import *
-from pathlib import Path
-import threading
-
 import cv2
 import numpy as np
 
-cached_buffer = {}
-cached_err_buffer = {}
-libebsynth = None
-libebsynth_lock = threading.Lock()
-EBSYNTH_BACKEND_CPU         = 0x0001
-EBSYNTH_BACKEND_CUDA        = 0x0002
-EBSYNTH_BACKEND_AUTO        = 0x0000
-EBSYNTH_MAX_STYLE_CHANNELS  = 8
-EBSYNTH_MAX_GUIDE_CHANNELS  = 24
-EBSYNTH_VOTEMODE_PLAIN      = 0x0001         # weight = 1
-EBSYNTH_VOTEMODE_WEIGHTED   = 0x0002         # weight = 1/(1+error)
+from ._eb import *
 
+class ebsynth:
+    """
+    EBSynth class provides a wrapper around the ebsynth style transfer method.
 
-def _normalize_img_shape (img):
+    Usage:
+        ebsynth = ebsynth.ebsynth(style='style.png', guides=[('source1.png', 'target1.png'), 1.0])
+        result_img = ebsynth.run()
+    """
     
-    img_len = len(img.shape)
-    if img_len == 2:
-        sh, sw = img.shape
-        sc = 0
-    elif img_len == 3:
-        sh, sw, sc = img.shape
+    def __init__(self, style, guides=[], uniformity=3500.0, 
+             patchsize=5, pyramidlevels=6, searchvoteiters=12, 
+             patchmatchiters=6, extrapass3x3=True, backend='cuda'):
 
-    if sc == 0:
-        sc = 1
-        img = img [...,np.newaxis]
-    return img
+        """
+        Initialize the EBSynth wrapper.      
+        :param style: path to the style image, or a numpy array.
+        :param guides: list of tuples containing source and target guide images, as file paths or as numpy arrays.
+        :param weight: weights for each guide pair. Defaults to 1.0 for each pair.
+        :param uniformity: uniformity weight for the style transfer. Defaults to 3500.0.
+        :param patchsize: size of the patches. Must be an odd number. Defaults to 5. [5x5 patches]
+        :param pyramidlevels: number of pyramid levels. Larger Values useful for things like color transfer. Defaults to 6.
+        :param searchvoteiters: number of search/vote iterations. Defaults to 12.
+        :param patchmatchiters: number of Patch-Match iterations. Defaults to 6.
+        :param extrapass3x3: whether to perform an extra pass with 3x3 patches. Defaults to False.
+        :param backend: backend to use ('cpu', 'cuda', or 'auto'). Defaults to 'auto'.
+        """
+        #self.lock = threading.Lock()
+        # Handling the style image
+        if isinstance(style, (np.ndarray)):
+            self.style = style
+        elif isinstance(style, (str)):
+            self.style = cv2.imread(style)
+        elif style is None:
+            print("[INFO] No Style Image Provided. Remember to add a style image to the run() method.")
+        else:
+            print(type(style))
+            raise ValueError("style should be either a file path or a numpy array.")
 
-def run (img_style, guides,
-         patch_size=5,
-         num_pyramid_levels=6,
-         num_search_vote_iters = 12,
-         num_patch_match_iters = 6,
-         stop_threshold = 0,
-         uniformity_weight = 3500.0,
-         extraPass3x3 = False,
-         ):
-    if patch_size < 3:
-        raise ValueError ("patch_size is too small")
-    if patch_size % 2 == 0:
-        raise ValueError ("patch_size must be an odd number")
-    if len(guides) == 0:
-        raise ValueError ("at least one guide must be specified")
-    #libebsynth = None
-    global libebsynth
-    with libebsynth_lock:
-        if libebsynth is None:
-            if sys.platform[0:3] == 'win':
-                libebsynth_path = str ( Path(__file__).parent / 'ebsynth.dll' )
-                libebsynth = CDLL(libebsynth_path)
+        # Handling the guide images
+        self.guides = []
+        #self.eb = LoadDLL()
+        self.runner = EbsynthRunner()
+        # Store the arguments
+        self.style = style
+        self.guides = guides
+        self.uniformity = uniformity
+        self.patchsize = patchsize
+        self.pyramidlevels = pyramidlevels
+        self.searchvoteiters = searchvoteiters
+        self.patchmatchiters = patchmatchiters
+        self.extrapass3x3 = extrapass3x3
+
+        # Define backend constants
+        self.backends = {
+            'cpu': EbsynthRunner.EBSYNTH_BACKEND_CPU,
+            'cuda': EbsynthRunner.EBSYNTH_BACKEND_CUDA,
+            'auto': EbsynthRunner.EBSYNTH_BACKEND_AUTO
+        }
+        self.backend = self.backends[backend]
+
+
+    def clear_guide(self):
+        """
+        Clear all the guides.
+        """
+      
+        self.guides = []
+        
+    def add_guide(self, source, target, weight=None):
+        """
+        Add a new guide pair.
+        
+        :param source: Path to the source guide image or a numpy array.
+        :param target: Path to the target guide image or a numpy array.
+        :param weight: Weight for the guide pair. Defaults to 1.0.
+        """
+
+    
+        if not isinstance(source, (str, np.ndarray)):
+            raise ValueError("source should be either a file path or a numpy array.")
+        if not isinstance(target, (str, np.ndarray)):
+            raise ValueError("target should be either a file path or a numpy array.")
+        if not isinstance(weight, (float, int)):
+            raise ValueError("weight should be a float or an integer.")
+        
+        weight = weight if weight is not None else 1.0
+        self.guides.append((source, target, weight))
+
+            
+    def run(self):
+        """
+        Run the style transfer and return the result image.
+        
+        :return: styled image as a numpy array.
+        """
+
+        #with self.lock:
+        if isinstance(self.style, np.ndarray):
+            style = self.style
+        else:
+            style = cv2.imread(self.style)
+
+        # Prepare the guides
+        guides_processed = []
+        for idx, (source, target, weight) in enumerate(self.guides):
+            if isinstance(source, np.ndarray):
+                source_img = source
             else:
-                #todo: implement for linux
-                if sys.platform[0:5] == 'linux':
-                    libebsynth_path = str ( Path(__file__).parent / 'ebsynth.so' )
-                    libebsynth = CDLL(libebsynth_path)
-                pass
-
-            if libebsynth is not None:
-                libebsynth.ebsynthRun.argtypes = ( \
-                    c_int,
-                    c_int,
-                    c_int,
-                    c_int,
-                    c_int,
-                    c_void_p,
-                    c_void_p,
-                    c_int,
-                    c_int,
-                    c_void_p,
-                    c_void_p,
-                    POINTER(c_float),
-                    POINTER(c_float),
-                    c_float,
-                    c_int,
-                    c_int,
-                    c_int,
-                    POINTER(c_int),
-                    POINTER(c_int),
-                    POINTER(c_int),
-                    c_int,
-                    c_void_p,
-                    c_void_p
+                source_img = cv2.imread(source)
+            if isinstance(target, np.ndarray):
+                target_img = target
+            else:
+                target_img = cv2.imread(target)
+            guides_processed.append((source_img, target_img, weight))
+            
+        # Call the run function with the provided arguments
+        img, err = self.runner.run(style, guides_processed, 
+                    patch_size=self.patchsize,
+                    num_pyramid_levels=self.pyramidlevels,
+                    num_search_vote_iters=self.searchvoteiters,
+                    num_patch_match_iters=self.patchmatchiters,
+                    uniformity_weight=self.uniformity,
+                    extraPass3x3=self.extrapass3x3
                     )
 
-        if libebsynth is None:
-            return img_style
-
-    img_style = _normalize_img_shape (img_style)
-    sh, sw, sc = img_style.shape
-    t_h, t_w, t_c = 0,0,0
-
-    if sc > EBSYNTH_MAX_STYLE_CHANNELS:
-        raise ValueError (f"error: too many style channels {sc}, maximum number is {EBSYNTH_MAX_STYLE_CHANNELS}")
-
-    guides_source = []
-    guides_target = []
-    guides_weights = []
-
-    for i in range(len(guides)):
-        source_guide, target_guide, guide_weight = guides[i]
-        source_guide = _normalize_img_shape(source_guide)
-        target_guide = _normalize_img_shape(target_guide)
-        s_h, s_w, s_c = source_guide.shape
-        nt_h, nt_w, nt_c = target_guide.shape
-
-        if s_h != sh or s_w != sw:
-            raise ValueError ("guide source and style resolution must match style resolution.")
-
-        if t_c == 0:
-            t_h, t_w, t_c = nt_h, nt_w, nt_c
-        elif nt_h != t_h or nt_w != t_w:
-            raise ValueError ("guides target resolutions must be equal")
-
-        if s_c != nt_c:
-            raise ValueError ("guide source and target channels must match exactly.")
-
-        guides_source.append (source_guide)
-        guides_target.append (target_guide)
-
-        guides_weights += [ guide_weight / s_c ] * s_c
-
-    guides_source = np.concatenate ( guides_source, axis=-1)
-    guides_target = np.concatenate ( guides_target, axis=-1)
-    guides_weights = (c_float*len(guides_weights) ) ( *guides_weights )
-
-    styleWeight = 1.0
-    style_weights = [ styleWeight / sc for i in range(sc) ]
-    style_weights = (c_float*sc) ( *style_weights )
-
-
-    maxPyramidLevels = 0
-    for level in range(32,-1,-1):
-        if min( min(sh, t_h)*pow(2.0, -level), \
-                min(sw, t_w)*pow(2.0, -level) ) >= (2*patch_size+1):
-            maxPyramidLevels = level+1
-            break
-
-    if num_pyramid_levels == -1:
-        num_pyramid_levels = maxPyramidLevels
-    num_pyramid_levels = min(num_pyramid_levels, maxPyramidLevels)
-
-    num_search_vote_iters_per_level = (c_int*num_pyramid_levels) ( *[num_search_vote_iters]*num_pyramid_levels )
-    num_patch_match_iters_per_level = (c_int*num_pyramid_levels) ( *[num_patch_match_iters]*num_pyramid_levels )
-    stop_threshold_per_level = (c_int*num_pyramid_levels) ( *[stop_threshold]*num_pyramid_levels )
-
-    buffer = cached_buffer.get ( (t_h,t_w,sc), None )
-    errbuffer = cached_buffer.get ( (t_h,t_w), None )
-    if buffer is None:
-        buffer = create_string_buffer (t_h*t_w*sc)
-        cached_buffer[(t_h,t_w,sc)] = buffer
-
-    if errbuffer is None:
-        errbuffer = (c_float * (t_h * t_w))()  # This creates a buffer of floats
-        cached_err_buffer[(t_h, t_w)] = errbuffer
-        
-    libebsynth.ebsynthRun (EBSYNTH_BACKEND_AUTO,    #backend
-                        sc,                      #numStyleChannels
-                        guides_source.shape[-1], #numGuideChannels
-                        sw,                      #sourceWidth
-                        sh,                      #sourceHeight
-                        img_style.tobytes(),     #sourceStyleData (width * height * numStyleChannels) bytes, scan-line order
-                        guides_source.tobytes(), #sourceGuideData (width * height * numGuideChannels) bytes, scan-line order
-                        t_w,                     #targetWidth
-                        t_h,                     #targetHeight
-                        guides_target.tobytes(), #targetGuideData (width * height * numGuideChannels) bytes, scan-line order
-                        None,                    #targetModulationData (width * height * numGuideChannels) bytes, scan-line order; pass NULL to switch off the modulation
-                        style_weights,           #styleWeights (numStyleChannels) floats
-                        guides_weights,          #guideWeights (numGuideChannels) floats
-                        uniformity_weight,       #uniformityWeight reasonable values are between 500-15000, 3500 is a good default
-                        patch_size,              #patchSize odd sizes only, use 5 for 5x5 patch, 7 for 7x7, etc.
-                        EBSYNTH_VOTEMODE_WEIGHTED,  #voteMode use VOTEMODE_WEIGHTED for sharper result
-                        num_pyramid_levels,      #numPyramidLevels
-                        num_search_vote_iters_per_level, #numSearchVoteItersPerLevel how many search/vote iters to perform at each level (array of ints, coarse first, fine last)
-                        num_patch_match_iters_per_level, #numPatchMatchItersPerLevel how many Patch-Match iters to perform at each level (array of ints, coarse first, fine last)
-                        stop_threshold_per_level, #stopThresholdPerLevel stop improving pixel when its change since last iteration falls under this threshold
-                        1 if extraPass3x3 else 0, #extraPass3x3 perform additional polishing pass with 3x3 patches at the finest level, use 0 to disable
-                        None,                     #outputNnfData (width * height * 2) ints, scan-line order; pass NULL to ignore
-                        buffer,                    #outputImageData  (width * height * numStyleChannels) bytes, scan-line order
-                        errbuffer,                 #outputErrorData (width * height) floats, scan-line order; pass NULL to ignore
-                        )
-
-    img = np.frombuffer(buffer, dtype=np.uint8).reshape ( (t_h,t_w,sc) ).copy()
-    err = np.frombuffer(errbuffer, dtype=np.float32).reshape ( (t_h,t_w) ).copy()
-    return img, err
-
-#transfer color from source to target
-def color_transfer(img_source, img_target):
-    guides = [( cv2.cvtColor(img_source, cv2.COLOR_BGR2GRAY),
-                cv2.cvtColor(img_target, cv2.COLOR_BGR2GRAY),
-                1 ) ]
-    h,w,c = img_source.shape
-    result = []
-    for i in range(c):
-        result += [        
-                    run( img_source[...,i:i+1] , guides=guides, 
-                                patch_size=11, 
-                                num_pyramid_levels=40, 
-                                num_search_vote_iters = 6,
-                                num_patch_match_iters = 4,
-                                stop_threshold = 5,
-                                uniformity_weight=500.0,
-                                extraPass3x3=True,
-                                )
-                                
-                ]
-    return np.concatenate( result, axis=-1 )
-
+        return img, err
