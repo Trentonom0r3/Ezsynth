@@ -1,0 +1,3 @@
+[submodule "ebsynth"]
+	path = ebsynth
+	url = https://github.com/Trentonom0r3/ebsynth
