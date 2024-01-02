@@ -10,6 +10,11 @@ The ```Ezsynth``` class provides a simple python method for running the ebsynth 
 This does not require or use ebsynth.exe, and is a custom implementation of the same paper and method used by ebsynth.exe.
 This implementation makes use of advanced physics based edge detection and RAFT optical flow, which leads to more accurate results during synthesis. 
 ## CHANGELOG
+- [1.02.24]
+    - Slight Refactorings, moved `ebsynth.py` into `_ebsynth.py` to avoid naming issues when importing module.
+    - Adjusted function signature for ctypes function.
+    - Kept `.dll` & `.so` named as `ebsynth`.
+    - Release version `2.1.0`.
 - [12.31.23]
     - Significant Refactoring of the Library. (In My opinion, easier to follow).
         - Various Refactorings, separations, etc to classes. 

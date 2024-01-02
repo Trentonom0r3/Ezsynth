@@ -30,6 +30,9 @@ class EbsynthRunner:
                     self.libebsynth = CDLL(libebsynth_path)
                 else:
                     # TODO: Implement for Linux
+                    if sys.platform[0:5] == 'linux':
+                        libebsynth_path = str(Path(__file__).parent / 'ebsynth.so')
+                        self.libebsynth = CDLL(libebsynth_path)
                     pass
 
                 if self.libebsynth is not None:
@@ -55,6 +58,7 @@ class EbsynthRunner:
                         POINTER(c_int),
                         POINTER(c_int),
                         c_int,
+                        c_void_p,
                         c_void_p,
                         c_void_p
                         )
