@@ -51,7 +51,7 @@ pip install ezsynth
 ```
 **OR**
 ```
-pip install ezsynth==2.0.3
+pip install ezsynth==2.1.0
 ```
 
 - To build from source:
