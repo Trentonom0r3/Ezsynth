@@ -169,7 +169,7 @@ def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
     with ThreadPoolExecutor(max_workers=2) as executor:
         futures = []  # Keep your existing list to store the futures
         for seq in subseq:
-            print(f"Submitting sequence: {seq}")
+            print(f"Submitting sequence:")
             # Your existing logic to submit tasks remains the same
             if seq.style_start is not None and seq.style_end is not None:
                 
@@ -181,13 +181,18 @@ def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
                 
             elif seq.style_start is not None and seq.style_end is None:
                 
-                futures.append(("fwd", executor.submit(run_sequences, imgseq, edge_maps, flow_fwd,
-                                                                     pos_fwd, seq)))
-                
+                fwd_img, fwd_err = run_sequences(imgseq, edge_maps, flow_fwd,
+                                                                     pos_fwd, seq)
+                fwd_imgs = [img for img in fwd_img if img is not None]
+
+                return fwd_imgs
             elif seq.style_start is None and seq.style_end is not None:
                 
-                futures.append(("bwd", executor.submit(run_sequences, imgseq, edge_maps,
-                                                            flow_bwd,  pos_bwd, seq, True)))
+                bwd_img, bwd_err = run_sequences(imgseq, edge_maps,
+                                                            flow_bwd,  pos_bwd, seq, True)
+                bwd_imgs = [img for img in bwd_img if img is not None]
+                
+                return bwd_imgs
             else:
                 raise ValueError("Invalid sequence.")
 
@@ -223,7 +228,8 @@ def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
     
     sty_bwd = sty_bwd[::-1]
     err_bwd = err_bwd[::-1]
-        
+    #check length of sty_fwd and sty_bwd
+    # if length of one is zero, skip blending and return the other
     # Initialize the Blend class
     blend_instance = Blend(style_fwd=sty_fwd, 
                         style_bwd=sty_bwd, 
@@ -254,7 +260,6 @@ def run_sequences(imgseq, edge, flow,
     with threading.Lock():
         stylized_frames = []
         err_list = []
-        print(f"Processing sequence: {seq}")
         # Initialize variables based on the 'reverse' flag.
         if reverse:
             start, step, style, init, final = (
@@ -262,7 +267,7 @@ def run_sequences(imgseq, edge, flow,
         else:
             start, step, style, init, final = (
                 seq.init, 1, seq.style_start, seq.begFrame, seq.endFrame)
-        print(f"Start: {start}, Step: {step}, Style: {style}, Init: {init}, Final: {final}")
+
         eb = ebsynth(style, guides=[])
         warp = Warp(imgseq[start])
         ORIGINAL_SIZE = imgseq[0].shape[1::-1]

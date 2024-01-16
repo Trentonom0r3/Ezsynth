@@ -1,21 +1,28 @@
 
 import cv2
 
-
 class Sequence:
     def __init__(self, begFrame, endFrame, style_start=None, style_end=None):
         self.begFrame = begFrame
         self.endFrame = endFrame
-        self.style_start = style_start if style_start else None
-        self.style_end = style_end if style_end else None
+
+        # Check explicitly for None
+        self.style_start = style_start if style_start is not None else None
+        self.style_end = style_end if style_end is not None else None
+
         self.init = begFrame
         self.final = endFrame
+
+        # Check if both style_start and style_end are None
         if self.style_start is None and self.style_end is None:
-                raise ValueError("At least one style attribute should be provided.")
-       
+            raise ValueError("At least one style attribute should be provided.")
+
     def __str__(self):
-        return f"Sequence: {self.begFrame} - {self.endFrame} | {self.style_start} - {self.style_end}"
-         
+        # Use a more informative string representation
+        start_info = str(self.style_start) if self.style_start is not None else "None"
+        end_info = str(self.style_end) if self.style_end is not None else "None"
+        return f"Sequence: {self.begFrame} - {self.endFrame} | Style Start: {start_info} - Style End: {end_info}"
+
 class Subsequence:
     def __init__(self, init, final, begFrame, endFrame,
                  style_start = None, style_end = None):
