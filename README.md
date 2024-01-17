@@ -247,12 +247,12 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
 
 - Ground Truth Sequence:
     - Found in the ```Output``` Folder. These are the stylized frames you can compare with.
-        - ```Styles``` This folder contains the keyrames used for generating the ground-truth sequence.
+        - ```Styles``` This folder contains the keyframes used for generating the ground-truth sequence.
         - ```Input``` This folder contains the input image sequence used for stylization.
 
     - You can create new Ground-Truth Sequences, but please do so with the unaltered library, and post any and all comparisons.
 
-- ### Guidelines:
+- Guidelines:
     - Outside the Ground-Truth Comparison, there isn't much in terms of Guidelines.
     - Where possible, try to write Object Oriented Code (refactoring existing code is fine, as long as the final output isn't negatively altered)
         - For public methods, detailed, numpy style doc-strings. See existing Core Classes for examples.
@@ -261,7 +261,7 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
         - Refactoring existing code is fine, but removing functionality (unless discussed and approved) is not.
         - For changes, create a fork, make changes, and submit a PR for review.
 
-- ### Main Points of work:
+- Main Points of work:
     - Simplification and Optimization. I Know it can be sped up, it will just take a lot of testing.
     - Possible refinement of pybind11 wrapper itself.
 
