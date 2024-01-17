@@ -1,15 +1,17 @@
 # ezsynth -- Ebsynth for Python!
-Ebsynth as an importable python library! 
+
+Ebsynth as an importable python library!
 
 This is quite a simple implementation. I'll be working to add more complex classes and options in the future.
 
 Using the class provided, you can perform things like style transfer, color transfer, inpainting, superimposition, and more!
 
-
-The ```Ezsynth``` class provides a simple python method for running the ebsynth video stylization you are probably familiar with. 
+The ```Ezsynth``` class provides a simple python method for running the ebsynth video stylization you are probably familiar with.
 This does not require or use ebsynth.exe, and is a custom implementation of the same paper and method used by ebsynth.exe.
-This implementation makes use of advanced physics based edge detection and RAFT optical flow, which leads to more accurate results during synthesis. 
+This implementation makes use of advanced physics based edge detection and RAFT optical flow, which leads to more accurate results during synthesis.
+
 ## CHANGELOG
+
 - [1.16.24]
     - Fixed Issues with Single style image.
     - Update to version `2.1.01`
@@ -20,23 +22,24 @@ This implementation makes use of advanced physics based edge detection and RAFT 
     - Release version `2.1.0`.
 - [12.31.23]
     - Significant Refactoring of the Library. (In My opinion, easier to follow).
-        - Various Refactorings, separations, etc to classes. 
+        - Various Refactorings, separations, etc to classes.
         - Utilization of `opencv` for warping vs using `torch.`
     - Improved computation time, down to ~4 minutes. (Still not great, but much better than previously ~10 minutes).
-    - Implemented multithreading in `Ezsynth`, `ImageSynth` remains the same. 
+    - Implemented multithreading in `Ezsynth`, `ImageSynth` remains the same.
     - Added logic for usage of `.so` with Linux. If someone can build and contribute the `.so`, would be much appreciated.
-    - Went back to `.dll` usage over `.pyd`. 
+    - Went back to `.dll` usage over `.pyd`.
         - Perhaps it was how I was setting up the `.pyd`, perhaps its was something else, but using the `.dll` and utilizing multithreading leads to huge performance gains I can't ignore, so I scrapped the `.pyd`.
     - Upload new version to `pypi`.
 - [10.17.23]
-  - Merge https://github.com/Trentonom0r3/Ezsynth/pull/19
-  - Re-build and distribute to PyPi
+    - Merge https://github.com/Trentonom0r3/Ezsynth/pull/19
+    - Re-build and distribute to PyPi
 - [10.10.23]
-  - ezsynth.run(output_path) now results in both final images AND in-between images being saved. 
+    - ezsynth.run(output_path) now results in both final images AND in-between images being saved.
 - [10.3.23]
-  - Linked to Ebsynth Source Code w/ Wrapper
-  
+    - Linked to Ebsynth Source Code w/ Wrapper
+
 # Table of Contents
+
 - [Installation](#installation)
 - [Class Definitions](#class-definitions)
 - [Example Usage](#example-usage)
@@ -52,25 +55,34 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 ```
 pip install ezsynth
 ```
+
 **OR**
+
 ```
 pip install ezsynth==2.1.01
 ```
 
 - To build from source:
-    - 1. Clone the Repo.
-    - 2. In the main parent folder, run ```py setup.py sdist bdist_wheel```
-    - 3. After that has built, run ```pip install C:\Ebsynth.py\dist\ezsynth-1.2.0.1.tar.gz``` 
+    -
+        1. Clone the Repo.
+    -
+        2. In the main parent folder, run ```py setup.py sdist bdist_wheel```
+    -
+        3. After that has built, run ```pip install C:\Ebsynth.py\dist\ezsynth-1.2.0.1.tar.gz```
+
         - Change path as needed.
-    - 4. You should have access to ezsynth and its associated classes now!
+    -
+        4. You should have access to ezsynth and its associated classes now!
 
 # FOR LINUX:
+
     I'd need some help with this, can update logic if I have the .so file, anyways--
     - Go to my Fork of Ebsynth, clone it, and run this [file](https://github.com/Trentonom0r3/ebsynth/blob/master/build-linux-cpu%2Bcuda.sh)
     - This will build the .so for ebsynth. (cuda+CPU). You can then place this in the `ezsynth/utils` directory alongside `ezsynth.dll`, enabling usage with linux. (In theory, untested on my end though.)
 
 ## Class Definitions:
-Both classes have inline docstrings. If you use VScode, you'll see hints on usage. 
+
+Both classes have inline docstrings. If you use VScode, you'll see hints on usage.
 
 ```py
 
@@ -99,6 +111,7 @@ class Imagesynth:
     backend : str, optional
         Backend to use, default is 'cuda'.
     """
+
     def __init__(self, style_img, guides=[], uniformity=3500.0,
                  patchsize=5, pyramidlevels=6, searchvoteiters=12,
                  patchmatchiters=6, extrapass3x3=True, backend='cuda'):
@@ -121,6 +134,7 @@ class Imagesynth:
         Run the ebsynth process and optionally save the output.
         """
         pass
+
 
 class Ezsynth:
     """
@@ -164,7 +178,9 @@ class Ezsynth:
 ```
 
 ## Example Usage:
+
 - For Imagesynth:
+
 ```
 from ezsynth import Imagesynth
 
@@ -184,6 +200,7 @@ synth.run(OUTPUT)  # Run the synthesis and save.
 ```
 
 - For Ezsynth:
+
 ```
 from ezsynth import Ezsynth
 
@@ -204,18 +221,18 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
 ## FAQ:
 
 - What is source? What is target? What does weight do?
-    - Source is the unstylized version of your style frame. 
+    - Source is the unstylized version of your style frame.
         - Theres many ways to use this, for example, you could make source a "cutout" of your style image and "inpaint" the target.
-    - Target (in context of video stylization) is the next frame in the sequence. 
-        - Again. many ways to use this, as in the above example, you would make this the image you're painting the source onto. 
-    - Weight is the weight of the guides against the style. 
+    - Target (in context of video stylization) is the next frame in the sequence.
+        - Again. many ways to use this, as in the above example, you would make this the image you're painting the source onto.
+    - Weight is the weight of the guides against the style.
         - Values over 1.0 give more weight to the guides --- less style image.
         - Values under 1.0 give less weight to the guides --- more style image.
-    - The ebsynth Repo actually does a decent job at explaining this a bit more, with examples. 
+    - The ebsynth Repo actually does a decent job at explaining this a bit more, with examples.
 
 - Does this work for macOS/Linux?
     - macOS, no. Potentially in the future, but that would require contributions to the codebase from others.
-    - Linux, soon. Just have to compile the '.pyd' properly and then double check it with the python. 
+    - Linux, soon. Just have to compile the '.pyd' properly and then double check it with the python.
 
 - The Ebsynth GUI app has a mask option. How do I do that with this?
     - Currently there is no option for using masks with Ezsynth. This will be updated in the future.
@@ -224,38 +241,39 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
     - No, this is a custom implementation, built using a pybind11 wrapper around the original ebsynth source code.
 
 ## TODO:
-- Profile and optimize the process. 
+
+- Profile and optimize the process.
     - Takes much longer than I'd like in its current state. (Though it does work quite well.)
 
 ## Contributing:
+
 - Chances are, if you're willing to contribute, you're more experienced with python and programming in general than I am.
-  - Though I did the vast majority of ideas behind logic and setting things up, I used GPT4 and Copilot X to write the actual code.
-  - This being said, changes to the codebase are super flexible and all I require is that any changes made either match, or exceed the quality of the ground-truth sequence.
-    
+    - Though I did the vast majority of ideas behind logic and setting things up, I used GPT4 and Copilot X to write the actual code.
+    - This being said, changes to the codebase are super flexible and all I require is that any changes made either match, or exceed the quality of the ground-truth sequence.
+
 - Ground Truth Sequence:
-  - Found in the ```Output``` Folder. These are the stylized frames you can compare with.
-    - ```Styles``` This folder contains the keyrames used for generating the ground-truth sequence.
-    - ```Input``` This folder contains the input image sequence used for stylization.
-  
-  - You can create new Ground-Truth Sequences, but please do so with the unaltered library, and post any and all comparisons.
+    - Found in the ```Output``` Folder. These are the stylized frames you can compare with.
+        - ```Styles``` This folder contains the keyrames used for generating the ground-truth sequence.
+        - ```Input``` This folder contains the input image sequence used for stylization.
+
+    - You can create new Ground-Truth Sequences, but please do so with the unaltered library, and post any and all comparisons.
 
 - ### Guidelines:
-  - Outside of the Ground-Truth Comparison, there isnt much in terms of Guidelines.
-  - Where possible, try to write Object Oriented Code (refactoring existing code is fine, as long as the final output isn't negatively altered)
-    - For public methods, detailed, numpy style doc-strings. See existing Core Classes for examples.
-    - For private methods, a brief description. If the method is more than a simple utility method, an example or additional annotation would be appreciated.
-    - Inline comments for things that seem unusual, or where you tried something else that didn't work vice/versa.
-    - Refactoring existing code is fine, but removing functionality (unless discussed and approved) is not.
-    - For changes, create a fork, make changes, and submit a PR for review.
-      
-- ### Main Points of work:
-  - Simplification and Optimization. I Know it can be sped up, it will just take a lot of testing.
-  - Possible refinement of pybind11 wrapper itself.
-    
-- If I missed anything or you have any questions, feel free to start a new issue or discussion!
-        
-## Examples:
+    - Outside of the Ground-Truth Comparison, there isnt much in terms of Guidelines.
+    - Where possible, try to write Object Oriented Code (refactoring existing code is fine, as long as the final output isn't negatively altered)
+        - For public methods, detailed, numpy style doc-strings. See existing Core Classes for examples.
+        - For private methods, a brief description. If the method is more than a simple utility method, an example or additional annotation would be appreciated.
+        - Inline comments for things that seem unusual, or where you tried something else that didn't work vice/versa.
+        - Refactoring existing code is fine, but removing functionality (unless discussed and approved) is not.
+        - For changes, create a fork, make changes, and submit a PR for review.
 
+- ### Main Points of work:
+    - Simplification and Optimization. I Know it can be sped up, it will just take a lot of testing.
+    - Possible refinement of pybind11 wrapper itself.
+
+- If I missed anything or you have any questions, feel free to start a new issue or discussion!
+
+## Examples:
 
 https://github.com/Trentonom0r3/Ezsynth/assets/130304830/2937cb02-597b-4f9b-a218-340b124dcd84
 
