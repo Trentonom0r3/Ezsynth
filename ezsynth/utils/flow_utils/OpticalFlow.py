@@ -67,7 +67,7 @@ class RAFT_flow(Warp):
             raise ValueError(
                 f"[ERROR] Model file '{model_name}' not found.")
 
-        self.model.load_state_dict(torch.load(model_path))
+        self.model.load_state_dict(torch.load(model_path, map_location=self.DEVICE))
         self.model = self.model.module
         self.model.to(self.DEVICE)
         self.model.eval()
