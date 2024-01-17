@@ -62,7 +62,7 @@ pip install ezsynth
 pip install ezsynth==2.1.01
 ```
 
-# Build from source
+## Build from source
 
 1. Clone the Repo.
 2. In the main parent folder, run ```py setup.py sdist bdist_wheel```
@@ -70,7 +70,7 @@ pip install ezsynth==2.1.01
     - Change path as needed.
 4. You should have access to ezsynth and its associated classes now!
 
-# For Linux
+## For Linux
 
 I'd need some help with this, can update logic if I have the .so file, anyway
 
