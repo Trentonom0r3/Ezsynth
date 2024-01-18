@@ -278,8 +278,11 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
 - If I missed anything or you have any questions, feel free to start a new issue or discussion!
 
 ## Thanks: 
-    - [pravdomil](https://github.com/pravdomil)
-    - [xy-gao](https://github.com/xy-gao)
+- All contributions are greatly appreciated! 
+No matter how small, your work should be recognized. 
+special thanks to: 
+ - [pravdomil](https://github.com/pravdomil)
+ - [xy-gao](https://github.com/xy-gao)
     
 ## Examples:
 
