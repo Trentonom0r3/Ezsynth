@@ -14,14 +14,14 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 
 - [Changelog](#changelog)
 - [Installation](#installation)
-- [Class Definitions](#class-definitions)
-- [Example Usage](#example-usage)
+- [API](#api)
+- [Usage](#usage)
 - [FAQ](#faq)
 - [TODO](#todo)
 - [Contributing](#contributing)
 - [Examples](#examples)
 
-## CHANGELOG
+## Changelog
 
 - [1.16.24]
     - Fixed Issues with Single style image.
@@ -49,7 +49,7 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 - [10.3.23]
     - Linked to Ebsynth Source Code w/ Wrapper
 
-## Installation!
+## Installation
 
 - Simplest way is pip installation.
 
@@ -81,7 +81,7 @@ pip install ezsynth==2.1.01
     - Go to my Fork of Ebsynth, clone it, and run this [file](https://github.com/Trentonom0r3/ebsynth/blob/master/build-linux-cpu%2Bcuda.sh)
     - This will build the .so for ebsynth. (cuda+CPU). You can then place this in the `ezsynth/utils` directory alongside `ezsynth.dll`, enabling usage with linux. (In theory, untested on my end though.)
 
-## Class Definitions:
+## API
 
 Both classes have inline docstrings. If you use VScode, you'll see hints on usage.
 
@@ -178,7 +178,7 @@ class Ezsynth:
 
 ```
 
-## Example Usage:
+## Usage
 
 - For Imagesynth:
 
@@ -219,7 +219,7 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
 # results = ez.set_guides().stylize() # returns a list of images as numpy arrays
 ```
 
-## FAQ:
+## FAQ
 
 - What is source? What is target? What does weight do?
     - Source is the unstylized version of your style frame.
@@ -241,12 +241,12 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
 - Does this use ebsynth.exe on the back end?
     - No, this is a custom implementation, built using a pybind11 wrapper around the original ebsynth source code.
 
-## TODO:
+## TODO
 
 - Profile and optimize the process.
     - Takes much longer than I'd like in its current state. (Though it does work quite well.)
 
-## Contributing:
+## Contributing
 
 - Chances are, if you're willing to contribute, you're more experienced with python and programming in general than I am.
     - Though I did the vast majority of ideas behind logic and setting things up, I used GPT4 and Copilot X to write the actual code.
@@ -274,8 +274,6 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
 
 - If I missed anything or you have any questions, feel free to start a new issue or discussion!
 
-## Examples:
+## Examples
 
 https://github.com/Trentonom0r3/Ezsynth/assets/130304830/2937cb02-597b-4f9b-a218-340b124dcd84
-
-
