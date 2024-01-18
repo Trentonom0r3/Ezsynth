@@ -5,15 +5,14 @@ setup(
     version='2.1.01',
     packages=find_packages(),
     include_package_data=True,
-install_requires=[
-    'torch',
-    'Pillow', 
-    'numpy',
-    'phycv',  
-    'opencv-contrib-python',  
-    'scipy'
-],
-
+    install_requires=[
+        'torch',
+        'Pillow',
+        'numpy',
+        'phycv',
+        'opencv-contrib-python',
+        'scipy'
+    ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
