@@ -23,14 +23,12 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 
 ## Changelog
 
-- [1.16.24]
+- 2.1.01
     - Fixed Issues with Single style image.
-    - Update to version `2.1.01`
-- [1.02.24]
+- 2.1.0
     - Slight Refactorings, moved `ebsynth.py` into `_ebsynth.py` to avoid naming issues when importing module.
     - Adjusted function signature for ctypes function.
     - Kept `.dll` & `.so` named as `ebsynth`.
-    - Release version `2.1.0`.
 - [12.31.23]
     - Significant Refactoring of the Library. (In My opinion, easier to follow).
         - Various Refactorings, separations, etc to classes.
@@ -46,7 +44,7 @@ This implementation makes use of advanced physics based edge detection and RAFT 
     - Re-build and distribute to PyPi
 - [10.10.23]
     - ezsynth.run(output_path) now results in both final images AND in-between images being saved.
-- [10.3.23]
+- [10.03.23]
     - Linked to Ebsynth Source Code w/ Wrapper
 
 ## Installation
