@@ -51,35 +51,24 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 
 ## Installation
 
-- Simplest way is pip installation.
-
-```
+```sh
 pip install ezsynth
 ```
 
-**OR**
+### Build from source
 
-```
-pip install ezsynth==2.1.01
-```
+1. Clone the Repo.
+2. In the main parent folder run `py setup.py sdist bdist_wheel`
+3. After that has built run `pip install C:\Ebsynth.py\dist\ezsynth-1.2.0.1.tar.gz`
+    - Change path as needed.
+4. You should have access to ezsynth and its associated classes now!
 
-- To build from source:
-    -
-        1. Clone the Repo.
-    -
-        2. In the main parent folder, run ```py setup.py sdist bdist_wheel```
-    -
-        3. After that has built, run ```pip install C:\Ebsynth.py\dist\ezsynth-1.2.0.1.tar.gz```
+### Linux
 
-        - Change path as needed.
-    -
-        4. You should have access to ezsynth and its associated classes now!
+I'd need some help with this, can update logic if I have the .so file, anyway.
 
-# FOR LINUX:
-
-    I'd need some help with this, can update logic if I have the .so file, anyways--
-    - Go to my Fork of Ebsynth, clone it, and run this [file](https://github.com/Trentonom0r3/ebsynth/blob/master/build-linux-cpu%2Bcuda.sh)
-    - This will build the .so for ebsynth. (cuda+CPU). You can then place this in the `ezsynth/utils` directory alongside `ezsynth.dll`, enabling usage with linux. (In theory, untested on my end though.)
+- Go to my Fork of Ebsynth, clone it, and run this [file](https://github.com/Trentonom0r3/ebsynth/blob/master/build-linux-cpu%2Bcuda.sh).
+- This will build the .so for ebsynth. (cuda+CPU). You can then place this in the `ezsynth/utils` directory alongside `ezsynth.dll`, enabling usage with linux. (In theory, untested on my end though.)
 
 ## API
 
