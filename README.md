@@ -173,7 +173,6 @@ class Ezsynth:
         Save the results to the specified directory.
         """
         pass
-
 ```
 
 ## Usage
