@@ -1,17 +1,21 @@
 from ezsynth import Ezsynth
 
-
-STYLE_PATHS = [
+style_paths = [
     "output000.jpg",
     "output099.jpg",
 ]
 
-IMAGE_FOLDER = "C:/Input"
-OUTPUT_FOLDER = "C:/Output"
+image_folder = "C:/input"
+output_folder = "C:/output"
 
-ez = Ezsynth(styles=STYLE_PATHS, imgsequence=IMAGE_FOLDER, edge_method = "Classic",
-             flow_method = "RAFT", model='sintel', output_folder=OUTPUT_FOLDER) # Create an Ezsynth object
+ez = Ezsynth(
+    styles=style_paths,
+    imgsequence=image_folder,
+    edge_method="Classic",
+    flow_method="RAFT",
+    model='sintel',
+    output_folder=output_folder,
+)
 
-ez.run() # Run the stylization process
-results = ez.results # The results are stored in the results variable
-
+ez.run()  # Run the stylization process
+results = ez.results  # The results are stored in the results variable
