@@ -83,10 +83,7 @@ pip install ezsynth==2.1.01
 
 ## API
 
-Both classes have inline docstrings. If you use VScode, you'll see hints on usage.
-
 ```py
-
 class Imagesynth:
     """
     Imagesynth class for image synthesis with style transfer.
@@ -135,8 +132,9 @@ class Imagesynth:
         Run the ebsynth process and optionally save the output.
         """
         pass
+```
 
-
+```py
 class Ezsynth:
     """
     `Ezsynth` is the main class for the ezsynth package.
