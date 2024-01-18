@@ -20,9 +20,12 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 - [TODO](#todo)
 - [Contributing](#contributing)
 - [Examples](#examples)
+- [Thanks](#thanks)
 
 ## CHANGELOG
-
+- [1.18.24]
+    - Various formatting, info, and other small changes.
+        - Courtesy of [pravdomil](https://github.com/pravdomil).
 - [1.16.24]
     - Fixed Issues with Single style image.
     - Update to version `2.1.01`
@@ -69,7 +72,7 @@ pip install ezsynth==2.1.01
     -
         2. In the main parent folder, run ```py setup.py sdist bdist_wheel```
     -
-        3. After that has built, run ```pip install C:\Ebsynth.py\dist\ezsynth-1.2.0.1.tar.gz```
+        3. After that has built, run ```pip install C:\path\to\ezsynth-XX.XX.XX.tar.gz```
 
         - Change path as needed.
     -
@@ -233,10 +236,10 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
 
 - Does this work for macOS/Linux?
     - macOS, no. Potentially in the future, but that would require contributions to the codebase from others.
-    - Linux, soon. Just have to compile the '.pyd' properly and then double check it with the python.
+    - Linux, you must compile from source. 
 
 - The Ebsynth GUI app has a mask option. How do I do that with this?
-    - Currently there is no option for using masks with Ezsynth. This will be updated in the future.
+    - Currently there is no option for using masks with Ezsynth. This is currently undergoing testing.
 
 - Does this use ebsynth.exe on the back end?
     - No, this is a custom implementation, built using a pybind11 wrapper around the original ebsynth source code.
@@ -270,12 +273,17 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
 
 - ### Main Points of work:
     - Simplification and Optimization. I Know it can be sped up, it will just take a lot of testing.
-    - Possible refinement of pybind11 wrapper itself.
+    - Thread Management, locks, optimizing blending algorithms. 
 
 - If I missed anything or you have any questions, feel free to start a new issue or discussion!
 
+## Thanks: 
+    - [pravdomil](https://github.com/pravdomil)
+    - [xy-gao](https://github.com/xy-gao)
+    
 ## Examples:
 
 https://github.com/Trentonom0r3/Ezsynth/assets/130304830/2937cb02-597b-4f9b-a218-340b124dcd84
+
 
 
