@@ -64,7 +64,7 @@ class RAFT_flow(Warp):
         if not os.path.exists(model_path):
             raise ValueError(f"[ERROR] Model file '{model_path}' not found.")
 
-        self.model.load_state_dict(torch.load(model_path))
+        self.model.load_state_dict(torch.load(model_path, map_location=self.DEVICE))
         self.model = self.model.module
         self.model.to(self.DEVICE)
         self.model.eval()
@@ -77,9 +77,9 @@ class RAFT_flow(Warp):
         args.mixed_precision = False
         return args
     
-    def _load_tensor_from_numpy(self, np_array, device='cuda'):
+    def _load_tensor_from_numpy(self, np_array):
         try:
-            tensor = torch.tensor(np_array, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0).to(device)
+            tensor = torch.tensor(np_array, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0).to(self.DEVICE)
             return tensor
         except Exception as e:
             print(f"[ERROR] Exception in load_tensor_from_numpy: {e}")
