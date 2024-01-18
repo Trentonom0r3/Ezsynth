@@ -39,7 +39,7 @@ class OpticalFlowProcessor():
         
         
 class RAFT_flow(Warp):
-    DEVICE = 'cuda'
+    device = 'cuda'
     def __init__(self, img, model_name = 'Sintel'):
         """
         
@@ -64,9 +64,9 @@ class RAFT_flow(Warp):
         if not os.path.exists(model_path):
             raise ValueError(f"[ERROR] Model file '{model_path}' not found.")
 
-        self.model.load_state_dict(torch.load(model_path, map_location=self.DEVICE))
+        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model = self.model.module
-        self.model.to(self.DEVICE)
+        self.model.to(self.device)
         self.model.eval()
     
     def _instantiate_raft_model(self, model_name):
@@ -79,7 +79,7 @@ class RAFT_flow(Warp):
     
     def _load_tensor_from_numpy(self, np_array):
         try:
-            tensor = torch.tensor(np_array, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0).to(self.DEVICE)
+            tensor = torch.tensor(np_array, dtype=torch.float32).permute(2, 0, 1).unsqueeze(0).to(self.device)
             return tensor
         except Exception as e:
             print(f"[ERROR] Exception in load_tensor_from_numpy: {e}")
@@ -104,8 +104,3 @@ class RAFT_flow(Warp):
     def compute_optical_flow(self, imgsequence):
         self.optical_flow = self.__iter__(imgsequence)
         return self.optical_flow
-  
-      
-    
-            
-        
