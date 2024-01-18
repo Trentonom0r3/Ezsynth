@@ -58,14 +58,11 @@ class RAFT_flow(Warp):
         >>> flow.compute_optical_flow(imgsequence)
         """
         super().__init__(img)
-        model_name = "raft" + "-" + model_name + ".pth"
-        self.model = torch.nn.DataParallel(
-            RAFT(args=self._instantiate_raft_model(model_name)))
-        model_path = os.path.join(os.path.dirname(
-            __file__), 'models\\' + model_name)
+        model_name = "raft-" + model_name + ".pth"
+        self.model = torch.nn.DataParallel(RAFT(args=self._instantiate_raft_model(model_name)))
+        model_path = os.path.join(os.path.dirname(__file__), 'models', model_name)
         if not os.path.exists(model_path):
-            raise ValueError(
-                f"[ERROR] Model file '{model_name}' not found.")
+            raise ValueError(f"[ERROR] Model file '{model_path}' not found.")
 
         self.model.load_state_dict(torch.load(model_path))
         self.model = self.model.module
