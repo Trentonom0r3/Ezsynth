@@ -28,15 +28,17 @@ class EbsynthRunner:
                 if sys.platform[0:3] == 'win':
                     libebsynth_path = str(Path(__file__).parent / 'ebsynth.dll')
                     self.libebsynth = CDLL(libebsynth_path)
-                else:
+                elif sys.platform == 'darwin':
+                    # TODO: Implement for macOS
+                    libebsynth_path = str(Path(__file__).parent / 'ebsynth.so')
+                    self.libebsynth = CDLL(libebsynth_path)
+                elif sys.platform[0:5] == 'linux':
                     # TODO: Implement for Linux
-                    if sys.platform[0:5] == 'linux':
-                        libebsynth_path = str(Path(__file__).parent / 'ebsynth.so')
-                        self.libebsynth = CDLL(libebsynth_path)
-                    pass
+                    libebsynth_path = str(Path(__file__).parent / 'ebsynth.so')
+                    self.libebsynth = CDLL(libebsynth_path)
 
                 if self.libebsynth is not None:
-                    self.libebsynth.ebsynthRun.argtypes = ( \
+                    self.libebsynth.ebsynthRun.argtypes = (
                         c_int,
                         c_int,
                         c_int,
