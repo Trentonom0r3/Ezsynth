@@ -237,26 +237,26 @@ ez.set_guides().stylize(output_path=OUTPUT_FOLDER)
     - This being said, changes to the codebase are super flexible and all I require is that any changes made either match, or exceed the quality of the ground-truth sequence.
 
 - Ground Truth Sequence:
-    - Found in the ```Output``` Folder. These are the stylized frames you can compare with.
-        - ```Styles``` This folder contains the keyrames used for generating the ground-truth sequence.
-        - ```Input``` This folder contains the input image sequence used for stylization.
+    - Found in the `Output` Folder. These are the stylized frames you can compare with.
+        - `Styles` This folder contains the keyframes used for generating the ground-truth sequence.
+        - `Input` This folder contains the input image sequence used for stylization.
 
     - You can create new Ground-Truth Sequences, but please do so with the unaltered library, and post any and all comparisons.
 
-- ### Guidelines:
-    - Outside of the Ground-Truth Comparison, there isnt much in terms of Guidelines.
-    - Where possible, try to write Object Oriented Code (refactoring existing code is fine, as long as the final output isn't negatively altered)
+- Guidelines:
+    - Outside the Ground-Truth Comparison, there isn't much in terms of Guidelines.
+    - Where possible, try to write Object-Oriented Code (refactoring existing code is fine, as long as the final output isn't negatively altered)
         - For public methods, detailed, numpy style doc-strings. See existing Core Classes for examples.
         - For private methods, a brief description. If the method is more than a simple utility method, an example or additional annotation would be appreciated.
         - Inline comments for things that seem unusual, or where you tried something else that didn't work vice/versa.
         - Refactoring existing code is fine, but removing functionality (unless discussed and approved) is not.
         - For changes, create a fork, make changes, and submit a PR for review.
 
-- ### Main Points of work:
+- Main Points of work:
     - Simplification and Optimization. I Know it can be sped up, it will just take a lot of testing.
     - Possible refinement of pybind11 wrapper itself.
 
-- If I missed anything or you have any questions, feel free to start a new issue or discussion!
+- If I missed anything, or you have any questions, feel free to start a new issue or discussion.
 
 ## Examples
 
