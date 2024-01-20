@@ -57,7 +57,7 @@ pip install ezsynth
 
 1. Clone the Repo.
 2. In the main parent folder run `py setup.py sdist bdist_wheel`
-3. After that has built run `pip install C:\Ebsynth.py\dist\ezsynth-1.2.0.1.tar.gz`
+3. After that has built, run `pip install C:\path\to\ezsynth-XX.XX.XX.tar.gz`
     - Change path as needed.
 4. You should have access to ezsynth and its associated classes now!
 
@@ -223,10 +223,10 @@ results = ez.results  # The results are stored in the results variable
 
 - Does this work for macOS/Linux?
     - macOS, no. Potentially in the future, but that would require contributions to the codebase from others.
-    - Linux, soon. Just have to compile the '.pyd' properly and then double check it with the python.
+    - Linux, you must compile from source.
 
 - The Ebsynth GUI app has a mask option. How do I do that with this?
-    - Currently, there is no option for using masks with Ezsynth. This will be updated in the future.
+    - This is currently undergoing testing.
 
 - Does this use ebsynth.exe on the back end?
     - No, this is a custom implementation, built using a pybind11 wrapper around the original ebsynth source code.
@@ -260,7 +260,7 @@ results = ez.results  # The results are stored in the results variable
 
 - Main Points of work:
     - Simplification and Optimization. I Know it can be sped up, it will just take a lot of testing.
-    - Possible refinement of pybind11 wrapper itself.
+    - Thread Management, locks, optimizing blending algorithms. 
 
 - If I missed anything, or you have any questions, feel free to start a new issue or discussion.
 
