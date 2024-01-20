@@ -226,7 +226,7 @@ results = ez.results  # The results are stored in the results variable
     - Linux, you must compile from source.
 
 - The Ebsynth GUI app has a mask option. How do I do that with this?
-    - This is currently undergoing testing.
+    - Currently there is no option for using masks with Ezsynth. This is currently undergoing testing.
 
 - Does this use ebsynth.exe on the back end?
     - No, this is a custom implementation, built using a pybind11 wrapper around the original ebsynth source code.
@@ -260,7 +260,7 @@ results = ez.results  # The results are stored in the results variable
 
 - Main Points of work:
     - Simplification and Optimization. I Know it can be sped up, it will just take a lot of testing.
-    - Thread Management, locks, optimizing blending algorithms. 
+    - Thread Management, locks, optimizing blending algorithms.
 
 - If I missed anything, or you have any questions, feel free to start a new issue or discussion.
 
