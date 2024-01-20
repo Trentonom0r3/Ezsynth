@@ -213,12 +213,12 @@ results = ez.results  # The results are stored in the results variable
 
 - What is source? What is target? What does weight do?
     - Source is the unstylized version of your style frame.
-        - Theres many ways to use this, for example, you could make source a "cutout" of your style image and "inpaint" the target.
+        - There's many ways to use this, for example, you could make source a "cutout" of your style image and "inpaint" the target.
     - Target (in context of video stylization) is the next frame in the sequence.
         - Again. many ways to use this, as in the above example, you would make this the image you're painting the source onto.
     - Weight is the weight of the guides against the style.
-        - Values over 1.0 give more weight to the guides --- less style image.
-        - Values under 1.0 give less weight to the guides --- more style image.
+        - Values over 1.0 give more weight to the guides - less style image.
+        - Values under 1.0 give less weight to the guides - more style image.
     - The ebsynth Repo actually does a decent job at explaining this a bit more, with examples.
 
 - Does this work for macOS/Linux?
@@ -226,7 +226,7 @@ results = ez.results  # The results are stored in the results variable
     - Linux, soon. Just have to compile the '.pyd' properly and then double check it with the python.
 
 - The Ebsynth GUI app has a mask option. How do I do that with this?
-    - Currently there is no option for using masks with Ezsynth. This will be updated in the future.
+    - Currently, there is no option for using masks with Ezsynth. This will be updated in the future.
 
 - Does this use ebsynth.exe on the back end?
     - No, this is a custom implementation, built using a pybind11 wrapper around the original ebsynth source code.
