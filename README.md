@@ -66,7 +66,7 @@ pip install ezsynth
 I'd need some help with this, can update logic if I have the .so file, anyway.
 
 - Go to my Fork of Ebsynth, clone it, and run this [file](https://github.com/Trentonom0r3/ebsynth/blob/master/build-linux-cpu%2Bcuda.sh).
-- This will build the .so for ebsynth. (cuda+CPU). You can then place this in the `ezsynth/utils` directory alongside `ezsynth.dll`, enabling usage with linux. (In theory, untested on my end though.)
+- This will build the .so for ebsynth. (CUDA+CPU). You can then place this in the `ezsynth/utils` directory alongside `ezsynth.dll`, enabling usage with linux. (In theory, untested on my end though.)
 
 ## API
 
