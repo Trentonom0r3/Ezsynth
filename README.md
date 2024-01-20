@@ -55,7 +55,7 @@ pip install ezsynth
 
 ### Build from source
 
-1. Clone the Repo.
+1. Clone the repo.
 2. In the main parent folder run `py setup.py sdist bdist_wheel`
 3. After that has built, run `pip install C:\path\to\ezsynth-XX.XX.XX.tar.gz`
     - Change path as needed.
