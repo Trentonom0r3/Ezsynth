@@ -23,7 +23,7 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 
 ## Changelog
 
-- 2.1.01
+- 2.1.1
     - Fixed Issues with Single style image.
 - 2.1.0
     - Slight Refactorings, moved `ebsynth.py` into `_ebsynth.py` to avoid naming issues when importing module.
