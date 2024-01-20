@@ -61,12 +61,18 @@ pip install ezsynth
     - Change path as needed.
 4. You should have access to ezsynth and its associated classes now!
 
+There is a fork of [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) to create a library version of ebsynth.
+
 ### Linux
 
 I'd need some help with this, can update logic if I have the .so file, anyway.
 
-- Go to my Fork of Ebsynth, clone it, and run this [file](https://github.com/Trentonom0r3/ebsynth/blob/master/build-linux-cpu%2Bcuda.sh).
-- This will build the .so for ebsynth. (CUDA+CPU). You can then place this in the `ezsynth/utils` directory alongside `ezsynth.dll`, enabling usage with linux. (In theory, untested on my end though.)
+- Go to [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth).
+- Clone it.
+- Run [build-linux-cpu+cuda](https://github.com/Trentonom0r3/ebsynth/blob/master/build-linux-cpu%2Bcuda.sh).
+- This will build the .so for ebsynth.
+  You can then place this in the `ezsynth/utils` directory alongside `ezsynth.dll`.
+  In theory, untested on my end though.
 
 ### macOS
 
