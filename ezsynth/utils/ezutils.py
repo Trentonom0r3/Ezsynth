@@ -9,9 +9,9 @@ import numpy
 
 from ._ebsynth import ebsynth
 from .blend.blender import Blend
-from .config import Config, Guides
+from .config import Config
 from .flow_utils.warp import Warp
-from .guides.guides import create_guides
+from .guides.guides import create_guides, Guides
 from .sequences import SequenceManager, Sequence
 
 
