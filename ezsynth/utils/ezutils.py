@@ -20,10 +20,6 @@ class Config:
     styles: List[tuple[int, numpy.ndarray]]
     images: List[tuple[int, numpy.ndarray]]
 
-    def __init__(self, images, styles):
-        self.styles = styles
-        self.images = images
-
 
 def config_from_directory(style_path: str, input_path: str) -> Config:
     return Config(
