@@ -2,10 +2,10 @@
 
 Perform things like style transfer, color transfer, inpainting, superimposition, video stylization and more!
 
-We use [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) to create a library version of Ebsynth.
-
 This implementation makes use of advanced physics based edge detection and RAFT optical flow,
 which leads to more accurate results during synthesis.
+
+Ezsynth uses [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) - library version of Ebsynth.
 
 # Table of Contents
 
