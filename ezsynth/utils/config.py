@@ -19,7 +19,7 @@ class Config:
     model_name: Literal["sintel", "kitti", "chairs"]
 
 
-def setup(
+def config_from_directory(
         style_path: str = "styles",
         input_path: str = "input",
         edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE",
