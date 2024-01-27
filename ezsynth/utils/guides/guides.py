@@ -13,6 +13,7 @@ def create_guides(config: Config) -> Guides:
 
     processor = OpticalFlowProcessor(model_name = config.model_name, flow_method = config.flow_method)
     flow_guide = processor.compute_flow([x for i, x in config.images])
+    flow_guide = [x for x in flow_guide]
 
     positional_guide = PositionalGuide([x for i, x in config.images], flow = flow_guide)
     positional_guide = positional_guide()
