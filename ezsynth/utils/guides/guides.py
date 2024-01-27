@@ -47,10 +47,10 @@ class GuideFactory():
 
     Usage
     -----
-    >>> factory = GuideFactory(imgsequence, edge_method="PAGE", flow_method="RAFT", model_name="sintel")
-    >>> factory.create_all_guides()
-    >>> custom_guides = some list of images as numpy arrays
-    >>> factory.add_custom_guide("custom", custom_guides)
+        factory = GuideFactory(imgsequence, edge_method="PAGE", flow_method="RAFT", model_name="sintel")
+        factory.create_all_guides()
+        custom_guides = some list of images as numpy arrays
+        factory.add_custom_guide("custom", custom_guides)
     """
     VALID_EDGE_METHODS = ["PAGE", "PST", "Classic"]
     VALID_FLOW_METHODS = ["RAFT", "DeepFlow"]

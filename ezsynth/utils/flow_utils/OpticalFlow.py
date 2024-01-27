@@ -50,12 +50,12 @@ class RAFT_flow(Warp):
             
         Example
         -------
-        >>> flow = RAFT_flow()
-        >>> flow.compute_flow(img1, img2)
+            flow = RAFT_flow()
+            flow.compute_flow(img1, img2)
         For an imgsequence, use the compute_optical_flow method.
         
-        >>> flow = RAFT_flow()
-        >>> flow.compute_optical_flow(imgsequence)
+            flow = RAFT_flow()
+            flow.compute_optical_flow(imgsequence)
         """
         super().__init__(img)
         model_name = "raft-" + model_name + ".pth"
