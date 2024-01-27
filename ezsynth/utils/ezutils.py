@@ -2,26 +2,17 @@ import os
 import re
 import threading
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
-from typing import List
+from typing import List, Literal
 
 import cv2
 import numpy
 
 from ._ebsynth import ebsynth
 from .blend.blender import Blend
+from .config import Config
 from .flow_utils.warp import Warp
 from .guides.guides import GuideFactory
 from .sequences import SequenceManager
-
-
-@dataclass
-class Config:
-    styles: List[tuple[int, numpy.ndarray]]
-    images: List[tuple[int, numpy.ndarray]]
-    edge_method: str
-    flow_method: str
-    model_name: str
 
 
 def _get_image_paths(path: str) -> List[tuple[int, str]]:
@@ -49,11 +40,11 @@ def _read_images(a: List[tuple[int, str]]) -> List[tuple[int, numpy.ndarray]]:
 
 
 def setup(
-        style_path = "styles",
-        input_path = "input",
-        edge_method = "PAGE",
-        flow_method = "RAFT",
-        model_name = "sintel"
+        style_path: str = "styles",
+        input_path: str = "input",
+        edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE",
+        flow_method: Literal["RAFT", "DeepFlow"] = "RAFT",
+        model_name: Literal["sintel", "kitti", "chairs"] = "sintel"
 ):
     config = Config(
         _read_images(_get_image_paths(style_path)),
