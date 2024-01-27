@@ -165,15 +165,15 @@ synth.run(output)  # Run the synthesis and save.
 from ezsynth import Ezsynth
 
 a = Ezsynth(
-    styles=[
+    styles = [
         "styles/style000.jpg",
         "styles/style099.jpg",
     ],
-    imgsequence="input",
-    edge_method="Classic",
-    flow_method="RAFT",
-    model="sintel",
-    output_folder="output",
+    imgsequence = "input",
+    edge_method = "Classic",
+    flow_method = "RAFT",
+    model = "sintel",
+    output_folder = "output",
 )
 
 a.run()
