@@ -53,7 +53,8 @@ class PositionalGuide:
         self.imgseq = imgseq
 
     def __call__(self):
-        return self._create()
+        self.g_pos = self._create_g_pos_from_flow(self.flow, self.imgseq[0].shape[1::-1])
+        return self.g_pos
 
     def _create_and_warp_coord_map(self, flow_up, original_size):
         if self.coord_map is None:
@@ -84,7 +85,3 @@ class PositionalGuide:
             g_pos = (g_pos * 255).astype(np.uint8)
             g_pos_files.append(g_pos)
         return g_pos_files
-
-    def _create(self):
-        self.g_pos = self._create_g_pos_from_flow(self.flow, self.imgseq[0].shape[1::-1])
-        return self.g_pos
