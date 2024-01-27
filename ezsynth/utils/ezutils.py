@@ -9,10 +9,10 @@ import numpy
 
 from ._ebsynth import ebsynth
 from .blend.blender import Blend
-from .config import Config
+from .config import Config, Guides
 from .flow_utils.warp import Warp
 from .guides.guides import create_guides
-from .sequences import SequenceManager
+from .sequences import SequenceManager, Sequence
 
 
 def setup(
@@ -21,7 +21,7 @@ def setup(
         edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE",
         flow_method: Literal["RAFT", "DeepFlow"] = "RAFT",
         model_name: Literal["sintel", "kitti", "chairs"] = "sintel"
-):
+) -> tuple[Config, Guides, List[Sequence]]:
     config = Config(
         _read_images(_get_image_paths(style_path)),
         _read_images(_get_image_paths(input_path)),
@@ -30,9 +30,7 @@ def setup(
         model_name,
     )
 
-    guides = create_guides(config)
-    subsequences = SequenceManager(config)._set_sequence()
-    return config, guides, subsequences
+    return config, create_guides(config), SequenceManager(config)._set_sequence()
 
 
 def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
