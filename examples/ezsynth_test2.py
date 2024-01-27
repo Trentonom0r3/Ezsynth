@@ -6,7 +6,7 @@ import ezsynth.utils.ezutils
 
 
 def main():
-    sequence, subsequences, guides = ezsynth.utils.ezutils.setup(
+    config, guides, sequences = ezsynth.utils.ezutils.setup(
         style_path = "styles",
         input_path = "input",
         edge_method = "Classic",
@@ -14,15 +14,7 @@ def main():
         model_name = "sintel",
     )
 
-    results = ezsynth.utils.ezutils.process(
-        subseq = subsequences,
-        imgseq = sequence,
-        edge_maps = guides["edge"],
-        flow_fwd = guides["flow_fwd"],
-        flow_bwd = guides["flow_rev"],
-        pos_fwd = guides["positional_fwd"],
-        pos_bwd = guides["positional_rev"],
-    )
+    results = ezsynth.utils.ezutils.process(config, guides, sequences)
 
     for i in range(len(results)):
         save_results("output", "output" + str(i).zfill(3) + ".png", results[i])
