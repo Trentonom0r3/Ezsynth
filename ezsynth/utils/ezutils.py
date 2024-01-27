@@ -14,57 +14,6 @@ from .guides.guides import GuideFactory
 from .sequences import SequenceManager
 
 
-def _get_image_paths(path: str) -> List[str]:
-    """Get image paths of image sequence from the directory."""
-    if not os.path.isdir(path):
-        raise ValueError("Path must be a valid directory.")
-    a = sorted(os.listdir(path))
-    return [
-        os.path.join(path, filename) for filename in a
-        if filename.lower().endswith(('.png', '.jpg', '.jpeg'))
-    ]
-
-
-class Preprocessor:
-    def __init__(self, styles: Union[str, List[str]], img_sequence: str):
-        image_paths = _get_image_paths(img_sequence)
-        if not image_paths:
-            raise ValueError("No image files found.")
-
-        self.images = []
-        self.imgindexes = self._extract_indexes(image_paths)
-        self._read_frames(image_paths)
-        self.begFrame = self.imgindexes[0]
-        self.endFrame = self.imgindexes[-1]
-        self.styles = self._get_styles(styles)
-        self.style_indexes = self._extract_indexes(self.styles)
-
-    def _get_styles(self, styles: Union[str, List[str]]) -> List[str]:
-        """Get the styles either as a list or single string."""
-        if isinstance(styles, str):
-            return [styles]
-        elif isinstance(styles, list):
-            return styles
-        else:
-            raise ValueError("Styles must be either a string or a list of strings.")
-
-    def _extract_indexes(self, lst: List[str]) -> List[int]:
-        """Extract the indexes from the image filenames."""
-        pattern = re.compile(r'(\d+)(?=\.(jpg|jpeg|png)$)')
-        return sorted(int(pattern.findall(img)[-1][0]) for img in lst)
-
-    def _read_frames(self, lst: List[str]) -> List[np.ndarray]:
-        """Read the image frames."""
-        try:
-            for img in lst:
-                cv2_img = cv2.imread(img)
-                self.images.append(cv2_img)
-
-            return self.images
-        except Exception as e:
-            raise ValueError(f"Error reading image frames: {e}")
-
-
 def setup(style_keys, input_path = "input", edge_method = "PAGE", flow_method = "RAFT", model_name = "sintel"):
     prepro = Preprocessor(style_keys, input_path)
     guide = GuideFactory(prepro.images, prepro.image_paths, edge_method, flow_method, model_name)
