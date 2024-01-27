@@ -5,8 +5,8 @@ style_paths = [
     "output099.jpg",
 ]
 
-image_folder = "../input"
-output_folder = "../output"
+image_folder = "input"
+output_folder = "output"
 
 ez = Ezsynth(
     styles=style_paths,
