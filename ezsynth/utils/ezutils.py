@@ -24,13 +24,6 @@ class Config:
     model_name: str
 
 
-def config_from_directory(style_path: str, input_path: str) -> Config:
-    return Config(
-        _read_images(_get_image_paths(style_path)),
-        _read_images(_get_image_paths(input_path)),
-    )
-
-
 def _get_image_paths(path: str) -> List[tuple[int, str]]:
     try:
         return sorted([
