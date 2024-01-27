@@ -118,8 +118,7 @@ class Preprocessor:
 
 class Setup(Preprocessor, GuideFactory):
 
-    def __init__(self, style_keys, imgseq, edge_method = "PAGE",
-                 flow_method = "RAFT", model_name = "sintel"):
+    def __init__(self, style_keys, imgseq, edge_method = "PAGE", flow_method = "RAFT", model_name = "sintel"):
         prepro = Preprocessor(style_keys, imgseq)
         GuideFactory.__init__(self, prepro.imgsequence, prepro.imgseq, edge_method, flow_method, model_name)
         manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes,
