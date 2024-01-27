@@ -31,9 +31,8 @@ def setup(
     )
 
     guides = create_guides(config)
-    manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes, prepro.imgindexes)
-    subsequences = manager._set_sequence()
-    return prepro.images, subsequences, guides
+    subsequences = SequenceManager(config)._set_sequence()
+    return config, guides, subsequences
 
 
 def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
