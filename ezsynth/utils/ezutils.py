@@ -32,7 +32,6 @@ class Preprocessor:
             raise ValueError("No image files found.")
 
         self.images = []
-        self.image_paths = image_paths
         self.imgindexes = self._extract_indexes(image_paths)
         self._read_frames(image_paths)
         self.begFrame = self.imgindexes[0]
