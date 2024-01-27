@@ -1,18 +1,18 @@
-
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
-import threading
-import time
-from typing import List, Union
 import os
 import re
+import threading
+from concurrent.futures import ThreadPoolExecutor
+from typing import List, Union
+
 import cv2
 import numpy as np
-from .blend.blender import Blend
 
-from .sequences import SequenceManager
-from .guides.guides import GuideFactory
 from ._ebsynth import ebsynth
+from .blend.blender import Blend
 from .flow_utils.warp import Warp
+from .guides.guides import GuideFactory
+from .sequences import SequenceManager
+
 """
 HELPER CLASSES CONTAINED WITHIN THIS FILE:
 
@@ -43,6 +43,7 @@ TODO REFACTOR:
         - Optimize, if possible. 
         - Will use the Runner Class, as will the Ezsynth class.
 """
+
 
 class Preprocessor:
     def __init__(self, styles: Union[str, List[str]], img_sequence: str):
@@ -82,8 +83,9 @@ class Preprocessor:
         if not os.path.isdir(img_sequence):
             raise ValueError("img_sequence must be a valid directory.")
         filenames = sorted(os.listdir(img_sequence),
-                           key=lambda x: [int(c) if c.isdigit() else c for c in re.split('([0-9]+)', x)])
-        img_files = [os.path.join(img_sequence, fname) for fname in filenames if fname.lower().endswith(('.png', '.jpg', '.jpeg'))]
+                           key = lambda x: [int(c) if c.isdigit() else c for c in re.split('([0-9]+)', x)])
+        img_files = [os.path.join(img_sequence, fname) for fname in filenames if
+                     fname.lower().endswith(('.png', '.jpg', '.jpeg'))]
         if not img_files:
             raise ValueError("No image files found in the directory.")
         return img_files
@@ -108,30 +110,33 @@ class Preprocessor:
             for img in lst:
                 cv2_img = cv2.imread(img)
                 self.imgsequence.append(cv2_img)
-                
+
             return self.imgsequence
         except Exception as e:
             raise ValueError(f"Error reading image frames: {e}")
- 
+
+
 class Setup(Preprocessor, GuideFactory):
-    
-    def __init__(self, style_keys, imgseq, edge_method="PAGE",
-                 flow_method="RAFT", model_name="sintel"):
+
+    def __init__(self, style_keys, imgseq, edge_method = "PAGE",
+                 flow_method = "RAFT", model_name = "sintel"):
         prepro = Preprocessor(style_keys, imgseq)
         GuideFactory.__init__(self, prepro.imgsequence, prepro.imgseq, edge_method, flow_method, model_name)
-        manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes, prepro.imgindexes)
+        manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes,
+                                  prepro.imgindexes)
         self.imgseq = prepro.imgsequence
         self.subsequences = manager._set_sequence()
         self.guides = self.create_all_guides()  # works well, just commented out since it takes a bit to run.
-        
+
     def __call__(self):
         return self.guides, self.subsequences
-    
+
     def __str__(self):
         return f"Setup: Init: {self.begFrame} - {self.endFrame} | Styles: {self.style_indexes} | Subsequences: {[str(sub) for sub in self.subsequences]}"
-    
+
+
 class Runner:
-    def __init__(self, setup, masks=None):
+    def __init__(self, setup, masks = None):
         self.setup = setup
         self.guides, self.subsequences = self.setup()
         self.imgsequence = self.setup.imgseq
@@ -142,7 +147,9 @@ class Runner:
         self.positional_bwd = self.guides["positional_rev"]
 
     def run(self):
-        return process(self.subsequences, self.imgsequence, self.edge_maps, self.flow_fwd, self.flow_bwd, self.positional_fwd, self.positional_bwd)
+        return process(self.subsequences, self.imgsequence, self.edge_maps, self.flow_fwd, self.flow_bwd,
+                       self.positional_fwd, self.positional_bwd)
+
 
 def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
     """
@@ -165,33 +172,33 @@ def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
     err_fwd = []
     style_imgs_bwd = []
     err_bwd = []
-    
-    with ThreadPoolExecutor(max_workers=2) as executor:
+
+    with ThreadPoolExecutor(max_workers = 2) as executor:
         futures = []  # Keep your existing list to store the futures
         for seq in subseq:
             print(f"Submitting sequence:")
             # Your existing logic to submit tasks remains the same
             if seq.style_start is not None and seq.style_end is not None:
-                
+
                 futures.append(("fwd", executor.submit(run_sequences, imgseq, edge_maps, flow_fwd,
-                                                                     pos_fwd, seq)))
-                
+                                                       pos_fwd, seq)))
+
                 futures.append(("bwd", executor.submit(run_sequences, imgseq, edge_maps,
-                                                            flow_bwd,  pos_bwd, seq, True)))
-                
+                                                       flow_bwd, pos_bwd, seq, True)))
+
             elif seq.style_start is not None and seq.style_end is None:
-                
+
                 fwd_img, fwd_err = run_sequences(imgseq, edge_maps, flow_fwd,
-                                                                     pos_fwd, seq)
+                                                 pos_fwd, seq)
                 fwd_imgs = [img for img in fwd_img if img is not None]
 
                 return fwd_imgs
             elif seq.style_start is None and seq.style_end is not None:
-                
+
                 bwd_img, bwd_err = run_sequences(imgseq, edge_maps,
-                                                            flow_bwd,  pos_bwd, seq, True)
+                                                 flow_bwd, pos_bwd, seq, True)
                 bwd_imgs = [img for img in bwd_img if img is not None]
-                
+
                 return bwd_imgs
             else:
                 raise ValueError("Invalid sequence.")
@@ -216,39 +223,38 @@ def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
                 print("TimeoutError")
             except Exception as e:
                 print(f"List Creation Exception: {e}")
-    #C:\Users\tjerf\Desktop\Testing\src\Testvids\Output
+    # C:\Users\tjerf\Desktop\Testing\src\Testvids\Output
     style_imgs_b = [img for img in style_imgs_bwd if img is not None]
-    style_imgs_f= [img for img in style_imgs_fwd if img is not None]
+    style_imgs_f = [img for img in style_imgs_fwd if img is not None]
 
-    
     sty_fwd = [img for sublist in style_imgs_f for img in sublist]
     sty_bwd = [img for sublist in style_imgs_b for img in sublist]
     err_fwd = [img for sublist in err_fwd for img in sublist]
     err_bwd = [img for sublist in err_bwd for img in sublist]
-    
+
     sty_bwd = sty_bwd[::-1]
     err_bwd = err_bwd[::-1]
-    #check length of sty_fwd and sty_bwd
+    # check length of sty_fwd and sty_bwd
     # if length of one is zero, skip blending and return the other
     # Initialize the Blend class
-    blend_instance = Blend(style_fwd=sty_fwd, 
-                        style_bwd=sty_bwd, 
-                        err_fwd=err_fwd, 
-                        err_bwd=err_bwd, 
-                        flow_fwd=flow_fwd)
+    blend_instance = Blend(style_fwd = sty_fwd,
+                           style_bwd = sty_bwd,
+                           err_fwd = err_fwd,
+                           err_bwd = err_bwd,
+                           flow_fwd = flow_fwd)
 
     # Invoke the __call__ method to perform blending
     final_blends = blend_instance()
     final_blends = [blends for blends in final_blends if blends is not None]
-    
-    #t2 = time.time()
-    #print(f"Time taken to blend: {t2 - t1}")
-    
-    
+
+    # t2 = time.time()
+    # print(f"Time taken to blend: {t2 - t1}")
+
     return final_blends
 
+
 def run_sequences(imgseq, edge, flow,
-                  positional, seq, reverse=False):
+                  positional, seq, reverse = False):
     """
     Run the sequence for ebsynth based on the provided parameters.
     Parameters:
@@ -268,7 +274,7 @@ def run_sequences(imgseq, edge, flow,
             start, step, style, init, final = (
                 seq.init, 1, seq.style_start, seq.begFrame, seq.endFrame)
 
-        eb = ebsynth(style, guides=[])
+        eb = ebsynth(style, guides = [])
         warp = Warp(imgseq[start])
         ORIGINAL_SIZE = imgseq[0].shape[1::-1]
         # Loop through frames.
@@ -279,36 +285,20 @@ def run_sequences(imgseq, edge, flow,
 
             # Commented out section: additional guide and warping
             if i != start:
-                eb.add_guide(positional[start -1] if reverse else positional[start], positional[i], 2.0)
-               
+                eb.add_guide(positional[start - 1] if reverse else positional[start], positional[i], 2.0)
+
                 stylized_img = stylized_frames[-1] / 255.0  # Assuming stylized_frames[-1] is already in BGR format
-              
-                warped_img = warp.run_warping(stylized_img, flow[i] if reverse else flow[i - 1])  # Changed from run_warping_from_np to run_warping
-              
+
+                warped_img = warp.run_warping(stylized_img, flow[i] if reverse else flow[
+                    i - 1])  # Changed from run_warping_from_np to run_warping
+
                 warped_img = cv2.resize(warped_img, ORIGINAL_SIZE)
 
                 eb.add_guide(style, warped_img, 0.5)
-                
+
             stylized_img, err = eb.run()
             stylized_frames.append(stylized_img)
             err_list.append(err)
 
         print(f"Final Length, Reverse = {reverse}: {len(stylized_frames)}. Error Length: {len(err_list)}")
         return stylized_frames, err_list
-
-        
-    
-          
-        
-
-
-                
-            
-        
-        
-        
-        
-
-    
-        
-        
