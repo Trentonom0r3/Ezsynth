@@ -24,9 +24,9 @@ Ezsynth uses [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) - l
 pip install ezsynth
 ```
 
-## Build from source
+### Build from source
 
-### Windows
+#### Windows
 
 ```sh
 # clone the repo
@@ -34,7 +34,7 @@ py setup.py sdist bdist_wheel
 pip install ezsynth-XX.XX.XX.tar.gz
 ```
 
-### macOS & Linux
+#### macOS & Linux
 
 ```sh
 # clone the repo
