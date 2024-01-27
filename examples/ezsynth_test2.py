@@ -2,9 +2,10 @@ import os
 
 import cv2
 
+import ezsynth.utils.config
 import ezsynth.utils.ezutils
 
-config, guides, sequences = ezsynth.utils.ezutils.setup(
+config, guides, sequences = ezsynth.utils.config.config_from_directory(
     style_path = "styles",
     input_path = "input",
     edge_method = "Classic",
