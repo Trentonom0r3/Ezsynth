@@ -118,13 +118,12 @@ class Preprocessor:
 
 def setup(style_keys, input_path, edge_method = "PAGE", flow_method = "RAFT", model_name = "sintel"):
     prepro = Preprocessor(style_keys, input_path)
-    GuideFactory.__init__(self, prepro.imgsequence, prepro.imgseq, edge_method, flow_method, model_name)
+    guide = GuideFactory(prepro.imgsequence, prepro.imgseq, edge_method, flow_method, model_name)
     manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes,
                               prepro.imgindexes)
-    sequence = prepro.imgsequence
     subsequences = manager._set_sequence()
-    guides = self.create_all_guides()  # works well, just commented out since it takes a bit to run.
-    return sequence, subsequences, guides
+    guides = guide.create_all_guides()  # works well, just commented out since it takes a bit to run.
+    return prepro.imgsequence, subsequences, guides
 
 
 def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
