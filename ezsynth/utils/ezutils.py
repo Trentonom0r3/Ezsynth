@@ -11,7 +11,7 @@ from ._ebsynth import ebsynth
 from .blend.blender import Blend
 from .config import Config
 from .flow_utils.warp import Warp
-from .guides.guides import GuideFactory
+from .guides.guides import create_guides
 from .sequences import SequenceManager
 
 
@@ -30,10 +30,9 @@ def setup(
         model_name,
     )
 
-    guide = GuideFactory(prepro.images, prepro.image_paths, edge_method, flow_method, model_name)
+    guides = create_guides(config)
     manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes, prepro.imgindexes)
     subsequences = manager._set_sequence()
-    guides = guide.create_all_guides()  # works well, just commented out since it takes a bit to run.
     return prepro.images, subsequences, guides
 
 
