@@ -19,8 +19,8 @@ def main():
     output_folder = "output"
     os.makedirs(output_folder, exist_ok = True)
 
-    for i in range(len(results)):
-        cv2.imwrite(os.path.join(output_folder, "output" + str(i).zfill(3) + ".png"), results[i])
+    for i, image in enumerate(results):
+        cv2.imwrite(os.path.join(output_folder, "output" + str(i).zfill(3) + ".png"), image)
 
 
 main()
