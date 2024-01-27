@@ -17,7 +17,7 @@ from .sequences import SequenceManager
 def _get_image_paths(path: str) -> List[str]:
     """Get image paths of image sequence from the directory."""
     if not os.path.isdir(path):
-        raise ValueError("Image path must be a valid directory.")
+        raise ValueError("Path must be a valid directory.")
     a = sorted(os.listdir(path))
     return [
         os.path.join(path, filename) for filename in a
