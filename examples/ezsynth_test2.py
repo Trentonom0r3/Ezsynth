@@ -2,16 +2,21 @@ import os
 
 import cv2
 
-import ezsynth.utils.config
-import ezsynth.utils.ezutils
+from ezsynth.utils.config import config_from_directory
+from ezsynth.utils.guides.guides import create_guides
+from ezsynth.utils.sequences import SequenceManager
 
-config, guides, sequences = ezsynth.utils.config.config_from_directory(
+config = config_from_directory(
     style_path = "styles",
     input_path = "input",
     edge_method = "Classic",
     flow_method = "RAFT",
     model_name = "sintel",
 )
+
+guides = create_guides(config)
+
+sequences = SequenceManager(config)._set_sequence()
 
 results = ezsynth.utils.ezutils.process(config, guides, sequences)
 
