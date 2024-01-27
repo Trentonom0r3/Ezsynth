@@ -24,30 +24,26 @@ Ezsynth uses [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) - l
 pip install ezsynth
 ```
 
-### Build from source
+## Build from source
 
-1. Clone the repo.
-2. In the main parent folder run `py setup.py sdist bdist_wheel`
-3. After that has built run `pip install C:\path\to\ezsynth-XX.XX.XX.tar.gz`
-    - Change path as needed.
-4. You should have access to ezsynth and its associated classes now!
+### Windows
 
-There is a fork of [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) to create a library version of ebsynth.
+```sh
+# clone the repo
+py setup.py sdist bdist_wheel
+pip install ezsynth-XX.XX.XX.tar.gz
+```
 
-### Linux
+### macOS & Linux
 
-I'd need some help with this, can update logic if I have the .so file, anyway.
-
-- Go to [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth).
-- Clone it.
-- Run [build-linux-cpu+cuda](https://github.com/Trentonom0r3/ebsynth/blob/master/build-linux-cpu%2Bcuda.sh).
-- This will build the .so for ebsynth.
-  You can then place this in the `ezsynth/utils` directory alongside `ezsynth.dll`.
-  In theory, untested on my end though.
-
-### macOS
-
-Not supported now.
+```sh
+# clone the repo
+git submodule update --init --recursive
+(cd ebsynth && ./build-linux-cpu+cuda.sh)
+# or
+(cd ebsynth && ./build-macos-cpu_only.sh)
+cp ebsynth/bin/ebsynth.so ezsynth/utils
+```
 
 ## API
 
