@@ -18,13 +18,14 @@ def _get_image_sequence(path: str) -> List[str]:
     """Get the image sequence from the directory."""
     if not os.path.isdir(path):
         raise ValueError("img_sequence must be a valid directory.")
-    filenames = sorted(os.listdir(path))
-
-    img_files = [os.path.join(path, fname) for fname in filenames if
-                 fname.lower().endswith(('.png', '.jpg', '.jpeg'))]
-    if not img_files:
-        raise ValueError("No image files found in the directory.")
-    return img_files
+    a = sorted(os.listdir(path))
+    b = [
+        os.path.join(path, filename) for filename in a
+        if filename.lower().endswith(('.png', '.jpg', '.jpeg'))
+    ]
+    if not b:
+        raise ValueError("No image files found.")
+    return b
 
 
 class Preprocessor:
