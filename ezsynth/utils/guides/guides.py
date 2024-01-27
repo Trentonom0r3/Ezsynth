@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 
 from .edge_detection import EdgeDetector
-from ..config import Config
+from ..config import Config, Guides
 from ..flow_utils.OpticalFlow import OpticalFlowProcessor
 from ..flow_utils.warp import Warp
 
 
-def create_guides(config: Config):
+def create_guides(config: Config) -> Guides:
     edge_guide = EdgeGuide(config.images, method = config.edge_method)
     edge_guide = edge_guide()
     # edge_guide = [edge for edge in edge_guide]
