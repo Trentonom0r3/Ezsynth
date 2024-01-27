@@ -1,14 +1,18 @@
 import threading
 from concurrent.futures import ThreadPoolExecutor
+from typing import List
 
 import cv2
 
 from ._ebsynth import ebsynth
 from .blend.blender import Blend
+from .config import Config
 from .flow_utils.warp import Warp
+from .guides.guides import Guides
+from .sequences import Sequence
 
 
-def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
+def process(config: Config, guides: Guides, sequences: List[Sequence]):
     """
     Process sub-sequences using multiprocessing.
     
