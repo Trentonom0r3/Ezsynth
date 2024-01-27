@@ -66,7 +66,7 @@ class Preprocessor:
             raise ValueError(f"Error reading image frames: {e}")
 
 
-def setup(style_keys, input_path, edge_method = "PAGE", flow_method = "RAFT", model_name = "sintel"):
+def setup(style_keys, input_path = "input", edge_method = "PAGE", flow_method = "RAFT", model_name = "sintel"):
     prepro = Preprocessor(style_keys, input_path)
     guide = GuideFactory(prepro.imgsequence, prepro.imgseq, edge_method, flow_method, model_name)
     manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes,
