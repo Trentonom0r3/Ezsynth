@@ -1,36 +1,11 @@
-import os
-import re
 import threading
 from concurrent.futures import ThreadPoolExecutor
-from typing import List, Literal
 
 import cv2
-import numpy
 
 from ._ebsynth import ebsynth
 from .blend.blender import Blend
-from .config import Config
 from .flow_utils.warp import Warp
-from .guides.guides import create_guides, Guides
-from .sequences import SequenceManager, Sequence
-
-
-def setup(
-        style_path: str = "styles",
-        input_path: str = "input",
-        edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE",
-        flow_method: Literal["RAFT", "DeepFlow"] = "RAFT",
-        model_name: Literal["sintel", "kitti", "chairs"] = "sintel"
-) -> tuple[Config, Guides, List[Sequence]]:
-    config = Config(
-        _read_images(_get_image_paths(style_path)),
-        _read_images(_get_image_paths(input_path)),
-        edge_method,
-        flow_method,
-        model_name,
-    )
-
-    return config, create_guides(config), SequenceManager(config)._set_sequence()
 
 
 def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
@@ -184,27 +159,3 @@ def run_sequences(imgseq, edge, flow,
 
         print(f"Final Length, Reverse = {reverse}: {len(stylized_frames)}. Error Length: {len(err_list)}")
         return stylized_frames, err_list
-
-
-def _get_image_paths(path: str) -> List[tuple[int, str]]:
-    try:
-        return sorted([
-            (_extract_index(x), os.path.join(path, x)) for x in os.listdir(path)
-        ])
-    except Exception:
-        raise ValueError("Cannot read images in: " + path)
-
-
-def _extract_index(name: str):
-    try:
-        pattern = re.compile(r"(\d+)\.(jpg|jpeg|png)$")
-        return int(pattern.findall(name)[0][0])
-    except Exception:
-        raise ValueError("Cannot extract index from: " + name)
-
-
-def _read_images(a: List[tuple[int, str]]) -> List[tuple[int, numpy.ndarray]]:
-    try:
-        return [(i, cv2.imread(b)) for i, b in a]
-    except Exception as e:
-        raise ValueError(f"Error reading image: {e}")
