@@ -164,7 +164,7 @@ class Imagesynth:
         output_path: str(optional)
             str leading to file path
         
-        returns: numpy array
+        :return: numpy array
         
         """
         output_path = self._validate_output_path(output_path)
