@@ -15,7 +15,7 @@ from .sequences import SequenceManager
 
 
 def _get_image_paths(path: str) -> List[str]:
-    """Get the image sequence from the directory."""
+    """Get file names of image sequence from the directory."""
     if not os.path.isdir(path):
         raise ValueError("img_sequence must be a valid directory.")
     a = sorted(os.listdir(path))
@@ -30,11 +30,11 @@ def _get_image_paths(path: str) -> List[str]:
 
 class Preprocessor:
     def __init__(self, styles: Union[str, List[str]], img_sequence: str):
+        image_paths = _get_image_paths(img_sequence)
         self.imgsequence = []
-        imgsequence = _get_image_paths(img_sequence)
-        self.imgseq = imgsequence
-        self.imgindexes = self._extract_indexes(imgsequence)
-        self._read_frames(imgsequence)
+        self.imgseq = image_paths
+        self.imgindexes = self._extract_indexes(image_paths)
+        self._read_frames(image_paths)
         self.begFrame = self.imgindexes[0]
         self.endFrame = self.imgindexes[-1]
         self.styles = self._get_styles(styles)
