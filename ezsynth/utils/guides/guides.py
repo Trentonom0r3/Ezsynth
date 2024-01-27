@@ -16,6 +16,7 @@ def create_guides(config: Config) -> Guides:
 
     positional_guide = PositionalGuide(config.imgsequence, flow = flow_guide)
     positional_guide = positional_guide()
+
     positional_fwd = PositionalGuide(config.imgsequence, flow = flow_guide[::-1])
     positional_fwd = positional_fwd()
     positional_fwd = positional_fwd[::-1]
