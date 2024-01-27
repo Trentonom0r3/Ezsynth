@@ -16,15 +16,11 @@ def main():
 
     results = ezsynth.utils.ezutils.process(config, guides, sequences)
 
-    for i in range(len(results)):
-        save_results("output", "output" + str(i).zfill(3) + ".png", results[i])
-
-
-def save_results(output_folder, base_file_name, a):
+    output_folder = "output"
     os.makedirs(output_folder, exist_ok = True)
-    output_file_path = os.path.join(output_folder, base_file_name)
-    cv2.imwrite(output_file_path, a)
-    return output_file_path
+
+    for i in range(len(results)):
+        cv2.imwrite(os.path.join(output_folder, "output" + str(i).zfill(3) + ".png"), results[i])
 
 
 main()
