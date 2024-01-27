@@ -8,9 +8,9 @@ from ..flow_utils.warp import Warp
 
 
 def create_guides(config: Config) -> Guides:
-    edge_guide = EdgeGuide(config.images, method = config.edge_method)
-    edge_guide = edge_guide()
-    # edge_guide = [edge for edge in edge_guide]
+    edge_detector = EdgeDetector(config.edge_method)
+    edge_guide = [edge_detector.compute_edge(x) for i, x in config.images]
+
     flow_guide = FlowGuide(config.imgsequence, method = config.flow_method, model_name = config.model_name)
     flow_guide = flow_guide()
     flow_guide = [flow for flow in flow_guide]
@@ -31,40 +31,6 @@ def create_guides(config: Config) -> Guides:
         positional_guide,
         positional_fwd,
     )
-
-
-class EdgeGuide:
-    valid_methods = ["PAGE", "PST", "Classic"]
-
-    def __init__(self, imgseq, method = "PAGE"):
-        if method not in self.valid_methods:
-            raise ValueError(f"Invalid method {method}. Valid methods are {self.valid_methods}")
-
-        self.edge_detector = EdgeDetector(method)
-        self.imgseq = imgseq
-
-        self._edge_maps = None  # Store edge_maps here when computed
-
-    def __call__(self):
-        if self._edge_maps is None:
-            self._compute_edge()
-        return self._edge_maps
-
-    def __iter__(self):
-        if self._edge_maps is None:
-            self._compute_edge()
-        for edge_map in self._edge_maps:
-            yield edge_map
-
-    def _compute_edge(self):
-        # Uncomment the following line to potentially parallelize this computation
-        # with concurrent.futures.ThreadPoolExecutor() as executor:
-
-        self._edge_maps = [self._create(img) for img in self.imgseq]
-
-    def _create(self, img):
-
-        return self.edge_detector.compute_edge(img)
 
 
 class FlowGuide:
