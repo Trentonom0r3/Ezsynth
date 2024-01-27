@@ -8,7 +8,7 @@ from ..flow_utils.warp import Warp
 
 
 def create_guides(config: Config) -> Guides:
-    edge_detector = EdgeDetector(config.edge_method)
+    edge_detector = EdgeDetector(method = config.edge_method)
     edge_guide = [edge_detector.compute_edge(x) for i, x in config.images]
 
     flow_guide = FlowGuide(config.imgsequence, method = config.flow_method, model_name = config.model_name)
