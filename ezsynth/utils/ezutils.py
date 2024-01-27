@@ -2,6 +2,7 @@ import os
 import re
 import threading
 from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from typing import List
 
 import cv2
@@ -14,6 +15,7 @@ from .guides.guides import GuideFactory
 from .sequences import SequenceManager
 
 
+@dataclass
 class Config:
     styles: List[tuple[int, numpy.ndarray]]
     images: List[tuple[int, numpy.ndarray]]
