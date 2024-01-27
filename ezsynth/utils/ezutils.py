@@ -32,7 +32,7 @@ class Preprocessor:
             raise ValueError("No image files found.")
 
         self.images = []
-        self.imgseq = image_paths
+        self.image_paths = image_paths
         self.imgindexes = self._extract_indexes(image_paths)
         self._read_frames(image_paths)
         self.begFrame = self.imgindexes[0]
@@ -69,7 +69,7 @@ class Preprocessor:
 
 def setup(style_keys, input_path = "input", edge_method = "PAGE", flow_method = "RAFT", model_name = "sintel"):
     prepro = Preprocessor(style_keys, input_path)
-    guide = GuideFactory(prepro.images, prepro.imgseq, edge_method, flow_method, model_name)
+    guide = GuideFactory(prepro.images, prepro.image_paths, edge_method, flow_method, model_name)
     manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes,
                               prepro.imgindexes)
     subsequences = manager._set_sequence()
