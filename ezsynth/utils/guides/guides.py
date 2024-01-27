@@ -27,6 +27,7 @@ def create_guides(config: Config) -> Guides:
     optical_flow_processor = OpticalFlowProcessor(model_name = config.model_name, flow_method = config.flow_method)
     flow_rev = optical_flow_processor.compute_flow([x for i, x in config.images])
     flow_rev = [x for x in flow_rev]
+    flow_fwd = [x * -1 for x in flow_rev]
 
     positional_rev = PositionalGuide([x for i, x in config.images], flow = flow_rev)
     positional_rev = positional_rev()
@@ -38,7 +39,7 @@ def create_guides(config: Config) -> Guides:
     return Guides(
         edge,
         flow_rev,
-        [x * -1 for x in flow_rev],
+        flow_fwd,
         positional_rev,
         positional_fwd,
     )
