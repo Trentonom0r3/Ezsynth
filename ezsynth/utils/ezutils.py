@@ -18,8 +18,8 @@ def _get_image_sequence(img_sequence: str) -> List[str]:
     """Get the image sequence from the directory."""
     if not os.path.isdir(img_sequence):
         raise ValueError("img_sequence must be a valid directory.")
-    filenames = sorted(os.listdir(img_sequence),
-                       key = lambda x: [int(c) if c.isdigit() else c for c in re.split('([0-9]+)', x)])
+    filenames = sorted(os.listdir(img_sequence))
+
     img_files = [os.path.join(img_sequence, fname) for fname in filenames if
                  fname.lower().endswith(('.png', '.jpg', '.jpeg'))]
     if not img_files:
