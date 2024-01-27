@@ -6,9 +6,6 @@ from typing import List, Literal
 import cv2
 import numpy
 
-from ezsynth.utils.guides.guides import Guides, create_guides
-from ezsynth.utils.sequences import Sequence, SequenceManager
-
 
 @dataclass
 class Config:
@@ -25,16 +22,14 @@ def config_from_directory(
         edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE",
         flow_method: Literal["RAFT", "DeepFlow"] = "RAFT",
         model_name: Literal["sintel", "kitti", "chairs"] = "sintel"
-) -> tuple[Config, Guides, List[Sequence]]:
-    config = Config(
+) -> Config:
+    return Config(
         _read_images(_get_image_paths(style_path)),
         _read_images(_get_image_paths(input_path)),
         edge_method,
         flow_method,
         model_name,
     )
-
-    return config, create_guides(config), SequenceManager(config)._set_sequence()
 
 
 def _get_image_paths(path: str) -> List[tuple[int, str]]:
