@@ -29,11 +29,9 @@ class EbsynthRunner:
                     libebsynth_path = str(Path(__file__).parent / 'ebsynth.dll')
                     self.libebsynth = CDLL(libebsynth_path)
                 elif sys.platform == 'darwin':
-                    # TODO: Implement for macOS
                     libebsynth_path = str(Path(__file__).parent / 'ebsynth.so')
                     self.libebsynth = CDLL(libebsynth_path)
                 elif sys.platform[0:5] == 'linux':
-                    # TODO: Implement for Linux
                     libebsynth_path = str(Path(__file__).parent / 'ebsynth.so')
                     self.libebsynth = CDLL(libebsynth_path)
 
