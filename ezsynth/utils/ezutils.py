@@ -31,7 +31,7 @@ class Preprocessor:
         if not image_paths:
             raise ValueError("No image files found.")
 
-        self.imgsequence = []
+        self.images = []
         self.imgseq = image_paths
         self.imgindexes = self._extract_indexes(image_paths)
         self._read_frames(image_paths)
@@ -60,21 +60,21 @@ class Preprocessor:
         try:
             for img in lst:
                 cv2_img = cv2.imread(img)
-                self.imgsequence.append(cv2_img)
+                self.images.append(cv2_img)
 
-            return self.imgsequence
+            return self.images
         except Exception as e:
             raise ValueError(f"Error reading image frames: {e}")
 
 
 def setup(style_keys, input_path = "input", edge_method = "PAGE", flow_method = "RAFT", model_name = "sintel"):
     prepro = Preprocessor(style_keys, input_path)
-    guide = GuideFactory(prepro.imgsequence, prepro.imgseq, edge_method, flow_method, model_name)
+    guide = GuideFactory(prepro.images, prepro.imgseq, edge_method, flow_method, model_name)
     manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes,
                               prepro.imgindexes)
     subsequences = manager._set_sequence()
     guides = guide.create_all_guides()  # works well, just commented out since it takes a bit to run.
-    return prepro.imgsequence, subsequences, guides
+    return prepro.images, subsequences, guides
 
 
 def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
