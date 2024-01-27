@@ -30,7 +30,7 @@ def _get_image_sequence(img_sequence: str) -> List[str]:
 class Preprocessor:
     def __init__(self, styles: Union[str, List[str]], img_sequence: str):
         self.imgsequence = []
-        imgsequence = self._get_image_sequence(img_sequence)
+        imgsequence = _get_image_sequence(img_sequence)
         self.imgseq = imgsequence
         self.imgindexes = self._extract_indexes(imgsequence)
         self._read_frames(imgsequence)
