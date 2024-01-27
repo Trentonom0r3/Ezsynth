@@ -58,8 +58,7 @@ def setup(
     config = config_from_directory(style_path, input_path)
     prepro = Preprocessor(style_path, input_path)
     guide = GuideFactory(prepro.images, prepro.image_paths, edge_method, flow_method, model_name)
-    manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes,
-                              prepro.imgindexes)
+    manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes, prepro.imgindexes)
     subsequences = manager._set_sequence()
     guides = guide.create_all_guides()  # works well, just commented out since it takes a bit to run.
     return prepro.images, subsequences, guides
