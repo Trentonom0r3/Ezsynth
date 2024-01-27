@@ -33,16 +33,10 @@ def create_guides(config: Config) -> Guides:
     )
 
 
-class Guide():
-    def __init__(self):
-        pass
-
-
-class EdgeGuide(Guide):
+class EdgeGuide:
     valid_methods = ["PAGE", "PST", "Classic"]
 
     def __init__(self, imgseq, method = "PAGE"):
-        super().__init__()
         if method not in self.valid_methods:
             raise ValueError(f"Invalid method {method}. Valid methods are {self.valid_methods}")
 
@@ -73,11 +67,10 @@ class EdgeGuide(Guide):
         return self.edge_detector.compute_edge(img)
 
 
-class FlowGuide(Guide):
+class FlowGuide:
     valid_methods = ["RAFT", "DeepFlow"]
 
     def __init__(self, imgseq, method = "RAFT", model_name = "sintel"):
-        super().__init__()
         if method not in self.valid_methods:
             raise ValueError(f"Invalid method {method}. Valid methods are {self.valid_methods}")
         self.optical_flow_processor = OpticalFlowProcessor(model_name = model_name, flow_method = method)
@@ -92,9 +85,8 @@ class FlowGuide(Guide):
         return self.optical_flow
 
 
-class PositionalGuide(Guide):
+class PositionalGuide:
     def __init__(self, imgseq, flow):
-        super().__init__()
         self.coord_map = None
         self.coord_map_warped = None
         self.warp = Warp(imgseq[0])  # Assuming Warp class has been modified to work with NumPy
