@@ -2,109 +2,35 @@ import cv2
 import numpy as np
 
 from .edge_detection import EdgeDetector
+from ..config import Config
 from ..flow_utils.OpticalFlow import OpticalFlowProcessor
 from ..flow_utils.warp import Warp
 
 
-# from utils import ebsynth, Preprocessor
+def create_guides(config: Config):
+    edge_guide = EdgeGuide(config.images, method = config.edge_method)
+    edge_guide = edge_guide()
+    # edge_guide = [edge for edge in edge_guide]
+    flow_guide = FlowGuide(config.imgsequence, method = config.flow_method, model_name = config.model_name)
+    flow_guide = flow_guide()
+    flow_guide = [flow for flow in flow_guide]
+    # fwd_flow = FlowGuide(self.imgsequence[::-1], method=self.flow_method, model_name=self.model_name) # Reverse the image sequence
+    # fwd_flow = fwd_flow()   # Compute the flow, for some reason computing flow using imgseq backwards results in fwd_flow
+    # fwd_flow = [flow for flow in fwd_flow]
+    positional_guide = PositionalGuide(config.imgsequence, flow = flow_guide)
+    positional_guide = positional_guide()
+    positional_fwd = PositionalGuide(config.imgsequence, flow = flow_guide[::-1])
+    positional_fwd = positional_fwd()
+    positional_fwd = positional_fwd[::-1]
+    fwd_flow = [flow * -1 for flow in flow_guide]
 
-class GuideFactory():
-    """
-    Factory class for creating and managing different types of guides.
-
-    The factory class provides methods to create different types of guides
-    like edge guides, flow guides, and positional guides. It also allows
-    the addition of custom guides.
-
-    Parameters
-    ----------
-    imgsequence : list
-        The sequence of images for which the guides will be created.
-    edge_method : str, optional
-        The method for edge detection, default is "PAGE".
-    flow_method : str, optional
-        The method for optical flow computation, default is "RAFT".
-    model_name : str, optional
-        The model name for optical flow, default is "sintel".
-
-    Attributes
-    ----------
-    imgsequence : list
-        The sequence of images for which the guides are created.
-    edge_method : str
-        The method used for edge detection.
-    flow_method : str
-        The method used for optical flow computation.
-    model_name : str
-        The name of the model used for optical flow.
-    guides : dict
-        Dictionary to store the created guide objects.
-
-    Methods
-    -------
-    create_all_guides()
-        Create all default guides.
-    add_custom_guide(name, custom_guide)
-        Add a custom guide to the factory's collection of guides.
-
-    Usage
-    -----
-        factory = GuideFactory(imgsequence, edge_method="PAGE", flow_method="RAFT", model_name="sintel")
-        factory.create_all_guides()
-        custom_guides = some list of images as numpy arrays
-        factory.add_custom_guide("custom", custom_guides)
-    """
-    VALID_EDGE_METHODS = ["PAGE", "PST", "Classic"]
-    VALID_FLOW_METHODS = ["RAFT", "DeepFlow"]
-    VALID_MODEL_NAMES = ["sintel", "kitti", "chairs"]
-
-    def __init__(self, imgsequence, imgseq, edge_method = "PAGE", flow_method = "RAFT", model_name = "sintel"):
-        if not imgsequence:
-            raise ValueError("Image sequence cannot be empty.")
-
-        self.imgsequence = imgsequence
-        self.edge_method = edge_method if edge_method in self.VALID_EDGE_METHODS else "PAGE"
-        self.flow_method = flow_method if flow_method in self.VALID_FLOW_METHODS else "RAFT"
-        self.model_name = model_name if model_name in self.VALID_MODEL_NAMES else "sintel"
-        self.guides = {}
-        self.imgs = imgseq
-
-    def create_all_guides(self):
-
-        edge_guide = EdgeGuide(self.imgs, method = self.edge_method)
-        edge_guide = edge_guide()
-        # edge_guide = [edge for edge in edge_guide]
-        flow_guide = FlowGuide(self.imgsequence, method = self.flow_method, model_name = self.model_name)
-        flow_guide = flow_guide()
-        flow_guide = [flow for flow in flow_guide]
-        # fwd_flow = FlowGuide(self.imgsequence[::-1], method=self.flow_method, model_name=self.model_name) # Reverse the image sequence
-        # fwd_flow = fwd_flow()   # Compute the flow, for some reason computing flow using imgseq backwards results in fwd_flow
-        # fwd_flow = [flow for flow in fwd_flow]
-        positional_guide = PositionalGuide(self.imgsequence, flow = flow_guide)
-        positional_guide = positional_guide()
-        positional_fwd = PositionalGuide(self.imgsequence, flow = flow_guide[::-1])
-        positional_fwd = positional_fwd()
-        positional_fwd = positional_fwd[::-1]
-        fwd_flow = [flow * -1 for flow in flow_guide]
-
-        self.guides = {
-            "edge": edge_guide,
-            "flow_rev": flow_guide,
-            "flow_fwd": fwd_flow,
-            "positional_rev": positional_guide,
-            "positional_fwd": positional_fwd,
-        }
-
-        return self.guides
-
-    def add_custom_guide(self, name, custom_guides):
-        if len(custom_guides) != len(self.imgsequence):
-            raise ValueError("The length of the custom guide must match the length of the image sequence.")
-
-        self.guides[name] = custom_guides
-
-    def __call__(self):
-        return self.create_all_guides()
+    return {
+        "edge": edge_guide,
+        "flow_rev": flow_guide,
+        "flow_fwd": fwd_flow,
+        "positional_rev": positional_guide,
+        "positional_fwd": positional_fwd,
+    }
 
 
 class Guide():
