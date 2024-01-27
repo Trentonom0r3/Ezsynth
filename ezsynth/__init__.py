@@ -1,2 +1,2 @@
-from .EZMain import Ezsynth
-from .EZMain import Imagesynth
+from .main import Ezsynth
+from .main import Imagesynth
