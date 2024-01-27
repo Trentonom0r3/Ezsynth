@@ -28,6 +28,9 @@ def _get_image_paths(path: str) -> List[str]:
 class Preprocessor:
     def __init__(self, styles: Union[str, List[str]], img_sequence: str):
         image_paths = _get_image_paths(img_sequence)
+        if not image_paths:
+            raise ValueError("No image files found.")
+
         self.imgsequence = []
         self.imgseq = image_paths
         self.imgindexes = self._extract_indexes(image_paths)
