@@ -11,12 +11,9 @@ def create_guides(config: Config) -> Guides:
     edge_detector = EdgeDetector(method = config.edge_method)
     edge_guide = [edge_detector.compute_edge(x) for i, x in config.images]
 
-    flow_guide = FlowGuide(config.imgsequence, method = config.flow_method, model_name = config.model_name)
-    flow_guide = flow_guide()
-    flow_guide = [flow for flow in flow_guide]
-    # fwd_flow = FlowGuide(self.imgsequence[::-1], method=self.flow_method, model_name=self.model_name) # Reverse the image sequence
-    # fwd_flow = fwd_flow()   # Compute the flow, for some reason computing flow using imgseq backwards results in fwd_flow
-    # fwd_flow = [flow for flow in fwd_flow]
+    processor = OpticalFlowProcessor(model_name = config.model_name, flow_method = config.flow_method)
+    flow_guide = processor.compute_flow([x for i, x in config.images])
+
     positional_guide = PositionalGuide(config.imgsequence, flow = flow_guide)
     positional_guide = positional_guide()
     positional_fwd = PositionalGuide(config.imgsequence, flow = flow_guide[::-1])
@@ -31,24 +28,6 @@ def create_guides(config: Config) -> Guides:
         positional_guide,
         positional_fwd,
     )
-
-
-class FlowGuide:
-    valid_methods = ["RAFT", "DeepFlow"]
-
-    def __init__(self, imgseq, method = "RAFT", model_name = "sintel"):
-        if method not in self.valid_methods:
-            raise ValueError(f"Invalid method {method}. Valid methods are {self.valid_methods}")
-        self.optical_flow_processor = OpticalFlowProcessor(model_name = model_name, flow_method = method)
-        self.imgsequence = imgseq
-        self.optical_flow = None
-
-    def __call__(self):
-        return self._create()
-
-    def _create(self):
-        self.optical_flow = self.optical_flow_processor.compute_flow(self.imgsequence)
-        return self.optical_flow
 
 
 class PositionalGuide:
