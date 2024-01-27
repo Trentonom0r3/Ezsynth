@@ -1,10 +1,23 @@
+from dataclasses import dataclass
+from typing import List
+
 import cv2
+import numpy
 import numpy as np
 
 from .edge_detection import EdgeDetector
-from ..config import Config, Guides
+from ..config import Config
 from ..flow_utils.OpticalFlow import OpticalFlowProcessor
 from ..flow_utils.warp import Warp
+
+
+@dataclass
+class Guides:
+    edge: List[numpy.ndarray]
+    flow_rev: List[numpy.ndarray]
+    flow_fwd: List[numpy.ndarray]
+    positional_rev: List[numpy.ndarray]
+    positional_fwd: List[numpy.ndarray]
 
 
 def create_guides(config: Config) -> Guides:
