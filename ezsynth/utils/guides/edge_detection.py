@@ -19,7 +19,7 @@ class EdgeDetector:
         :return: None.
         """
         self.method = method
-        self.device = "cuda"
+        self.device = "mps"
         if method == "PST":
             self.pst_gpu = PST_GPU(device=self.device)
         elif method == "PAGE":
