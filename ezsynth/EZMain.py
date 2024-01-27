@@ -75,27 +75,27 @@ class Imagesynth:
         Parameters
         ----------
         style_img: str or numpy array
-        >>> str leading to file path, or numpy array
+            str leading to file path, or numpy array
         
         guides: tuple of lists
-        >>> [[guide 1, guide 2, weight], [guide 1, guide 2, weight], ...]
-        >>> guide 1: str leading to file path, or numpy array
-        >>> guide 2: str leading to file path, or numpy array
-        >>> weight: float
+            [[guide 1, guide 2, weight], [guide 1, guide 2, weight], ...]
+            guide 1: str leading to file path, or numpy array
+            guide 2: str leading to file path, or numpy array
+            weight: float
         
         Example
         -------
         from ezsynth import imagesynth
         
-        >>> STYLE_PATH = "Style.jpg" or np.array
-        >>> SOURCE_IMG = "Source.jpg" or np.array
-        >>> TARGET_IMG = "Target.jpg" or np.array
-        >>> OUTPUT_PATH = "Output.jpg" or None
+            STYLE_PATH = "Style.jpg" or np.array
+            SOURCE_IMG = "Source.jpg" or np.array
+            TARGET_IMG = "Target.jpg" or np.array
+            OUTPUT_PATH = "Output.jpg" or None
         
-        >>> eb = imagesynth(style_img = STYLE_PATH)
-        >>> eb.add_guide(source = SOURCE_IMG, target = TARGET_IMG, weight = 1.0)
-        >>> eb.run(output_path = OUTPUT_PATH)
-        >>> or to do something else result = eb.run()
+            eb = imagesynth(style_img = STYLE_PATH)
+            eb.add_guide(source = SOURCE_IMG, target = TARGET_IMG, weight = 1.0)
+            eb.run(output_path = OUTPUT_PATH)
+            or to do something else result = eb.run()
         
         """
         self.style_img = self._validate_style_img(style_img)
@@ -112,10 +112,10 @@ class Imagesynth:
         Parameters
         ----------
         source: str or numpy array
-        >>> str leading to file path, or numpy array
+            str leading to file path, or numpy array
         
         target: str or numpy array
-        >>> str leading to file path, or numpy array
+            str leading to file path, or numpy array
         
         weight: float
         """
@@ -162,7 +162,7 @@ class Imagesynth:
         Parameters
         ----------
         output_path: str(optional)
-        >>> str leading to file path
+            str leading to file path
         
         returns: numpy array
         
