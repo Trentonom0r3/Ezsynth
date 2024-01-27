@@ -28,8 +28,8 @@ def create_guides(config: Config) -> Guides:
     flow_guide = optical_flow_processor.compute_flow([x for i, x in config.images])
     flow_guide = [x for x in flow_guide]
 
-    positional_guide = PositionalGuide([x for i, x in config.images], flow = flow_guide)
-    positional_guide = positional_guide()
+    positional_rev = PositionalGuide([x for i, x in config.images], flow = flow_guide)
+    positional_rev = positional_rev()
 
     positional_fwd = PositionalGuide([x for i, x in config.images], flow = flow_guide[::-1])
     positional_fwd = positional_fwd()
@@ -39,7 +39,7 @@ def create_guides(config: Config) -> Guides:
         edge_guide,
         flow_guide,
         [x * -1 for x in flow_guide],
-        positional_guide,
+        positional_rev,
         positional_fwd,
     )
 
