@@ -168,7 +168,7 @@ class Imagesynth:
         
         """
         output_path = self._validate_output_path(output_path)
-        result, _ = self.eb.run(output_nnf = True)
+        result, _ = self.eb.run()
 
         if output_path:
             cv2.imwrite(output_path, result)
