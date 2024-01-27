@@ -14,6 +14,19 @@ from .guides.guides import GuideFactory
 from .sequences import SequenceManager
 
 
+def _get_image_sequence(img_sequence: str) -> List[str]:
+    """Get the image sequence from the directory."""
+    if not os.path.isdir(img_sequence):
+        raise ValueError("img_sequence must be a valid directory.")
+    filenames = sorted(os.listdir(img_sequence),
+                       key = lambda x: [int(c) if c.isdigit() else c for c in re.split('([0-9]+)', x)])
+    img_files = [os.path.join(img_sequence, fname) for fname in filenames if
+                 fname.lower().endswith(('.png', '.jpg', '.jpeg'))]
+    if not img_files:
+        raise ValueError("No image files found in the directory.")
+    return img_files
+
+
 class Preprocessor:
     def __init__(self, styles: Union[str, List[str]], img_sequence: str):
         self.imgsequence = []
@@ -26,18 +39,6 @@ class Preprocessor:
         self.styles = self._get_styles(styles)
         self.style_indexes = self._extract_indexes(self.styles)
         self.num_styles = len(self.styles)
-
-    def _get_image_sequence(self, img_sequence: str) -> List[str]:
-        """Get the image sequence from the directory."""
-        if not os.path.isdir(img_sequence):
-            raise ValueError("img_sequence must be a valid directory.")
-        filenames = sorted(os.listdir(img_sequence),
-                           key = lambda x: [int(c) if c.isdigit() else c for c in re.split('([0-9]+)', x)])
-        img_files = [os.path.join(img_sequence, fname) for fname in filenames if
-                     fname.lower().endswith(('.png', '.jpg', '.jpeg'))]
-        if not img_files:
-            raise ValueError("No image files found in the directory.")
-        return img_files
 
     def _get_styles(self, styles: Union[str, List[str]]) -> List[str]:
         """Get the styles either as a list or single string."""
