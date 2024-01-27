@@ -14,7 +14,7 @@ from .guides.guides import GuideFactory
 from .sequences import SequenceManager
 
 
-def _get_image_sequence(path: str) -> List[str]:
+def _get_image_paths(path: str) -> List[str]:
     """Get the image sequence from the directory."""
     if not os.path.isdir(path):
         raise ValueError("img_sequence must be a valid directory.")
@@ -31,7 +31,7 @@ def _get_image_sequence(path: str) -> List[str]:
 class Preprocessor:
     def __init__(self, styles: Union[str, List[str]], img_sequence: str):
         self.imgsequence = []
-        imgsequence = _get_image_sequence(img_sequence)
+        imgsequence = _get_image_paths(img_sequence)
         self.imgseq = imgsequence
         self.imgindexes = self._extract_indexes(imgsequence)
         self._read_frames(imgsequence)
