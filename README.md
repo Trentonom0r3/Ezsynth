@@ -12,40 +12,14 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 
 # Table of Contents
 
-- [Changelog](#changelog)
 - [Installation](#installation)
 - [API](#api)
 - [Usage](#usage)
 - [FAQ](#faq)
 - [TODO](#todo)
 - [Contributing](#contributing)
+- [Changelog](#changelog)
 - [Examples](#examples)
-
-## Changelog
-
-- 2.1.1
-    - Fixed Issues with Single style image.
-- 2.1.0
-    - Slight Refactorings, moved `ebsynth.py` into `_ebsynth.py` to avoid naming issues when importing module.
-    - Adjusted function signature for ctypes function.
-    - Kept `.dll` & `.so` named as `ebsynth`.
-- [12.31.23]
-    - Significant Refactoring of the Library. (In My opinion, easier to follow).
-        - Various Refactorings, separations, etc to classes.
-        - Utilization of `opencv` for warping vs using `torch.`
-    - Improved computation time, down to ~4 minutes. (Still not great, but much better than previously ~10 minutes).
-    - Implemented multithreading in `Ezsynth`, `ImageSynth` remains the same.
-    - Added logic for usage of `.so` with Linux. If someone can build and contribute the `.so`, would be much appreciated.
-    - Went back to `.dll` usage over `.pyd`.
-        - Perhaps it was how I was setting up the `.pyd`, perhaps its was something else, but using the `.dll` and utilizing multithreading leads to huge performance gains I can't ignore, so I scrapped the `.pyd`.
-    - Upload new version to `pypi`.
-- [10.17.23]
-    - Merge https://github.com/Trentonom0r3/Ezsynth/pull/19
-    - Re-build and distribute to PyPi
-- [10.10.23]
-    - ezsynth.run(output_path) now results in both final images AND in-between images being saved.
-- [10.03.23]
-    - Linked to Ebsynth Source Code w/ Wrapper
 
 ## Installation
 
@@ -273,6 +247,32 @@ results = ez.results  # The results are stored in the results variable
     - Thread Management, locks, optimizing blending algorithms.
 
 - If I missed anything, or you have any questions, feel free to start a new issue or discussion.
+
+## Changelog
+
+- 2.1.1
+    - Fixed Issues with Single style image.
+- 2.1.0
+    - Slight Refactorings, moved `ebsynth.py` into `_ebsynth.py` to avoid naming issues when importing module.
+    - Adjusted function signature for ctypes function.
+    - Kept `.dll` & `.so` named as `ebsynth`.
+- [12.31.23]
+    - Significant Refactoring of the Library. (In My opinion, easier to follow).
+        - Various Refactorings, separations, etc to classes.
+        - Utilization of `opencv` for warping vs using `torch.`
+    - Improved computation time, down to ~4 minutes. (Still not great, but much better than previously ~10 minutes).
+    - Implemented multithreading in `Ezsynth`, `ImageSynth` remains the same.
+    - Added logic for usage of `.so` with Linux. If someone can build and contribute the `.so`, would be much appreciated.
+    - Went back to `.dll` usage over `.pyd`.
+        - Perhaps it was how I was setting up the `.pyd`, perhaps its was something else, but using the `.dll` and utilizing multithreading leads to huge performance gains I can't ignore, so I scrapped the `.pyd`.
+    - Upload new version to `pypi`.
+- [10.17.23]
+    - Merge https://github.com/Trentonom0r3/Ezsynth/pull/19
+    - Re-build and distribute to PyPi
+- [10.10.23]
+    - ezsynth.run(output_path) now results in both final images AND in-between images being saved.
+- [10.03.23]
+    - Linked to Ebsynth Source Code w/ Wrapper
 
 ## Examples
 
