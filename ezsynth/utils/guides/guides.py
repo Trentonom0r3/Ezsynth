@@ -24,13 +24,13 @@ def create_guides(config: Config) -> Guides:
     positional_fwd = positional_fwd[::-1]
     fwd_flow = [flow * -1 for flow in flow_guide]
 
-    return {
-        "edge": edge_guide,
-        "flow_rev": flow_guide,
-        "flow_fwd": fwd_flow,
-        "positional_rev": positional_guide,
-        "positional_fwd": positional_fwd,
-    }
+    return Guides(
+        edge_guide,
+        flow_guide,
+        fwd_flow,
+        positional_guide,
+        positional_fwd,
+    )
 
 
 class Guide():
