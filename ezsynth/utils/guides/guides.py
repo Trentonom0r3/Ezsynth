@@ -45,15 +45,15 @@ def create_guides(config: Config) -> Guides:
 
 
 class PositionalGuide:
-    def __init__(self, imgseq, flow):
+    def __init__(self, images, flow):
         self.coord_map = None
         self.coord_map_warped = None
-        self.warp = Warp(imgseq[0])  # Assuming Warp class has been modified to work with NumPy
+        self.warp = Warp(images[0])  # Assuming Warp class has been modified to work with NumPy
         self.flow = flow
-        self.imgseq = imgseq
+        self.images = images
 
     def __call__(self):
-        self.g_pos = self._create_g_pos_from_flow(self.flow, self.imgseq[0].shape[1::-1])
+        self.g_pos = self._create_g_pos_from_flow(self.flow, self.images[0].shape[1::-1])
         return self.g_pos
 
     def _create_and_warp_coord_map(self, flow_up, original_size):
