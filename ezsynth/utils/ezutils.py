@@ -55,8 +55,14 @@ def setup(
         flow_method = "RAFT",
         model_name = "sintel"
 ):
-    config = config_from_directory(style_path, input_path)
-    prepro = Preprocessor(style_path, input_path)
+    config = Config(
+        _read_images(_get_image_paths(style_path)),
+        _read_images(_get_image_paths(input_path)),
+        edge_method,
+        flow_method,
+        model_name,
+    )
+
     guide = GuideFactory(prepro.images, prepro.image_paths, edge_method, flow_method, model_name)
     manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes, prepro.imgindexes)
     subsequences = manager._set_sequence()
