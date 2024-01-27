@@ -7,9 +7,7 @@ import ezsynth.utils.ezutils
 
 def main():
     sequence, subsequences, guides = ezsynth.utils.ezutils.setup(
-        style_keys = [
-            "styles/style000.jpg",
-        ],
+        style_path = "styles",
         input_path = "input",
         edge_method = "Classic",
         flow_method = "RAFT",
