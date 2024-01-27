@@ -3,6 +3,7 @@ import numpy as np
 
 from ._eb import *
 
+
 class ebsynth:
     """
     EBSynth class provides a wrapper around the ebsynth style transfer method.
@@ -11,10 +12,10 @@ class ebsynth:
         ebsynth = ebsynth.ebsynth(style='style.png', guides=[('source1.png', 'target1.png'), 1.0])
         result_img = ebsynth.run()
     """
-    
-    def __init__(self, style, guides=[], uniformity=3500.0, 
-             patchsize=5, pyramidlevels=6, searchvoteiters=12, 
-             patchmatchiters=6, extrapass3x3=True, backend='auto'):
+
+    def __init__(self, style, guides = [], uniformity = 3500.0,
+                 patchsize = 5, pyramidlevels = 6, searchvoteiters = 12,
+                 patchmatchiters = 6, extrapass3x3 = True, backend = 'auto'):
 
         """
         Initialize the EBSynth wrapper.      
@@ -29,7 +30,7 @@ class ebsynth:
         :param extrapass3x3: whether to perform an extra pass with 3x3 patches. Defaults to False.
         :param backend: backend to use ('cpu', 'cuda', or 'auto'). Defaults to 'auto'.
         """
-        #self.lock = threading.Lock()
+        # self.lock = threading.Lock()
         # Handling the style image
         if isinstance(style, (np.ndarray)):
             self.style = style
@@ -43,7 +44,7 @@ class ebsynth:
 
         # Handling the guide images
         self.guides = []
-        #self.eb = LoadDLL()
+        # self.eb = LoadDLL()
         self.runner = EbsynthRunner()
         # Store the arguments
         self.style = style
@@ -63,15 +64,14 @@ class ebsynth:
         }
         self.backend = self.backends[backend]
 
-
     def clear_guide(self):
         """
         Clear all the guides.
         """
-      
+
         self.guides = []
-        
-    def add_guide(self, source, target, weight=None):
+
+    def add_guide(self, source, target, weight = None):
         """
         Add a new guide pair.
         
@@ -80,18 +80,16 @@ class ebsynth:
         :param weight: Weight for the guide pair. Defaults to 1.0.
         """
 
-    
         if not isinstance(source, (str, np.ndarray)):
             raise ValueError("source should be either a file path or a numpy array.")
         if not isinstance(target, (str, np.ndarray)):
             raise ValueError("target should be either a file path or a numpy array.")
         if not isinstance(weight, (float, int)):
             raise ValueError("weight should be a float or an integer.")
-        
+
         weight = weight if weight is not None else 1.0
         self.guides.append((source, target, weight))
 
-            
     def run(self):
         """
         Run the style transfer and return the result image.
@@ -99,7 +97,7 @@ class ebsynth:
         :return: styled image as a numpy array.
         """
 
-        #with self.lock:
+        # with self.lock:
         if isinstance(self.style, np.ndarray):
             style = self.style
         else:
@@ -117,15 +115,15 @@ class ebsynth:
             else:
                 target_img = cv2.imread(target)
             guides_processed.append((source_img, target_img, weight))
-            
+
         # Call the run function with the provided arguments
-        img, err = self.runner.run(style, guides_processed, 
-                    patch_size=self.patchsize,
-                    num_pyramid_levels=self.pyramidlevels,
-                    num_search_vote_iters=self.searchvoteiters,
-                    num_patch_match_iters=self.patchmatchiters,
-                    uniformity_weight=self.uniformity,
-                    extraPass3x3=self.extrapass3x3
-                    )
+        img, err = self.runner.run(style, guides_processed,
+                                   patch_size = self.patchsize,
+                                   num_pyramid_levels = self.pyramidlevels,
+                                   num_search_vote_iters = self.searchvoteiters,
+                                   num_patch_match_iters = self.patchmatchiters,
+                                   uniformity_weight = self.uniformity,
+                                   extraPass3x3 = self.extrapass3x3
+                                   )
 
         return img, err
