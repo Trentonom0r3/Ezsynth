@@ -5,15 +5,15 @@ style_paths = [
     "output099.jpg",
 ]
 
-image_folder = "C:/input"
-output_folder = "C:/output"
+image_folder = "../input"
+output_folder = "../output"
 
 ez = Ezsynth(
     styles=style_paths,
     imgsequence=image_folder,
     edge_method="Classic",
     flow_method="RAFT",
-    model='sintel',
+    model="sintel",
     output_folder=output_folder,
 )
 
