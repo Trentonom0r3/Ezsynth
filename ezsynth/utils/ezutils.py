@@ -116,22 +116,14 @@ class Preprocessor:
             raise ValueError(f"Error reading image frames: {e}")
 
 
-class Setup(Preprocessor, GuideFactory):
-
-    def __init__(self, style_keys, imgseq, edge_method = "PAGE", flow_method = "RAFT", model_name = "sintel"):
-        prepro = Preprocessor(style_keys, imgseq)
-        GuideFactory.__init__(self, prepro.imgsequence, prepro.imgseq, edge_method, flow_method, model_name)
-        manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes,
-                                  prepro.imgindexes)
-        self.imgseq = prepro.imgsequence
-        self.subsequences = manager._set_sequence()
-        self.guides = self.create_all_guides()  # works well, just commented out since it takes a bit to run.
-
-    def __call__(self):
-        return self.guides, self.subsequences
-
-    def __str__(self):
-        return f"Setup: Init: {self.begFrame} - {self.endFrame} | Styles: {self.style_indexes} | Subsequences: {[str(sub) for sub in self.subsequences]}"
+def setup(self, style_keys, imgseq, edge_method = "PAGE", flow_method = "RAFT", model_name = "sintel"):
+    prepro = Preprocessor(style_keys, imgseq)
+    GuideFactory.__init__(self, prepro.imgsequence, prepro.imgseq, edge_method, flow_method, model_name)
+    manager = SequenceManager(prepro.begFrame, prepro.endFrame, prepro.styles, prepro.style_indexes,
+                              prepro.imgindexes)
+    self.imgseq = prepro.imgsequence
+    self.subsequences = manager._set_sequence()
+    self.guides = self.create_all_guides()  # works well, just commented out since it takes a bit to run.
 
 
 def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
