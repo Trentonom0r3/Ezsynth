@@ -16,26 +16,6 @@ from .sequences import SequenceManager
 
 class Preprocessor:
     def __init__(self, styles: Union[str, List[str]], img_sequence: str):
-        """
-        Initialize the Preprocessor class.
-
-        Parameters
-        ----------
-        styles : Union[str, List[str]]
-            Style(s) used for the sequence. Can be a string or a list of strings.
-        img_sequence : str
-            Directory path containing the image sequence.
-
-        Examples
-        --------
-        >>> preprocessor = Preprocessor("Style1", "/path/to/image_sequence")
-        >>> preprocessor.styles
-        ['Style1']
-
-        >>> preprocessor = Preprocessor(["Style1", "Style2"], "/path/to/image_sequence")
-        >>> preprocessor.styles
-        ['Style1', 'Style2']
-        """
         self.imgsequence = []
         imgsequence = self._get_image_sequence(img_sequence)
         self.imgseq = imgsequence
