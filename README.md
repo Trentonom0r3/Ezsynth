@@ -1,14 +1,11 @@
-# Ezsynth - Ebsynth for Python
+# Ezsynth - Ebsynth Python Library
 
-Ebsynth as an importable python library!
+Perform things like style transfer, color transfer, inpainting, superimposition, video stylization and more!
 
-This is quite a simple implementation. I'll be working to add more complex classes and options in the future.
+This implementation makes use of advanced physics based edge detection and RAFT optical flow,
+which leads to more accurate results during synthesis.
 
-Using the class provided, you can perform things like style transfer, color transfer, inpainting, superimposition, and more!
-
-The `Ezsynth` class provides a simple python method for running the ebsynth video stylization you are probably familiar with.  
-This does not require or use ebsynth.exe, and is a custom implementation of the same paper and method used by ebsynth.exe.  
-This implementation makes use of advanced physics based edge detection and RAFT optical flow, which leads to more accurate results during synthesis.
+Ezsynth uses [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) - library version of Ebsynth.
 
 # Table of Contents
 
