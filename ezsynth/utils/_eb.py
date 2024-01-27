@@ -175,44 +175,45 @@ class EbsynthRunner:
         errbuffer = self.get_or_create_err_buffer((t_h, t_w))
 
         with self.libebsynth_lock:
-            self.libebsynth.ebsynthRun(self.EBSYNTH_BACKEND_AUTO,  # backend
-                                       sc,  # numStyleChannels
-                                       guides_source.shape[-1],  # numGuideChannels
-                                       sw,  # sourceWidth
-                                       sh,  # sourceHeight
-                                       img_style.tobytes(),
-                                       # sourceStyleData (width * height * numStyleChannels) bytes, scan-line order
-                                       guides_source.tobytes(),
-                                       # sourceGuideData (width * height * numGuideChannels) bytes, scan-line order
-                                       t_w,  # targetWidth
-                                       t_h,  # targetHeight
-                                       guides_target.tobytes(),
-                                       # targetGuideData (width * height * numGuideChannels) bytes, scan-line order
-                                       None,
-                                       # targetModulationData (width * height * numGuideChannels) bytes, scan-line order; pass NULL to switch off the modulation
-                                       style_weights,  # styleWeights (numStyleChannels) floats
-                                       guides_weights,  # guideWeights (numGuideChannels) floats
-                                       uniformity_weight,
-                                       # uniformityWeight reasonable values are between 500-15000, 3500 is a good default
-                                       patch_size,  # patchSize odd sizes only, use 5 for 5x5 patch, 7 for 7x7, etc.
-                                       self.EBSYNTH_VOTEMODE_WEIGHTED,
-                                       # voteMode use VOTEMODE_WEIGHTED for sharper result
-                                       num_pyramid_levels,  # numPyramidLevels
-                                       num_search_vote_iters_per_level,
-                                       # numSearchVoteItersPerLevel how many search/vote iters to perform at each level (array of ints, coarse first, fine last)
-                                       num_patch_match_iters_per_level,
-                                       # numPatchMatchItersPerLevel how many Patch-Match iters to perform at each level (array of ints, coarse first, fine last)
-                                       stop_threshold_per_level,
-                                       # stopThresholdPerLevel stop improving pixel when its change since last iteration falls under this threshold
-                                       1 if extraPass3x3 else 0,
-                                       # extraPass3x3 perform additional polishing pass with 3x3 patches at the finest level, use 0 to disable
-                                       None,
-                                       # outputNnfData (width * height * 2) ints, scan-line order; pass NULL to ignore
-                                       buffer,
-                                       # outputImageData  (width * height * numStyleChannels) bytes, scan-line order
-                                       errbuffer,
-                                       # outputErrorData (width * height) floats, scan-line order; pass NULL to ignore
-                                       )
+            self.libebsynth.ebsynthRun(
+                self.EBSYNTH_BACKEND_AUTO,  # backend
+                sc,  # numStyleChannels
+                guides_source.shape[-1],  # numGuideChannels
+                sw,  # sourceWidth
+                sh,  # sourceHeight
+                img_style.tobytes(),
+                # sourceStyleData (width * height * numStyleChannels) bytes, scan-line order
+                guides_source.tobytes(),
+                # sourceGuideData (width * height * numGuideChannels) bytes, scan-line order
+                t_w,  # targetWidth
+                t_h,  # targetHeight
+                guides_target.tobytes(),
+                # targetGuideData (width * height * numGuideChannels) bytes, scan-line order
+                None,
+                # targetModulationData (width * height * numGuideChannels) bytes, scan-line order; pass NULL to switch off the modulation
+                style_weights,  # styleWeights (numStyleChannels) floats
+                guides_weights,  # guideWeights (numGuideChannels) floats
+                uniformity_weight,
+                # uniformityWeight reasonable values are between 500-15000, 3500 is a good default
+                patch_size,  # patchSize odd sizes only, use 5 for 5x5 patch, 7 for 7x7, etc.
+                self.EBSYNTH_VOTEMODE_WEIGHTED,
+                # voteMode use VOTEMODE_WEIGHTED for sharper result
+                num_pyramid_levels,  # numPyramidLevels
+                num_search_vote_iters_per_level,
+                # numSearchVoteItersPerLevel how many search/vote iters to perform at each level (array of ints, coarse first, fine last)
+                num_patch_match_iters_per_level,
+                # numPatchMatchItersPerLevel how many Patch-Match iters to perform at each level (array of ints, coarse first, fine last)
+                stop_threshold_per_level,
+                # stopThresholdPerLevel stop improving pixel when its change since last iteration falls under this threshold
+                1 if extraPass3x3 else 0,
+                # extraPass3x3 perform additional polishing pass with 3x3 patches at the finest level, use 0 to disable
+                None,
+                # outputNnfData (width * height * 2) ints, scan-line order; pass NULL to ignore
+                buffer,
+                # outputImageData  (width * height * numStyleChannels) bytes, scan-line order
+                errbuffer,
+                # outputErrorData (width * height) floats, scan-line order; pass NULL to ignore
+            )
 
         img = np.frombuffer(buffer, dtype = np.uint8).reshape((t_h, t_w, sc)).copy()
         err = np.frombuffer(errbuffer, dtype = np.float32).reshape((t_h, t_w)).copy()
