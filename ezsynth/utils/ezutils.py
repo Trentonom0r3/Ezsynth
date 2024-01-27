@@ -39,7 +39,6 @@ class Preprocessor:
         self.endFrame = self.imgindexes[-1]
         self.styles = self._get_styles(styles)
         self.style_indexes = self._extract_indexes(self.styles)
-        self.num_styles = len(self.styles)
 
     def _get_styles(self, styles: Union[str, List[str]]) -> List[str]:
         """Get the styles either as a list or single string."""
