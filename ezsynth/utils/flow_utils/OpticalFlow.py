@@ -39,7 +39,7 @@ class OpticalFlowProcessor():
         
         
 class RAFT_flow(Warp):
-    device = 'cuda'
+    device = 'mps'
     def __init__(self, img, model_name = 'Sintel'):
         """
         
