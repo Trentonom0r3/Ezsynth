@@ -13,37 +13,6 @@ from .flow_utils.warp import Warp
 from .guides.guides import GuideFactory
 from .sequences import SequenceManager
 
-"""
-HELPER CLASSES CONTAINED WITHIN THIS FILE:
-
-    - Preprocessor
-        - _get_image_sequence
-        - _get_styles
-        - _extract_indexes
-        - _read_frames
-        -Used to preprocess the image sequence.
-
-    - ebsynth
-        - __init__
-        - add_guide
-        - clear_guide
-        - __call__
-        - run
-        - Used to run the underlying Ebsynth pipeline.
-        
-TODO NEW:
-        
-TODO REFACTOR:
-
-    - ImageSynth
-        - __init__
-        - synthesize
-        - Used to synthesize a single image. 
-        - This is a wrapper around the underlying .pyd file.
-        - Optimize, if possible. 
-        - Will use the Runner Class, as will the Ezsynth class.
-"""
-
 
 class Preprocessor:
     def __init__(self, styles: Union[str, List[str]], img_sequence: str):
