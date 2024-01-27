@@ -65,7 +65,7 @@ pip install ezsynth-XX.XX.XX.tar.gz
 
 ### macOS & Linux
 
-```
+```sh
 # clone the repo
 git submodule update --init --recursive
 (cd ebsynth && ./build-linux-cpu+cuda.sh)
