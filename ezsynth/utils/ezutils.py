@@ -135,22 +135,6 @@ class Setup(Preprocessor, GuideFactory):
         return f"Setup: Init: {self.begFrame} - {self.endFrame} | Styles: {self.style_indexes} | Subsequences: {[str(sub) for sub in self.subsequences]}"
 
 
-class Runner:
-    def __init__(self, setup, masks = None):
-        self.setup = setup
-        self.guides, self.subsequences = self.setup()
-        self.imgsequence = self.setup.imgseq
-        self.flow_fwd = self.guides["flow_fwd"]
-        self.flow_bwd = self.guides["flow_rev"]
-        self.edge_maps = self.guides["edge"]
-        self.positional_fwd = self.guides["positional_fwd"]
-        self.positional_bwd = self.guides["positional_rev"]
-
-    def run(self):
-        return process(self.subsequences, self.imgsequence, self.edge_maps, self.flow_fwd, self.flow_bwd,
-                       self.positional_fwd, self.positional_bwd)
-
-
 def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
     """
     Process sub-sequences using multiprocessing.
