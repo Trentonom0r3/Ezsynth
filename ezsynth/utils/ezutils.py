@@ -2,10 +2,10 @@ import os
 import re
 import threading
 from concurrent.futures import ThreadPoolExecutor
-from typing import List, Union
+from typing import List
 
 import cv2
-import numpy as np
+import numpy
 
 from ._ebsynth import ebsynth
 from .blend.blender import Blend
