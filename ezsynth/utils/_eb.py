@@ -36,6 +36,8 @@ class EbsynthRunner:
                     # TODO: Implement for Linux
                     libebsynth_path = str(Path(__file__).parent / 'ebsynth.so')
                     self.libebsynth = CDLL(libebsynth_path)
+                else:
+                    raise RuntimeError("Unsupported platform.")
 
                 if self.libebsynth is not None:
                     self.libebsynth.ebsynthRun.argtypes = (
