@@ -159,8 +159,7 @@ class EbsynthRunner:
 
         maxPyramidLevels = 0
         for level in range(32, -1, -1):
-            if min(min(sh, t_h) * pow(2.0, -level), \
-                   min(sw, t_w) * pow(2.0, -level)) >= (2 * patch_size + 1):
+            if min(min(sh, t_h) * pow(2.0, -level), min(sw, t_w) * pow(2.0, -level)) >= (2 * patch_size + 1):
                 maxPyramidLevels = level + 1
                 break
 
