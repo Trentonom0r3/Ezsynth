@@ -18,10 +18,8 @@ def config_to_sequences(a: Config) -> List[Sequence]:
     for b in a.style_frames:
         acc.append(
             Sequence(
-                start_frame = 0,
-                end_frame = 0,
-                style_start_frame = None,
-                style_end_frame = None,
+                start_frame = first_frame if len(acc) == 0 else acc[-1].end_frame,
+                end_frame = b.index,
             )
         )
 
