@@ -65,7 +65,7 @@ synth.run(output)  # Run the synthesis and save.
 # result = synth.run()  # Run the synthesis and return the result as a numpy array
 ```
 
-### Ezsynth
+### Visynth
 
 ```py
 from ezsynth import Ezsynth
