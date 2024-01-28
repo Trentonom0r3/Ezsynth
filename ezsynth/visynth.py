@@ -107,12 +107,10 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
 
 
 def _run_sequences(
-        imgseq,
-        edge,
-        flow,
-        positional,
-        seq,
-        reverse = False
+        a: Config,
+        guides: Guides,
+        seq: Sequence,
+        reverse: bool,
 ):
     with threading.Lock():
         stylized_frames = []
