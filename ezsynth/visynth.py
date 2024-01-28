@@ -154,7 +154,7 @@ def _run_sequences(
 
                 eb.add_guide(style, warped_img, 0.5)
 
-            stylized_img, err = eb.run()
+            stylized_img, err = eb(config)
             stylized_frames.append(stylized_img)
             err_list.append(err)
 
