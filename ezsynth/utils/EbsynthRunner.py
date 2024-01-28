@@ -172,7 +172,7 @@ class EbsynthRunner:
 
         # Get or create buffers
         buffer = self.get_or_create_buffer((t_h, t_w, sc))
-        errbuffer = self.get_or_create_err_buffer((t_h, t_w))
+        err_buffer = self.get_or_create_err_buffer((t_h, t_w))
 
         with self.lib_lock:
             self.lib.ebsynthRun(
@@ -199,10 +199,10 @@ class EbsynthRunner:
                 1 if extra_pass3x3 else 0,  # extraPass3x3 perform additional polishing pass with 3x3 patches at the finest level, use 0 to disable
                 None,  # outputNnfData (width * height * 2) ints, scan-line order; pass NULL to ignore
                 buffer,  # outputImageData  (width * height * numStyleChannels) bytes, scan-line order
-                errbuffer,  # outputErrorData (width * height) floats, scan-line order; pass NULL to ignore
+                err_buffer,  # outputErrorData (width * height) floats, scan-line order; pass NULL to ignore
             )
 
         img = np.frombuffer(buffer, dtype = np.uint8).reshape((t_h, t_w, sc)).copy()
-        err = np.frombuffer(errbuffer, dtype = np.float32).reshape((t_h, t_w)).copy()
+        err = np.frombuffer(err_buffer, dtype = np.float32).reshape((t_h, t_w)).copy()
 
         return img, err
