@@ -18,6 +18,8 @@ def config_to_sequences(a: Config) -> List[Sequence]:
     """
     Compares style frame indexes with image frame indexes to determine the sequences.
     """
+    num_styles = len(a.style_frames)
+
     if num_styles == 1 and start_frame == style_indexes[0]:
         return [
             Sequence(start_frame = start_frame, end_frame = end_frame, style_start = cv2.imread(styles[0]))
