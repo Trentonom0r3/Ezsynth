@@ -24,8 +24,8 @@ class Config:
     :param extra_pass3x3: whether to perform an extra pass with 3x3 patches. Defaults to False.
     """
 
-    style_image: np.ndarray
-    guides: List[Tuple[np.ndarray, np.ndarray, float]]
+    style_image: Union[str, np.ndarray]
+    guides: List[Tuple[Union[str, np.ndarray], Union[str, np.ndarray], float]]
     uniformity: float = 3500.0
     patch_size: int = 5
     num_pyramid_levels: int = -1
