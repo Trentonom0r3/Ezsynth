@@ -117,7 +117,7 @@ def _run_sequences(
 ):
     with threading.Lock():
         frames = []
-        err_list = []
+        errors = []
 
         if direction == 1:
             start_frame = seq.start_frame
@@ -156,7 +156,7 @@ def _run_sequences(
 
             stylized_img, err = eb(config)
             frames.append(stylized_img)
-            err_list.append(err)
+            errors.append(err)
 
-        print(f"Final Length, Reverse = {direction}: {len(frames)}. Error Length: {len(err_list)}")
-        return frames, err_list
+        print(f"Final Length, Reverse = {direction}: {len(frames)}. Error Length: {len(errors)}")
+        return frames, errors
