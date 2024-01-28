@@ -66,6 +66,7 @@ class RAFT_flow(Warp):
         self.model.to(self.device)
         self.model.eval()
 
+    # noinspection PyMethodMayBeStatic
     def _instantiate_raft_model(self, model_name):
         from argparse import Namespace
         args = Namespace()
