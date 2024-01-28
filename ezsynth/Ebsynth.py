@@ -126,7 +126,7 @@ class Ebsynth:
         return img, err
 
 
-def _validate_image(a):
+def _validate_image(a: Union[str, np.ndarray]) -> np.ndarray:
     if isinstance(a, str):
         b = cv2.imread(a)
         if b is None:
