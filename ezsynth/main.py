@@ -45,7 +45,7 @@ class Imagesynth:
             or to do something else result = eb.run()
         
         """
-        self.style_img = self._validate_style_img(style_img)
+        self.style_img = self._validate_image(style_img)
         self.eb = ebsynth(style = style_img, guides = [], uniformity = uniformity,
                           patchsize = patchsize, pyramidlevels = pyramidlevels,
                           searchvoteiters = searchvoteiters, patchmatchiters = patchmatchiters,
@@ -84,9 +84,6 @@ class Imagesynth:
         else:
             raise ValueError('style_img must be a str leading to a valid file path or a 3-channel numpy array')
         return img
-
-    def _validate_style_img(self, style_img):
-        return self._validate_image(style_img)
 
     def _validate_guide(self, guide):
         if len(guide) != 3:
