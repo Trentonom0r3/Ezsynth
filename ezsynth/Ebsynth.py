@@ -13,7 +13,7 @@ import numpy as np
 @dataclass
 class Config:
     """
-    Initialize Ebsynth.
+    Ebsynth config.
     :param style_image: Path to the image, or a numpy array.
     :param guides: List of tuples containing: source image, target image, weight.
     :param uniformity: Uniformity weight for the style transfer. Defaults to 3500.
