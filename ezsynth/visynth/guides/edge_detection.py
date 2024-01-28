@@ -75,15 +75,15 @@ class EdgeDetector:
                 os.remove(input_data_path)
 
         elif self.method == "Classic":
-                if isinstance(input_data, np.ndarray):
-                    img = input_data
-                elif isinstance(input_data, str):
-                    img = cv2.imread(input_data)
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                blurred = cv2.filter2D(gray, -1, self.kernel)
-                edge_map = cv2.subtract(gray, blurred)
-                edge_map = cv2.add(edge_map, 0.5 * 255)
-                edge_map = np.clip(edge_map, 0, 255)
+            if isinstance(input_data, np.ndarray):
+                img = input_data
+            elif isinstance(input_data, str):
+                img = cv2.imread(input_data)
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            blurred = cv2.filter2D(gray, -1, self.kernel)
+            edge_map = cv2.subtract(gray, blurred)
+            edge_map = cv2.add(edge_map, 0.5 * 255)
+            edge_map = np.clip(edge_map, 0, 255)
 
         else:
             raise ValueError("Unknown edge detection method.")
