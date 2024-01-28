@@ -47,8 +47,7 @@ class EdgeDetector:
 
         :return: Edge map as a numpy array.
         """
-        method = self.method
-        if method == "PAGE":
+        if self.method == "PAGE":
             try:
                 input_data_path = self.load_image(input_data)
                 # page_gpu = PAGE_GPU(direction_bins=10, device=self.device)
@@ -61,7 +60,7 @@ class EdgeDetector:
             finally:
                 os.remove(input_data_path)
 
-        elif method == "PST":
+        elif self.method == "PST":
             try:
                 input_data_path = self.load_image(input_data)
                 # pst_gpu = PST_GPU(device=self.device)
