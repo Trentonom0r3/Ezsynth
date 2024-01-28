@@ -41,7 +41,7 @@ git submodule update --init --recursive
 (cd ebsynth && ./build-linux-cpu+cuda.sh)
 # or
 (cd ebsynth && ./build-macos-cpu_only.sh)
-cp ebsynth/bin/ebsynth.so ezsynth
+cp ebsynth/bin/ebsynth.so ezsynth/lib
 ```
 
 ## Usage
