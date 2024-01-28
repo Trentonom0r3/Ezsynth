@@ -1,4 +1,4 @@
-from ._eb import *
+from ezsynth.utils._eb import *
 
 
 class Ebsynth:

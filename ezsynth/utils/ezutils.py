@@ -4,7 +4,7 @@ from typing import List
 
 import cv2
 
-from .ebsynth import Ebsynth
+from ezsynth.ebsynth import Ebsynth
 from .blend.blender import Blend
 from .config import Config
 from .flow_utils.warp import Warp
