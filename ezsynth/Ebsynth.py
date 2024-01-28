@@ -64,7 +64,7 @@ class Ebsynth:
         if len(a.guides) == 0:
             raise ValueError("At least one guide must be specified.")
 
-        style_image = self._normalize_img_shape(a.style_image)
+        style_image = self._normalize_img_shape(_validate_image(a.style_image))
         sh, sw, sc = style_image.shape
         t_h, t_w, t_c = 0, 0, 0
 
@@ -76,8 +76,8 @@ class Ebsynth:
         guides_weights = []
 
         for source_guide, target_guide, guide_weight in a.guides:
-            source_guide = self._normalize_img_shape(source_guide)
-            target_guide = self._normalize_img_shape(target_guide)
+            source_guide = self._normalize_img_shape(_validate_image(source_guide))
+            target_guide = self._normalize_img_shape(_validate_image(target_guide))
             guide_weight = _validate_weight(guide_weight)
 
             s_h, s_w, s_c = source_guide.shape
