@@ -70,7 +70,12 @@ class Ebsynth:
         """
         self.guides = []
 
-    def add_guide(self, source, target, weight = None):
+    def add_guide(
+            self,
+            source: Union[str, np.ndarray],
+            target: Union[str, np.ndarray],
+            weight: Union[float, None] = None
+    ):
         """
         Add a new guide pair.
         
