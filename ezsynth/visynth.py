@@ -81,8 +81,6 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
                         style_imgs_bwd.append(img)
                     if err:
                         err_bwd.append(err)
-            except TimeoutError:
-                print("TimeoutError")
             except Exception as e:
                 print(f"List Creation Exception: {e}")
 
