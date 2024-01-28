@@ -103,7 +103,7 @@ class EbsynthRunner:
             stop_threshold: int = 5,
             uniformity_weight: float = 3500.0,
             extra_pass3x3: bool = False,
-    ):
+    ) -> Tuple[np.ndarray, np.ndarray]:
         self.init_lib()
 
         # Validation checks
