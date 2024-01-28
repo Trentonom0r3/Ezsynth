@@ -47,22 +47,19 @@ cp ebsynth/bin/ebsynth.so ezsynth/utils
 
 ## Usage
 
-### Imagesynth
+### Ebsynth
 
 ```py
-from ezsynth import Imagesynth
+import cv2
+from ezsynth import *
 
-style = "input/000.jpg"
-synth = Imagesynth(style)
+ebsynth = Ebsynth()
 
-src = "input/000.jpg"
-target = "styles/style000.jpg"
-weight = 0.5
-synth.add_guide(src, target, weight)
+config = Config(style_image = "input/000.jpg", guides = [("input/000.jpg", "styles/style000.jpg", 0.5)])
 
-output = "output/000.jpg"
-synth.run(output)  # Run the synthesis and save.
-# result = synth.run()  # Run the synthesis and return the result as a numpy array
+img, err = ebsynth(config)
+
+cv2.imwrite("output/000.jpg", img)
 ```
 
 ### Visynth
