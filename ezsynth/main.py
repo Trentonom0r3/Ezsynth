@@ -1,29 +1,4 @@
-from .utils.ezutils import *
 from .utils.guides.guides import *
-
-
-def imagesynth(
-        style_img,
-        guides = None,
-        uniformity = 3500.0,
-        patchsize = 5,
-        pyramidlevels = 6,
-        searchvoteiters = 12,
-        patchmatchiters = 6,
-        extrapass3x3 = True,
-        backend = 'cuda'
-):
-    return Ebsynth(
-        style = _validate_image(style_img),
-        guides = guides,
-        uniformity = uniformity,
-        patchsize = patchsize,
-        pyramidlevels = pyramidlevels,
-        searchvoteiters = searchvoteiters,
-        patchmatchiters = patchmatchiters,
-        extrapass3x3 = extrapass3x3,
-        backend = backend,
-    )
 
 
 def add_guide(self, source, target, weight):
