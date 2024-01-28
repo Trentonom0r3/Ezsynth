@@ -112,13 +112,13 @@ def _run_sequences(
         a: Config,
         guides: Guides,
         seq: Sequence,
-        reverse: bool,
+        direction: bool,
 ):
     with threading.Lock():
         stylized_frames = []
         err_list = []
 
-        if reverse:
+        if direction:
             start_frame, step, style, init, final = (seq.final, -1, seq.style_end, seq.endFrame, seq.begFrame)
         else:
             start_frame, step, style, init, final = (seq.init, 1, seq.style_start, seq.begFrame, seq.endFrame)
@@ -137,12 +137,12 @@ def _run_sequences(
 
             # Commented out section: additional guide and warping
             if i != start_frame:
-                eb.add_guide(positional[start_frame - 1] if reverse else positional[start_frame], positional[i], 2.0)
+                eb.add_guide(positional[start_frame - 1] if direction else positional[start_frame], positional[i], 2.0)
 
                 stylized_img = stylized_frames[-1] / 255.0  # Assuming stylized_frames[-1] is already in BGR format
 
                 # Changed from run_warping_from_np to run_warping
-                warped_img = warp.run_warping(stylized_img, flow[i] if reverse else flow[i - 1])
+                warped_img = warp.run_warping(stylized_img, flow[i] if direction else flow[i - 1])
 
                 warped_img = cv2.resize(warped_img, imgseq[0].shape[1::-1])
 
@@ -152,5 +152,5 @@ def _run_sequences(
             stylized_frames.append(stylized_img)
             err_list.append(err)
 
-        print(f"Final Length, Reverse = {reverse}: {len(stylized_frames)}. Error Length: {len(err_list)}")
+        print(f"Final Length, Reverse = {direction}: {len(stylized_frames)}. Error Length: {len(err_list)}")
         return stylized_frames, err_list
