@@ -62,7 +62,7 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
                 return [x for x in images if x is not None]
 
             else:
-                raise ValueError("Invalid sequence.")
+                raise ValueError("Cannot find style frame for " + str(seq.start_frame) + "-" + str(seq.end_frame) + " sequence.")
 
     for direction, future in futures:
         with threading.Lock():
