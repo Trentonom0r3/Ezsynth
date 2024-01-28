@@ -73,11 +73,11 @@ class EbsynthRunner:
 
     def get_or_create_err_buffer(self, key):
         with self.cache_lock:
-            errbuffer = self.cached_err_buffer.get(key, None)
-            if errbuffer is None:
-                errbuffer = (c_float * (key[0] * key[1]))()
-                self.cached_err_buffer[key] = errbuffer
-            return errbuffer
+            buffer = self.cached_err_buffer.get(key, None)
+            if buffer is None:
+                buffer = (c_float * (key[0] * key[1]))()
+                self.cached_err_buffer[key] = buffer
+            return buffer
 
     def _normalize_img_shape(self, img):
         with self.normalize_lock:
