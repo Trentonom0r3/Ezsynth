@@ -11,7 +11,8 @@ from phycv import PST_GPU, PAGE_GPU
 class EdgeDetector:
     def __init__(
             self,
-            method: Literal["PAGE", "PST", "Classic"] = "PAGE"
+            method: Literal["PAGE", "PST", "Classic"] = "PAGE",
+            device: str = "cpu",
     ):
         """
         Initialize the edge detector.
