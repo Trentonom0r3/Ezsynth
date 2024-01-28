@@ -48,11 +48,11 @@ class EdgeDetector:
 
         elif isinstance(image, np.ndarray):
             with tempfile.NamedTemporaryFile(suffix = ".png", delete = False) as temp_file:
-                temp_file_path = temp_file.name
+                path = temp_file.name
                 img = Image.fromarray(image)
-                img.save(temp_file_path)
+                img.save(path)
 
-            return temp_file_path
+            return path
 
         else:
             raise ValueError("Invalid input. Provide either a file path or a numpy array.")
