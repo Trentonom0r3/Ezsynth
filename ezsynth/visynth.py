@@ -6,12 +6,12 @@ import cv2
 import numpy as np
 
 from .ebsynth import Ebsynth
+from .visynth_utils.blend.blender import Blend
 # noinspection PyUnresolvedReferences
-from .visynth.config import Config, image_sequence_from_directory
-from .visynth.blend.blender import Blend
-from .visynth.flow_utils.warp import Warp
-from .visynth.guides import Guides, create_guides
-from .visynth.sequences import Sequence, SequenceManager
+from .visynth_utils.config import Config, image_sequence_from_directory
+from .visynth_utils.flow_utils.warp import Warp
+from .visynth_utils.guides import Guides, create_guides
+from .visynth_utils.sequences import Sequence, SequenceManager
 
 
 class Visynth:
