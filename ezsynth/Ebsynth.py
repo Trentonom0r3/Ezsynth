@@ -28,9 +28,9 @@ class Config:
     guides: List[Tuple[Union[str, np.ndarray], Union[str, np.ndarray], float]]
     uniformity: float = 3500.0
     patch_size: int = 5
-    num_pyramid_levels: int = -1
-    num_search_vote_iters: int = 6
-    num_patch_match_iters: int = 4
+    num_pyramid_levels: int = 6
+    num_search_vote_iters: int = 12
+    num_patch_match_iters: int = 6
     stop_threshold: int = 5
     extra_pass3x3: bool = False
 
