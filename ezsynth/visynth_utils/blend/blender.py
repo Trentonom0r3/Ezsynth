@@ -7,7 +7,7 @@ from .reconstruction import reconstructor
 from ..flow_utils.warp import Warp
 
 
-class Blend():
+class Blend:
     def __init__(self, style_fwd, style_bwd, err_fwd, err_bwd, flow_fwd):
         self.style_fwd = style_fwd
         self.style_bwd = style_bwd
