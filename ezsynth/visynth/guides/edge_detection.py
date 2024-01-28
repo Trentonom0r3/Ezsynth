@@ -48,8 +48,8 @@ class EdgeDetector:
         :return: Edge map as a numpy array.
         """
         method = self.method
-        try:
-            if method == "PAGE":
+        if method == "PAGE":
+            try:
                 input_data_path = self.load_image(input_data)
                 # page_gpu = PAGE_GPU(direction_bins=10, device=self.device)
                 mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag = 0, 0.35, 0.05, 0.8, 0.8, 0.8, 0.1, 0.0, 0.9, 1
@@ -58,8 +58,11 @@ class EdgeDetector:
                 edge_map = edge_map.cpu().numpy()
                 edge_map = cv2.GaussianBlur(edge_map, (5, 5), 3)
                 edge_map = (edge_map * 255).astype(np.uint8)
+            finally:
+                os.remove(input_data_path)
 
-            elif method == "PST":
+        elif method == "PST":
+            try:
                 input_data_path = self.load_image(input_data)
                 # pst_gpu = PST_GPU(device=self.device)
                 S, W, sigma_LPF, thresh_min, thresh_max, morph_flag = 0.3, 15, 0.15, 0.05, 0.9, 1
@@ -68,8 +71,10 @@ class EdgeDetector:
                 edge_map = edge_map.cpu().numpy()
                 edge_map = cv2.GaussianBlur(edge_map, (5, 5), 3)
                 edge_map = (edge_map * 255).astype(np.uint8)
+            finally:
+                os.remove(input_data_path)
 
-            elif self.method == "Classic":
+        elif self.method == "Classic":
                 if isinstance(input_data, np.ndarray):
                     img = input_data
                 elif isinstance(input_data, str):
@@ -80,12 +85,8 @@ class EdgeDetector:
                 edge_map = cv2.add(edge_map, 0.5 * 255)
                 edge_map = np.clip(edge_map, 0, 255)
 
-            else:
-                raise ValueError("Unknown edge detection method.")
-        finally:
-            # If the input_data was a numpy array and the method is not 'Classic', delete the temporary file
-            if method != 'Classic' and isinstance(input_data, np.ndarray):
-                os.remove(input_data_path)
+        else:
+            raise ValueError("Unknown edge detection method.")
 
         return edge_map
 
