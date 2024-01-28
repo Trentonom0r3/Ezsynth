@@ -52,11 +52,11 @@ class EdgeDetector:
                 input_data_path = self.load_image(input_data)
                 # page_gpu = PAGE_GPU(direction_bins=10, device=self.device)
                 mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag = 0, 0.35, 0.05, 0.8, 0.8, 0.8, 0.1, 0.0, 0.9, 1
-                edge_map = self.page_gpu.run(
+                result = self.page_gpu.run(
                     input_data_path, mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag)
-                edge_map = edge_map.cpu().numpy()
-                edge_map = cv2.GaussianBlur(edge_map, (5, 5), 3)
-                edge_map = (edge_map * 255).astype(np.uint8)
+                result = result.cpu().numpy()
+                result = cv2.GaussianBlur(result, (5, 5), 3)
+                result = (result * 255).astype(np.uint8)
             finally:
                 os.remove(input_data_path)
 
@@ -65,11 +65,11 @@ class EdgeDetector:
                 input_data_path = self.load_image(input_data)
                 # pst_gpu = PST_GPU(device=self.device)
                 S, W, sigma_LPF, thresh_min, thresh_max, morph_flag = 0.3, 15, 0.15, 0.05, 0.9, 1
-                edge_map = self.pst_gpu.run(
+                result = self.pst_gpu.run(
                     input_data_path, S, W, sigma_LPF, thresh_min, thresh_max, morph_flag)
-                edge_map = edge_map.cpu().numpy()
-                edge_map = cv2.GaussianBlur(edge_map, (5, 5), 3)
-                edge_map = (edge_map * 255).astype(np.uint8)
+                result = result.cpu().numpy()
+                result = cv2.GaussianBlur(result, (5, 5), 3)
+                result = (result * 255).astype(np.uint8)
             finally:
                 os.remove(input_data_path)
 
@@ -80,14 +80,14 @@ class EdgeDetector:
                 img = cv2.imread(input_data)
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             blurred = cv2.filter2D(gray, -1, self.kernel)
-            edge_map = cv2.subtract(gray, blurred)
-            edge_map = cv2.add(edge_map, 0.5 * 255)
-            edge_map = np.clip(edge_map, 0, 255)
+            result = cv2.subtract(gray, blurred)
+            result = cv2.add(result, 0.5 * 255)
+            result = np.clip(result, 0, 255)
 
         else:
             raise ValueError("Unknown edge detection method.")
 
-        return edge_map
+        return result
 
 
 def _load_image(image):
