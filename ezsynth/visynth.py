@@ -141,8 +141,8 @@ def _run_sequences(
             config = ebsynth.Config(
                 style_image = style,
                 guides = [
-                    (edge[start_frame], edge[i], 1.0),
-                    (start_frame_image, imgseq[i], 6.0),
+                    (guides.edge[start_frame - frame_offset], guides.edge[i - frame_offset], 1.0),
+                    (a.frames[start_frame - frame_offset], a.frames[i - frame_offset], 6.0),
                 ]
             )
 
