@@ -11,7 +11,7 @@ from .visynth_utils.blend.blender import Blend
 from .visynth_utils.config import Config, image_sequence_from_directory
 from .visynth_utils.flow_utils.warp import Warp
 from .visynth_utils.guides import Guides, create_guides
-from .visynth_utils.sequences import Sequence, SequenceManager
+from .visynth_utils.sequences import Sequence, config_to_sequences
 
 
 class Visynth:
@@ -24,7 +24,7 @@ class Visynth:
 
         guides = create_guides(a)
 
-        sequences = SequenceManager(a)
+        sequences = config_to_sequences(a)
 
         return _process(a, guides, sequences)
 
