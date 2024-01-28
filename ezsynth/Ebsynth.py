@@ -10,11 +10,11 @@ class Ebsynth:
             style,
             guides = None,
             uniformity = 3500.0,
-            patchsize = 5,
-            pyramidlevels = 6,
-            searchvoteiters = 12,
-            patchmatchiters = 6,
-            extrapass3x3 = True,
+            patch_size = 5,
+            pyramid_levels = 6,
+            search_voteiters = 12,
+            patch_matchiters = 6,
+            extra_pass3x3 = True,
             backend = 'auto'
     ):
         """
@@ -23,11 +23,11 @@ class Ebsynth:
         :param guides: list of tuples containing source and target guide images, as file paths or as numpy arrays.
         :param weight: weights for each guide pair. Defaults to 1.0 for each pair.
         :param uniformity: uniformity weight for the style transfer. Defaults to 3500.0.
-        :param patchsize: size of the patches. Must be an odd number. Defaults to 5. [5x5 patches]
-        :param pyramidlevels: number of pyramid levels. Larger Values useful for things like color transfer. Defaults to 6.
-        :param searchvoteiters: number of search/vote iterations. Defaults to 12.
-        :param patchmatchiters: number of Patch-Match iterations. Defaults to 6.
-        :param extrapass3x3: whether to perform an extra pass with 3x3 patches. Defaults to False.
+        :param patch_size: size of the patches. Must be an odd number. Defaults to 5. [5x5 patches]
+        :param pyramid_levels: number of pyramid levels. Larger Values useful for things like color transfer. Defaults to 6.
+        :param search_voteiters: number of search/vote iterations. Defaults to 12.
+        :param patch_matchiters: number of Patch-Match iterations. Defaults to 6.
+        :param extra_pass3x3: whether to perform an extra pass with 3x3 patches. Defaults to False.
         :param backend: backend to use ('cpu', 'cuda', or 'auto'). Defaults to 'auto'.
         """
         # self.lock = threading.Lock()
@@ -50,11 +50,11 @@ class Ebsynth:
         self.style = style
         self.guides = guides
         self.uniformity = uniformity
-        self.patchsize = patchsize
-        self.pyramidlevels = pyramidlevels
-        self.searchvoteiters = searchvoteiters
-        self.patchmatchiters = patchmatchiters
-        self.extrapass3x3 = extrapass3x3
+        self.patchsize = patch_size
+        self.pyramidlevels = pyramid_levels
+        self.searchvoteiters = search_voteiters
+        self.patchmatchiters = patch_matchiters
+        self.extrapass3x3 = extra_pass3x3
 
         # Define backend constants
         self.backends = {
