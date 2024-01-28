@@ -61,16 +61,13 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
             # Your existing logic to submit tasks remains the same
             if seq.style_start is not None and seq.style_end is not None:
 
-                futures.append(("fwd", executor.submit(_run_sequences, imgseq, edge_maps, flow_fwd,
-                                                       pos_fwd, seq)))
+                futures.append(("fwd", executor.submit(_run_sequences, imgseq, edge_maps, flow_fwd, pos_fwd, seq)))
 
-                futures.append(("bwd", executor.submit(_run_sequences, imgseq, edge_maps,
-                                                       flow_bwd, pos_bwd, seq, True)))
+                futures.append(("bwd", executor.submit(_run_sequences, imgseq, edge_maps, flow_bwd, pos_bwd, seq, True)))
 
             elif seq.style_start is not None and seq.style_end is None:
 
-                fwd_img, fwd_err = _run_sequences(imgseq, edge_maps, flow_fwd,
-                                                  pos_fwd, seq)
+                fwd_img, fwd_err = _run_sequences(imgseq, edge_maps, flow_fwd, pos_fwd, seq)
                 fwd_imgs = [img for img in fwd_img if img is not None]
 
                 return fwd_imgs
