@@ -22,12 +22,22 @@ def config_to_sequences(a: Config) -> List[Sequence]:
 
     if num_styles == 1 and a.frames[0][0] == a.style_frames[0][0]:
         return [
-            Sequence(start_frame = a.frames[0][0], end_frame = a.frames[-1][0], style_start = cv2.imread(styles[0]), style_end = None)
+            Sequence(
+                start_frame = a.frames[0][0],
+                end_frame = a.frames[-1][0],
+                style_start = cv2.imread(styles[0]),
+                style_end = None,
+            )
         ]
 
     if num_styles == 1 and a.frames[-1][0] == a.style_frames[0][0]:
         return [
-            Sequence(start_frame = a.frames[0][0], end_frame = a.frames[-1][0], style_start = None, style_end = styles[0])
+            Sequence(
+                start_frame = a.frames[0][0],
+                end_frame = a.frames[-1][0],
+                style_start = None,
+                style_end = styles[0],
+            )
         ]
 
     sequences = []
