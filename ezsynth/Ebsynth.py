@@ -18,7 +18,7 @@ class Ebsynth:
             backend = 'auto'
     ):
         """
-        Initialize the EBSynth wrapper.      
+        Initialize Ebsynth.
         :param style: path to the style image, or a numpy array.
         :param guides: list of tuples containing source and target guide images, as file paths or as numpy arrays.
         :param weight: weights for each guide pair. Defaults to 1.0 for each pair.
