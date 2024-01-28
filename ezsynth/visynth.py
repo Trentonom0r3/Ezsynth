@@ -46,7 +46,9 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
             style_end = next(x.image for x in a.style_frames if x.index == seq.end_frame)
 
             if style_start is not None and style_end is not None:
+                # noinspection PyTypeChecker
                 futures.append(("fwd", executor.submit(_run_sequences, guides, seq, False)))
+                # noinspection PyTypeChecker
                 futures.append(("bwd", executor.submit(_run_sequences, guides, seq, True)))
 
             elif style_start is not None and style_end is None:
