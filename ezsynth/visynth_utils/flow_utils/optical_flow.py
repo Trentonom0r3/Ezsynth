@@ -29,6 +29,9 @@ class OpticalFlowProcessor:
         elif self.method == "DeepFlow":
             raise NotImplementedError("DeepFlow method is not implemented.")
 
+        else:
+            raise ValueError("Unknown optical flow method.")
+
 
 class RAFT_flow(Warp):
     device = 'mps'
