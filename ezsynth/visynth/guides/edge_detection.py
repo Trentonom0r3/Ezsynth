@@ -49,7 +49,7 @@ class EdgeDetector:
         """
         if self.method == "PAGE":
             mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag = 0, 0.35, 0.05, 0.8, 0.8, 0.8, 0.1, 0.0, 0.9, 1
-            result = self.page_gpu.run(input_data_path, mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag)
+            result = self.page_gpu.page_edge
             result = result.cpu().numpy()
             result = cv2.GaussianBlur(result, (5, 5), 3)
             result = (result * 255).astype(np.uint8)
