@@ -55,8 +55,7 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
 
             elif style_start is None and style_end is not None:
                 bwd_img, bwd_err = _run_sequences(a, guides, seq, True)
-                bwd_imgs = [img for img in bwd_img if img is not None]
-                return bwd_imgs
+                return [img for img in bwd_img if img is not None]
 
             else:
                 raise ValueError("Invalid sequence.")
