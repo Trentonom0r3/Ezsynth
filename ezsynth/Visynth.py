@@ -12,8 +12,8 @@ import numpy
 from .Ebsynth import Ebsynth
 from .utils.blend.blender import Blend
 from .utils.flow_utils.warp import Warp
-from .utils.guides.guides import Guides
-from .utils.sequences import Sequence
+from .utils.guides.guides import Guides, create_guides
+from .utils.sequences import Sequence, SequenceManager
 
 
 @dataclass
@@ -68,8 +68,12 @@ class Visynth:
     def __init__(self):
         pass
 
-    def __call__(self, a: Config):
-        pass
+    def __call__(self, a: Config) -> List[tuple[int, numpy.ndarray]]:
+        guides = create_guides(a)
+
+        sequences = SequenceManager(a)._set_sequence()
+
+        return process(a, guides, sequences)
 
 
 def process(config: Config, guides: Guides, sequences: List[Sequence]):
