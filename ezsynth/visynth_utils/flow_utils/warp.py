@@ -5,10 +5,10 @@ import numpy as np
 class Warp:
     def __init__(self, img):
         # self.lock = threading.Lock()
-        H, W, _ = img.shape
-        self.H = H
-        self.W = W
-        self.grid = self._create_grid(H, W)
+        height, width, _ = img.shape
+        self.H = height
+        self.W = width
+        self.grid = self._create_grid(height, width)
 
     def _create_grid(self, H, W):
         x, y = np.meshgrid(np.arange(W), np.arange(H))
