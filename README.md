@@ -10,7 +10,6 @@ Ezsynth uses [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) - l
 # Table of Contents
 
 - [Installation](#installation)
-- [API](#api)
 - [Usage](#usage)
 - [FAQ](#faq)
 - [TODO](#todo)
