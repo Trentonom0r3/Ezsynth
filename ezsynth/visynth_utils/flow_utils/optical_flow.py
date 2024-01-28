@@ -23,7 +23,7 @@ class OpticalFlowProcessor:
 
     def __call__(self, images: List[np.ndarray]):
         if self.method == "RAFT":
-            self.flow = RAFT_flow(images[0], self.model)
+            self.flow = RAFT_flow(image = images[0], model = self.model, device = self.device)
             return self.flow.__iter__(images)
 
         elif self.method == "DeepFlow":
