@@ -1,1 +1,1 @@
-from .Ebsynth import *
+from .Ebsynth import Ebsynth, Config
