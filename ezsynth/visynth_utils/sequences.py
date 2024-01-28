@@ -17,7 +17,7 @@ class Sequence:
 
 def config_to_sequences(a: Config) -> List[Sequence]:
     """
-    Compares style frame indexes with image frame indexes to determine the sequences.
+    Compares style frame indexes with image frame indexes to determine sequences.
     """
     num_styles = len(a.style_frames)
 
