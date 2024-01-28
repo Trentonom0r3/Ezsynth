@@ -23,4 +23,12 @@ def config_to_sequences(a: Config) -> List[Sequence]:
             )
         )
 
+    if acc[-1].end_frame != a.frames[-1].index:
+        acc.append(
+            Sequence(
+                start_frame = acc[-1].end_frame,
+                end_frame = a.frames[-1].index,
+            )
+        )
+
     return acc
