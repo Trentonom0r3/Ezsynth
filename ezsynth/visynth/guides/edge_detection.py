@@ -25,10 +25,10 @@ class EdgeDetector:
                 Good overall structure, but not very detailed.
             Classic
                 A good balance between structure and detail.
-        :return: None.
+        :param device: What processing unit to use.
         """
         self.method = method
-        self.device = "mps"
+        self.device = device
 
         if method == "PST":
             self.pst_gpu = phycv.PST_GPU(device = self.device)
