@@ -32,7 +32,7 @@ class Visynth:
         return _process(a, sequences, guides)
 
 
-def _process(config: Config, sequences: List[Sequence], guides: Guides):
+def _process(a: Config, sequences: List[Sequence], guides: Guides):
     style_images_fwd = []
     style_images_bwd = []
     err_fwd = []
