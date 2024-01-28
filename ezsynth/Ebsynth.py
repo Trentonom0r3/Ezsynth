@@ -52,10 +52,9 @@ class Ebsynth:
         self.lib_lock = threading.Lock()
         self.cache_lock = threading.Lock()
         self.normalize_lock = threading.Lock()
-
-    def __call__(self, a: Config) -> Tuple[np.ndarray, np.ndarray]:
         self.init_lib()
 
+    def __call__(self, a: Config) -> Tuple[np.ndarray, np.ndarray]:
         # Validation checks
         if a.patch_size < 3:
             raise ValueError("Patch size is too small.")
