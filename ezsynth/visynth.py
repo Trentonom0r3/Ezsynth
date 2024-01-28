@@ -158,7 +158,7 @@ def _run_sequences(
             if i != start_frame:
                 guides.append(
                     (
-                        positional[start_frame - 1] if direction else positional[start_frame],
+                        positional[start_frame] if direction == 1 else positional[start_frame - 1],
                         positional[i],
                         2.0,
                     )
