@@ -32,5 +32,5 @@ class Warp:
             warped_image = (warped_img * 255).astype(np.uint8)
             return warped_image
         except Exception as e:
-            print(f"[ERROR] Exception in run_warping: {e}")
+            print(f"Exception in run_warping: {e}")
             return None
