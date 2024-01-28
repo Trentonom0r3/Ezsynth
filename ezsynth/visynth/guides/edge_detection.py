@@ -46,7 +46,6 @@ class EdgeDetector:
         if isinstance(image, str):
             return image
 
-        # If it's a numpy array, save it as a temporary file
         elif isinstance(image, np.ndarray):
             with tempfile.NamedTemporaryFile(suffix = ".png", delete = False) as temp_file:
                 temp_file_path = temp_file.name
@@ -54,6 +53,7 @@ class EdgeDetector:
                 img.save(temp_file_path)
 
             return temp_file_path
+
         else:
             raise ValueError("Invalid input. Provide either a file path or a numpy array.")
 
