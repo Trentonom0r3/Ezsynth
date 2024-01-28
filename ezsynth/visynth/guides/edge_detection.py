@@ -90,7 +90,16 @@ class EdgeDetector:
             raise ValueError("Unknown edge detection method.")
 
         try:
-            if method == "PST":
+            if method == "PAGE":
+                # page_gpu = PAGE_GPU(direction_bins=10, device=self.device)
+                mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag = 0, 0.35, 0.05, 0.8, 0.8, 0.8, 0.1, 0.0, 0.9, 1
+                edge_map = self.page_gpu.run(
+                    input_data_path, mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag)
+                edge_map = edge_map.cpu().numpy()
+                edge_map = cv2.GaussianBlur(edge_map, (5, 5), 3)
+                edge_map = (edge_map * 255).astype(np.uint8)
+
+            elif method == "PST":
                 # pst_gpu = PST_GPU(device=self.device)
                 S, W, sigma_LPF, thresh_min, thresh_max, morph_flag = 0.3, 15, 0.15, 0.05, 0.9, 1
                 edge_map = self.pst_gpu.run(
@@ -109,16 +118,6 @@ class EdgeDetector:
                 edge_map = cv2.subtract(gray, blurred)
                 edge_map = cv2.add(edge_map, 0.5 * 255)
                 edge_map = np.clip(edge_map, 0, 255)
-
-            elif method == "PAGE":
-                # page_gpu = PAGE_GPU(direction_bins=10, device=self.device)
-                mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag = 0, 0.35, 0.05, 0.8, 0.8, 0.8, 0.1, 0.0, 0.9, 1
-                edge_map = self.page_gpu.run(
-                    input_data_path, mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag)
-                edge_map = edge_map.cpu().numpy()
-                edge_map = cv2.GaussianBlur(edge_map, (5, 5), 3)
-                edge_map = (edge_map * 255).astype(np.uint8)
-
 
             else:
                 raise ValueError("Unknown edge detection method.")
