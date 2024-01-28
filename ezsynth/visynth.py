@@ -97,11 +97,13 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
     sty_bwd = sty_bwd[::-1]
     err_bwd = err_bwd[::-1]
 
-    blend_instance = Blend(style_fwd = sty_fwd,
-                           style_bwd = sty_bwd,
-                           err_fwd = err_fwd,
-                           err_bwd = err_bwd,
-                           flow_fwd = flow_fwd)
+    blend_instance = Blend(
+        style_fwd = sty_fwd,
+        style_bwd = sty_bwd,
+        err_fwd = err_fwd,
+        err_bwd = err_bwd,
+        flow_fwd = flow_fwd,
+    )
 
     final_blends = blend_instance()
     final_blends = [blends for blends in final_blends if blends is not None]
