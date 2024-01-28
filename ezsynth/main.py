@@ -4,9 +4,18 @@ from .utils.guides.guides import *
 
 class Imagesynth:
 
-    def __init__(self, style_img, guides = [], uniformity = 3500.0,
-                 patchsize = 5, pyramidlevels = 6, searchvoteiters = 12,
-                 patchmatchiters = 6, extrapass3x3 = True, backend = 'cuda'):
+    def __init__(
+            self,
+            style_img,
+            guides = [],
+            uniformity = 3500.0,
+            patchsize = 5,
+            pyramidlevels = 6,
+            searchvoteiters = 12,
+            patchmatchiters = 6,
+            extrapass3x3 = True,
+            backend = 'cuda'
+    ):
         """
         Initialize the ebsynth object.
 
