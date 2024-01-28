@@ -1,8 +1,8 @@
-import numpy as np
 import cv2
 
+
 class Segmenter:
-    def __init__(self, style, guides=None, masks=None):
+    def __init__(self, style, guides = None, masks = None):
         self.original_style = style.copy()  # Store the original style
         self.current_style = style  # Working copy of the style
         self.guides = guides
@@ -15,12 +15,12 @@ class Segmenter:
 
     def _segment_style(self, mask):
         # Segment the style using the mask
-        return cv2.bitwise_and(self.current_style, self.current_style, mask=mask)
+        return cv2.bitwise_and(self.current_style, self.current_style, mask = mask)
 
     def _segment_guide(self, guide_img, mask):
         # Segment the guide using the mask
         mask = cv2.bitwise_not(mask)
-        return cv2.bitwise_and(guide_img, guide_img, mask=mask)
+        return cv2.bitwise_and(guide_img, guide_img, mask = mask)
 
     def _combine(self, segmented_style, segmented_guide):
         # Combine the segmented style and guide
