@@ -145,3 +145,17 @@ def _validate_image(a: Union[str, np.ndarray]) -> np.ndarray:
 
     else:
         raise ValueError("Image must valid file path or a 3-channel numpy array.")
+
+
+def _validate_weight(a: Union[int, float, None]) -> float:
+    if isinstance(a, int):
+        return float(a)
+
+    elif isinstance(a, float):
+        return a
+
+    elif a is None:
+        return 1.0
+
+    else:
+        raise ValueError("Weight should be int or float or none.")
