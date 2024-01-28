@@ -17,12 +17,12 @@ class EdgeDetector:
         Initialize the edge detector.
 
         :param method: Edge detection method.
+            Phase and Gradient Estimation (PAGE)
+                Great detail, great structure, but slow.
             Phase Stretch Transform (PST)
                 Good overall structure, but not very detailed.
             Classic
                 A good balance between structure and detail.
-            Phase and Gradient Estimation (PAGE)
-                Great detail, great structure, but slow.
         :return: None.
         """
         self.method = method
