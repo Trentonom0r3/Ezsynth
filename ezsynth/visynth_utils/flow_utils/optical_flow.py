@@ -75,12 +75,9 @@ class RAFT_flow(Warp):
         args.mixed_precision = False
         return args
 
-    def _load_tensor_from_numpy(self, np_array):
-        try:
-            return torch.tensor(np_array, dtype = torch.float32).permute(2, 0, 1).unsqueeze(0).to(self.device)
-        except Exception as e:
-            print(f"Exception in load_tensor_from_numpy: {e}")
-            raise e
+    def __iter__(self, images):
+        for img1, img2 in zip(images[:-1], images[1:]):
+            yield self._compute_flow(img1, img2)
 
     def _compute_flow(self, img1, img2):
         original_size = img1.shape[1::-1]
@@ -94,6 +91,9 @@ class RAFT_flow(Warp):
             cv2.resize(flow_np, original_size)
             return flow_np
 
-    def __iter__(self, images):
-        for img1, img2 in zip(images[:-1], images[1:]):
-            yield self._compute_flow(img1, img2)
+    def _load_tensor_from_numpy(self, np_array):
+        try:
+            return torch.tensor(np_array, dtype = torch.float32).permute(2, 0, 1).unsqueeze(0).to(self.device)
+        except Exception as e:
+            print(f"Exception in load_tensor_from_numpy: {e}")
+            raise e
