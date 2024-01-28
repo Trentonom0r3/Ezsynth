@@ -10,7 +10,7 @@ from .ebsynth import Ebsynth
 from .visynth.config import Config, image_sequence_from_directory
 from .visynth.blend.blender import Blend
 from .visynth.flow_utils.warp import Warp
-from .visynth.guides.guides import Guides, create_guides
+from .visynth.guides import Guides, create_guides
 from .visynth.sequences import Sequence, SequenceManager
 
 

@@ -5,9 +5,9 @@ import cv2
 import numpy as np
 
 from .edge_detection import EdgeDetector
-from ..flow_utils.OpticalFlow import OpticalFlowProcessor
-from ..flow_utils.warp import Warp
-from ...visynth import Config
+from ..visynth.flow_utils.OpticalFlow import OpticalFlowProcessor
+from ..visynth.flow_utils.warp import Warp
+from ..visynth import Config
 
 
 @dataclass
