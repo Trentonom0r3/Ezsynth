@@ -141,8 +141,16 @@ def _run_sequences(
 
         for i in range(start_frame, end_frame, step):
             guides = [
-                (guides.edge[start_frame - frame_offset], guides.edge[i - frame_offset], 1.0),
-                (a.frames[start_frame - frame_offset], a.frames[i - frame_offset], 6.0),
+                (
+                    guides.edge[start_frame - frame_offset],
+                    guides.edge[i - frame_offset],
+                    1.0,
+                ),
+                (
+                    a.frames[start_frame - frame_offset],
+                    a.frames[i - frame_offset],
+                    6.0,
+                ),
             ]
 
             if i != start_frame:
