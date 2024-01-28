@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
 import cv2
-import numpy
+import numpy as np
 
 from .Ebsynth import Ebsynth
 # noinspection PyUnresolvedReferences
@@ -18,7 +18,7 @@ class Visynth:
     def __init__(self):
         pass
 
-    def __call__(self, a: Config) -> List[tuple[int, numpy.ndarray]]:
+    def __call__(self, a: Config) -> List[tuple[int, np.ndarray]]:
         guides = create_guides(a)
 
         sequences = SequenceManager(a)._set_sequence()
