@@ -7,13 +7,13 @@ import numpy as np
 
 
 class EbsynthRunner:
-    EBSYNTH_BACKEND_CPU = 0x0001
-    EBSYNTH_BACKEND_CUDA = 0x0002
-    EBSYNTH_BACKEND_AUTO = 0x0000
-    EBSYNTH_MAX_STYLE_CHANNELS = 8
-    EBSYNTH_MAX_GUIDE_CHANNELS = 24
-    EBSYNTH_VOTEMODE_PLAIN = 0x0001  # weight = 1
-    EBSYNTH_VOTEMODE_WEIGHTED = 0x0002  # weight = 1/(1+error)
+    BACKEND_CPU = 0x0001
+    BACKEND_CUDA = 0x0002
+    BACKEND_AUTO = 0x0000
+    MAX_STYLE_CHANNELS = 8
+    MAX_GUIDE_CHANNELS = 24
+    VOTEMODE_PLAIN = 0x0001  # weight = 1
+    VOTEMODE_WEIGHTED = 0x0002  # weight = 1/(1+error)
 
     def __init__(self):
         self.lib = None
@@ -119,8 +119,8 @@ class EbsynthRunner:
         sh, sw, sc = img_style.shape
         t_h, t_w, t_c = 0, 0, 0
 
-        if sc > self.EBSYNTH_MAX_STYLE_CHANNELS:
-            raise ValueError(f"Too many style channels {sc}, maximum number is {self.EBSYNTH_MAX_STYLE_CHANNELS}.")
+        if sc > self.MAX_STYLE_CHANNELS:
+            raise ValueError(f"Too many style channels {sc}, maximum number is {self.MAX_STYLE_CHANNELS}.")
 
         guides_source = []
         guides_target = []
@@ -176,7 +176,7 @@ class EbsynthRunner:
 
         with self.lib_lock:
             self.lib.ebsynthRun(
-                self.EBSYNTH_BACKEND_AUTO,
+                self.BACKEND_AUTO,
                 sc,  # numStyleChannels
                 guides_source.shape[-1],  # numGuideChannels
                 sw,  # sourceWidth
@@ -196,7 +196,7 @@ class EbsynthRunner:
                 uniformity_weight,
                 # uniformityWeight reasonable values are between 500-15000, 3500 is a good default
                 patch_size,  # patchSize odd sizes only, use 5 for 5x5 patch, 7 for 7x7, etc.
-                self.EBSYNTH_VOTEMODE_WEIGHTED,
+                self.VOTEMODE_WEIGHTED,
                 # voteMode use VOTEMODE_WEIGHTED for sharper result
                 num_pyramid_levels,  # numPyramidLevels
                 num_search_vote_iters_per_level,

@@ -56,9 +56,9 @@ class Ebsynth:
 
         # Define backend constants
         self.backends = {
-            'cpu': EbsynthRunner.EBSYNTH_BACKEND_CPU,
-            'cuda': EbsynthRunner.EBSYNTH_BACKEND_CUDA,
-            'auto': EbsynthRunner.EBSYNTH_BACKEND_AUTO
+            'cpu': EbsynthRunner.BACKEND_CPU,
+            'cuda': EbsynthRunner.BACKEND_CUDA,
+            'auto': EbsynthRunner.BACKEND_AUTO
         }
         self.backend = self.backends[backend]
 
