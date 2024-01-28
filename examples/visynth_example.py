@@ -2,7 +2,7 @@ import os
 
 import cv2
 
-from ezsynth.utils.Config import config_from_directory
+from ezsynth.Visynth import config_from_directory
 from ezsynth.utils.ezutils import process
 from ezsynth.utils.guides.guides import create_guides
 from ezsynth.utils.sequences import SequenceManager

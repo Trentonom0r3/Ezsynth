@@ -6,7 +6,7 @@ import cv2
 
 from ezsynth.Ebsynth import Ebsynth
 from .blend.blender import Blend
-from ezsynth.Config import Config
+from ezsynth.Visynth import Config
 from .flow_utils.warp import Warp
 from .guides.guides import Guides
 from .sequences import Sequence
