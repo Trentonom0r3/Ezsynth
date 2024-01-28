@@ -64,11 +64,11 @@ class Ebsynth:
             raise ValueError("At least one guide must be specified.")
 
         style_image = self._normalize_img_shape(_validate_image(a.style_image))
-        sh, sw, sc = style_image.shape
+        style_height, style_weight, style_channels = style_image.shape
         t_h, t_w, t_c = 0, 0, 0
 
-        if sc > self.MAX_STYLE_CHANNELS:
-            raise ValueError(f"Too many style channels {sc}, maximum number is {self.MAX_STYLE_CHANNELS}.")
+        if style_channels > self.MAX_STYLE_CHANNELS:
+            raise ValueError(f"Too many style channels {style_channels}, maximum number is {self.MAX_STYLE_CHANNELS}.")
 
         guides_source = []
         guides_target = []
@@ -82,7 +82,7 @@ class Ebsynth:
             s_h, s_w, s_c = source_guide.shape
             nt_h, nt_w, nt_c = target_guide.shape
 
-            if s_h != sh or s_w != sw:
+            if s_h != style_height or s_w != style_weight:
                 raise ValueError("Guide source and style resolution must match style resolution.")
 
             if t_c == 0:
@@ -103,12 +103,12 @@ class Ebsynth:
         # noinspection PyCallingNonCallable,PyTypeChecker
         guides_weights = (c_float * len(guides_weights))(*guides_weights)
 
-        style_weights = [1.0 / sc for _ in range(sc)]
-        style_weights = (c_float * sc)(*style_weights)
+        style_weights = [1.0 / style_channels for _ in range(style_channels)]
+        style_weights = (c_float * style_channels)(*style_weights)
 
         max_pyramid_levels = 0
         for level in range(32, -1, -1):
-            if min(min(sh, t_h) * pow(2.0, -level), min(sw, t_w) * pow(2.0, -level)) >= (2 * a.patch_size + 1):
+            if min(min(style_height, t_h) * pow(2.0, -level), min(style_weight, t_w) * pow(2.0, -level)) >= (2 * a.patch_size + 1):
                 max_pyramid_levels = level + 1
                 break
 
@@ -126,16 +126,16 @@ class Ebsynth:
         stop_threshold_per_level = (c_int * num_pyramid_levels)(*[a.stop_threshold] * num_pyramid_levels)
 
         # Get or create buffers
-        buffer = self._get_or_create_buffer((t_h, t_w, sc))
+        buffer = self._get_or_create_buffer((t_h, t_w, style_channels))
         err_buffer = self._get_or_create_err_buffer((t_h, t_w))
 
         with self.lib_lock:
             self.lib.ebsynthRun(
                 self.BACKEND_AUTO,  # backend
-                sc,  # numStyleChannels
+                style_channels,  # numStyleChannels
                 guides_source.shape[-1],  # numGuideChannels
-                sw,  # sourceWidth
-                sh,  # sourceHeight
+                style_weight,  # sourceWidth
+                style_height,  # sourceHeight
                 style_image.tobytes(),  # sourceStyleData (width * height * numStyleChannels) bytes, scan-line order
                 guides_source.tobytes(),  # sourceGuideData (width * height * numGuideChannels) bytes, scan-line order
                 t_w,  # targetWidth
@@ -157,7 +157,7 @@ class Ebsynth:
                 err_buffer,  # outputErrorData (width * height) floats, scan-line order; pass NULL to ignore
             )
 
-        img = np.frombuffer(buffer, dtype = np.uint8).reshape((t_h, t_w, sc)).copy()
+        img = np.frombuffer(buffer, dtype = np.uint8).reshape((t_h, t_w, style_channels)).copy()
         err = np.frombuffer(err_buffer, dtype = np.float32).reshape((t_h, t_w)).copy()
 
         return img, err
