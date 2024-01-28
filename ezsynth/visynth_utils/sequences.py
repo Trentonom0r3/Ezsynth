@@ -100,13 +100,6 @@ class SequenceManager:
 
         return subsequences
 
-    def __call__(self, chunk_size = 10, overlap = 1):
-        sequences = self._set_sequence()
-        subsequences = []
-        for sequence in sequences:
-            subsequences += self.generate_subsequences(sequence, chunk_size, overlap)
-        return subsequences
-
 
 class Subsequence:
     def __init__(self, init, final, begFrame, endFrame,
