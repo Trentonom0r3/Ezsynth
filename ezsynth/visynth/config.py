@@ -9,7 +9,7 @@ import numpy as np
 import torch
 
 
-def auto_device():
+def auto_device() -> str:
     if torch.backends.mps.is_available():
         return "mps"
     elif torch.cuda.is_available():
