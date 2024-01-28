@@ -1,6 +1,6 @@
 import cv2
 
-from ezsynth import *
+from ezsynth.Ebsynth import Ebsynth, Config
 
 ebsynth = Ebsynth()
 
