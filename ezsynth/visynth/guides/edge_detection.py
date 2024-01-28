@@ -37,6 +37,8 @@ class EdgeDetector:
         elif method == "Classic":
             size, sigma = 5, 6.0
             self.kernel = self.create_gaussian_kernel(size, sigma)
+        else:
+            raise ValueError("Unknown edge detection method.")
 
     @staticmethod
     def load_image(input_data):
