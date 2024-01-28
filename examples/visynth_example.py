@@ -2,10 +2,7 @@ import os
 
 import cv2
 
-from ezsynth.Visynth import config_from_directory
-from ezsynth.utils.ezutils import process
-from ezsynth.utils.guides.guides import create_guides
-from ezsynth.utils.sequences import SequenceManager
+from ezsynth.Visynth import Visynth, Config, config_from_directory
 
 config = config_from_directory(
     style_path = "styles",
