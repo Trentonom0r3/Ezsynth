@@ -26,8 +26,7 @@ def create_guides(a: Config) -> Guides:
 
     print("Analyzing optical flow.")
     optical_flow_processor = OpticalFlowProcessor(method = a.flow_method, model = a.flow_model, device = a.device)
-    flow_rev = optical_flow_processor([x for i, x in a.frames])
-    flow_rev = [x for x in flow_rev]
+    flow_rev = list(optical_flow_processor([x for i, x in a.frames]))
     flow_fwd = [x * -1 for x in flow_rev]
 
     print("Analyzing position.")
