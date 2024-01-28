@@ -120,8 +120,7 @@ class EbsynthRunner:
         t_h, t_w, t_c = 0, 0, 0
 
         if sc > self.EBSYNTH_MAX_STYLE_CHANNELS:
-            raise ValueError(
-                f"error: too many style channels {sc}, maximum number is {self.EBSYNTH_MAX_STYLE_CHANNELS}")
+            raise ValueError(f"Too many style channels {sc}, maximum number is {self.EBSYNTH_MAX_STYLE_CHANNELS}.")
 
         guides_source = []
         guides_target = []
