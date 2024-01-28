@@ -9,6 +9,15 @@ import numpy as np
 import torch
 
 
+def auto_device():
+    if torch.backends.mps.is_available():
+        return "mps"
+    elif torch.cuda.is_available():
+        return "cuda"
+    else:
+        "cpu"
+
+
 @dataclass
 class Config:
     """
@@ -26,15 +35,6 @@ class Config:
     flow_method: Literal["RAFT", "DeepFlow"] = "RAFT"
     flow_model: Literal["sintel", "kitti", "chairs"] = "sintel"
     device: torch.device = "cpu"
-
-
-def auto_device():
-    if torch.backends.mps.is_available():
-        return "mps"
-    elif torch.cuda.is_available():
-        return "cuda"
-    else:
-        "cpu"
 
 
 def image_sequence_from_directory(path: str) -> List[tuple[int, np.ndarray]]:
