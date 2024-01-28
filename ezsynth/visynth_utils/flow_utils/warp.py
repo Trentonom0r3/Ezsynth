@@ -10,8 +10,8 @@ class Warp:
         self.width = width
         self.grid = self._create_grid(height, width)
 
-    def _create_grid(self, H, W):
-        x, y = np.meshgrid(np.arange(W), np.arange(H))
+    def _create_grid(self, height, width):
+        x, y = np.meshgrid(np.arange(width), np.arange(height))
         return np.stack((x, y), axis = -1).astype(np.float32)
 
     def _warp(self, img, flo):
