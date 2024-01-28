@@ -1,6 +1,7 @@
 # Don't commit these files to git
 # The Main Library
 *.dll
+*.so
 
 # The Zipped Library
 *.zip
