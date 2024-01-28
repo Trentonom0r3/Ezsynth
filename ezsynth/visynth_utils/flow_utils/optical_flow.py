@@ -77,8 +77,7 @@ class RAFT_flow(Warp):
 
     def _load_tensor_from_numpy(self, np_array):
         try:
-            tensor = torch.tensor(np_array, dtype = torch.float32).permute(2, 0, 1).unsqueeze(0).to(self.device)
-            return tensor
+            return torch.tensor(np_array, dtype = torch.float32).permute(2, 0, 1).unsqueeze(0).to(self.device)
         except Exception as e:
             print(f"Exception in load_tensor_from_numpy: {e}")
             raise e
