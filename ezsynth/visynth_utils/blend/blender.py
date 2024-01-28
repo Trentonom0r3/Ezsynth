@@ -36,8 +36,7 @@ class Blend:
         # use err_masks with flow to create final err_masks
         self.prev_mask = None
 
-        ORIGINAL_SIZE = self.style_fwd[0].shape
-        print(f"Original size: {ORIGINAL_SIZE}")
+        print(f"Original size: {self.style_fwd[0].shape}")
         warped_masks = [None] * len(err_masks)  # Initialize with None to maintain list size
         warp = Warp(self.style_fwd[0])
         for i in range(len(err_masks) - 1):
