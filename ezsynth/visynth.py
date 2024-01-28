@@ -127,11 +127,13 @@ def _run_sequences(
             end_frame = seq.end_frame
             step = 1
             style = style_frame[0]
+            flow = guides.flow_fwd
         else:
             start_frame = seq.end_frame
             end_frame = seq.start_frame
             step = -1
             style = style_frame[1]
+            flow = guides.flow_rev
 
         eb = Ebsynth()
 
