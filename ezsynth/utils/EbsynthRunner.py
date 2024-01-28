@@ -177,7 +177,7 @@ class EbsynthRunner:
 
         with self.lock:
             self.lib.ebsynthRun(
-                self.EBSYNTH_BACKEND_AUTO,  # backend
+                self.EBSYNTH_BACKEND_AUTO,
                 sc,  # numStyleChannels
                 guides_source.shape[-1],  # numGuideChannels
                 sw,  # sourceWidth
