@@ -1,4 +1,4 @@
-from ezsynth.utils._eb import *
+from ezsynth.utils.EbsynthRunner import *
 
 
 class Ebsynth:
