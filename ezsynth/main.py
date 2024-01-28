@@ -3,7 +3,6 @@ from .utils.guides.guides import *
 
 
 class Imagesynth:
-    INVALID_OUTPUT_PATH = 'output_path must be a str leading to a valid file path or None'
 
     def __init__(self, style_img, guides = [], uniformity = 3500.0,
                  patchsize = 5, pyramidlevels = 6, searchvoteiters = 12,
@@ -91,7 +90,7 @@ class Imagesynth:
 
     def _validate_output_path(self, output_path):
         if not (isinstance(output_path, str) or output_path is None):
-            raise ValueError(Imagesynth.INVALID_OUTPUT_PATH)
+            raise ValueError('output_path must be a str leading to a valid file path or None')
         return output_path
 
     def run(self, output_path = None):
