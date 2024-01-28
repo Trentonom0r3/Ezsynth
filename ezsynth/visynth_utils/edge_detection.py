@@ -48,6 +48,7 @@ class EdgeDetector:
         :return: Edge map as a numpy array.
         """
         if self.method == "PAGE":
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             # noinspection PyPep8Naming
             mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag = 0, 0.35, 0.05, 0.8, 0.8, 0.8, 0.1, 0.0, 0.9, True
             self.page_gpu.load_img(img_array = torch.from_numpy(image))
@@ -61,6 +62,7 @@ class EdgeDetector:
             return result
 
         elif self.method == "PST":
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             # noinspection PyPep8Naming
             S, W, sigma_LPF, thresh_min, thresh_max, morph_flag = 0.3, 15, 0.15, 0.05, 0.9, True
             self.pst_gpu.load_img(img_file = torch.from_numpy(image))
