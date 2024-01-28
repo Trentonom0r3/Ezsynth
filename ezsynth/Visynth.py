@@ -73,6 +73,10 @@ def _read_images(a: List[tuple[int, str]]) -> List[tuple[int, numpy.ndarray]]:
         raise ValueError(f"Error reading image: {e}")
 
 
+class Visynth:
+    pass
+
+
 def process(config: Config, guides: Guides, sequences: List[Sequence]):
     """
     Process sub-sequences using multiprocessing.
