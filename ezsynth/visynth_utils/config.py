@@ -5,7 +5,6 @@ from typing import List
 from typing import Literal
 
 import cv2
-import numpy as np
 import torch
 
 from .frame import Frame
@@ -39,7 +38,7 @@ class Config:
     device: torch.device = auto_device()
 
 
-def image_sequence_from_directory(path: str) -> List[tuple[int, np.ndarray]]:
+def image_sequence_from_directory(path: str) -> List[Frame]:
     return _read_images(_get_image_paths(path))
 
 
@@ -60,8 +59,8 @@ def _extract_index(name: str):
         raise ValueError("Cannot extract index from: " + name)
 
 
-def _read_images(a: List[tuple[int, str]]) -> List[tuple[int, np.ndarray]]:
+def _read_images(a: List[tuple[int, str]]) -> List[Frame]:
     try:
-        return [(i, cv2.imread(b)) for i, b in a]
+        return [Frame(i, cv2.imread(b)) for i, b in a]
     except Exception as e:
         raise ValueError(f"Error reading image: {e}")
