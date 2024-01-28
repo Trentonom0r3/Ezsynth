@@ -126,7 +126,6 @@ def _run_sequences(
 
         eb = Ebsynth(style, guides = [])
         warp = Warp(imgseq[start])
-        ORIGINAL_SIZE = imgseq[0].shape[1::-1]
         # Loop through frames.
         for i in range(init, final, step):
             eb.clear_guide()
@@ -142,7 +141,7 @@ def _run_sequences(
                 warped_img = warp.run_warping(stylized_img, flow[i] if reverse else flow[
                     i - 1])  # Changed from run_warping_from_np to run_warping
 
-                warped_img = cv2.resize(warped_img, ORIGINAL_SIZE)
+                warped_img = cv2.resize(warped_img, imgseq[0].shape[1::-1])
 
                 eb.add_guide(style, warped_img, 0.5)
 
