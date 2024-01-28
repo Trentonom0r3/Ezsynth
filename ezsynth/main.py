@@ -30,20 +30,6 @@ class Imagesynth:
             guide 2: str leading to file path, or numpy array
             weight: float
         
-        Example
-        -------
-        from ezsynth import imagesynth
-        
-            STYLE_PATH = "Style.jpg" or np.array
-            SOURCE_IMG = "Source.jpg" or np.array
-            TARGET_IMG = "Target.jpg" or np.array
-            OUTPUT_PATH = "Output.jpg" or None
-        
-            eb = imagesynth(style_img = STYLE_PATH)
-            eb.add_guide(source = SOURCE_IMG, target = TARGET_IMG, weight = 1.0)
-            eb.run(output_path = OUTPUT_PATH)
-            or to do something else result = eb.run()
-        
         """
         self.style_img = self._validate_image(style_img)
         self.eb = ebsynth(style = style_img, guides = [], uniformity = uniformity,
