@@ -18,13 +18,11 @@ class OpticalFlowProcessor:
     ):
         self.method = method
         self.model = model
-        self.optical_flow = []
 
     def __call__(self, images: List[np.ndarray]):
         if self.method == "RAFT":
             self.flow = RAFT_flow(images[0], self.model)
-            self.optical_flow = self.flow.compute_optical_flow(images)
-            return self.optical_flow
+            return self.flow.compute_optical_flow(images)
 
         elif self.method == "DeepFlow":
             raise NotImplementedError("DeepFlow method is not implemented.")
