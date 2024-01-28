@@ -154,7 +154,13 @@ def _run_sequences(
             ]
 
             if i != start_frame:
-                eb.add_guide(positional[start_frame - 1] if direction else positional[start_frame], positional[i], 2.0)
+                guides.append(
+                    (
+                        positional[start_frame - 1] if direction else positional[start_frame],
+                        positional[i],
+                        2.0,
+                    )
+                )
 
                 # Assuming frames[-1] is already in BGR format
                 frame = frames[-1] / 255.0
