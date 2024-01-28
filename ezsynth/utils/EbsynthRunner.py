@@ -154,7 +154,7 @@ class EbsynthRunner:
         # noinspection PyCallingNonCallable,PyTypeChecker
         guides_weights = (c_float * len(guides_weights))(*guides_weights)
 
-        style_weights = [1.0 / sc for i in range(sc)]
+        style_weights = [1.0 / sc for _ in range(sc)]
         style_weights = (c_float * sc)(*style_weights)
 
         max_pyramid_levels = 0
