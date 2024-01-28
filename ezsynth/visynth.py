@@ -47,16 +47,16 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
 
             if style_start is not None and style_end is not None:
                 # noinspection PyTypeChecker
-                futures.append(("fwd", executor.submit(_run_sequences, guides, seq, False)))
+                futures.append(("fwd", executor.submit(_run_sequences, guides, seq, 1)))
                 # noinspection PyTypeChecker
-                futures.append(("bwd", executor.submit(_run_sequences, guides, seq, True)))
+                futures.append(("bwd", executor.submit(_run_sequences, guides, seq, -1)))
 
             elif style_start is not None and style_end is None:
-                images, _ = _run_sequences(a, guides, seq, False)
+                images, _ = _run_sequences(a, guides, seq, 1)
                 return [x for x in images if x is not None]
 
             elif style_start is None and style_end is not None:
-                images, _ = _run_sequences(a, guides, seq, True)
+                images, _ = _run_sequences(a, guides, seq, -1)
                 return [x for x in images if x is not None]
 
             else:
