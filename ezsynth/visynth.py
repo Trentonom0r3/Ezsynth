@@ -34,8 +34,8 @@ class Visynth:
 
 def _process(config: Config, sequences: List[Sequence], guides: Guides):
     style_images_fwd = []
-    err_fwd = []
     style_images_bwd = []
+    err_fwd = []
     err_bwd = []
 
     with ThreadPoolExecutor(max_workers = 2) as executor:
