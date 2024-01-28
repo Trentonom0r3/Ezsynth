@@ -30,11 +30,9 @@ def create_guides(a: Config) -> Guides:
     flow_fwd = [x * -1 for x in flow_rev]
 
     print("Analyzing position.")
-    positional_rev = PositionalGuide([x for i, x in a.frames], flow = flow_rev)
-    positional_rev = positional_rev()
+    positional_rev = PositionalGuide([x for i, x in a.frames], flow = flow_rev)()
 
-    positional_fwd = PositionalGuide([x for i, x in a.frames], flow = flow_rev[::-1])
-    positional_fwd = positional_fwd()
+    positional_fwd = PositionalGuide([x for i, x in a.frames], flow = flow_rev[::-1])()
     positional_fwd = positional_fwd[::-1]
 
     return Guides(
