@@ -40,11 +40,14 @@ class RAFT_flow(Warp):
             self,
             image: np.ndarray,
             model: Literal["sintel", "kitti", "chairs"] = "sintel",
+            device: torch.device = torch.device("cpu"),
     ):
         super().__init__(image)
 
         model_name = "raft-" + model + ".pth"
         model_path = os.path.join(os.path.dirname(__file__), "models", model_name)
+
+        self.device = device
 
         # noinspection PyTypeChecker
         self.model = torch.nn.DataParallel(RAFT(self._instantiate_raft_model(model_name)))
