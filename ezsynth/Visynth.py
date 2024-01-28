@@ -20,8 +20,8 @@ from .utils.sequences import Sequence
 class Config:
     """
     Ebsynth config.
-    :param styles: The paths to the style images.
-    :param imgsequence: The path to the folder containing the input images.
+    :param styles: List of tuples containing frame index and style video frame.
+    :param images: List of tuples containing frame index and video frame.
     :param edge_method: The method for edge detection, default is "PAGE". Options are "PAGE", "PST", and "Classic".
     :param flow_method: The method for optical flow computation, default is "RAFT". Options are "RAFT" and "DeepFlow".
     :param model: The model name for optical flow, default is "sintel". Options are "sintel", "kitti", and "chairs".
