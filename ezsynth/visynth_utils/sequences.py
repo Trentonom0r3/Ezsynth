@@ -25,7 +25,7 @@ class Sequence:
 
 
 class SequenceManager:
-    def __init__(self, begFrame, endFrame, styles, style_indexes, imgindexes):
+    def config_to_sequences(self, begFrame, endFrame, styles, style_indexes, imgindexes):
         """
         Setup Sequence Information.
         Compares the style indexes with the image indexes to determine the sequence information.
