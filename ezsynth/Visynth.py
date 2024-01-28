@@ -18,6 +18,14 @@ from utils.sequences import Sequence
 
 @dataclass
 class Config:
+    """
+    Ebsynth config.
+    :param styles: The paths to the style images.
+    :param imgsequence: The path to the folder containing the input images.
+    :param edge_method: The method for edge detection, default is "PAGE". Options are "PAGE", "PST", and "Classic".
+    :param flow_method: The method for optical flow computation, default is "RAFT". Options are "RAFT" and "DeepFlow".
+    :param model: The model name for optical flow, default is "sintel". Options are "sintel", "kitti", and "chairs".
+    """
     styles: List[tuple[int, numpy.ndarray]]
     images: List[tuple[int, numpy.ndarray]]
     edge_method: Literal["PAGE", "PST", "Classic"]
