@@ -94,7 +94,7 @@ class EbsynthRunner:
 
     def run(
             self,
-            img_style: np.ndarray,
+            style_image: np.ndarray,
             guides: List[Tuple[np.ndarray, np.ndarray, float]],
             patch_size: int = 5,
             num_pyramid_levels: int = -1,
@@ -115,8 +115,8 @@ class EbsynthRunner:
         if len(guides) == 0:
             raise ValueError("At least one guide must be specified.")
 
-        img_style = self._normalize_img_shape(img_style)
-        sh, sw, sc = img_style.shape
+        style_image = self._normalize_img_shape(style_image)
+        sh, sw, sc = style_image.shape
         t_h, t_w, t_c = 0, 0, 0
 
         if sc > self.MAX_STYLE_CHANNELS:
@@ -185,7 +185,7 @@ class EbsynthRunner:
                 guides_source.shape[-1],  # numGuideChannels
                 sw,  # sourceWidth
                 sh,  # sourceHeight
-                img_style.tobytes(),  # sourceStyleData (width * height * numStyleChannels) bytes, scan-line order
+                style_image.tobytes(),  # sourceStyleData (width * height * numStyleChannels) bytes, scan-line order
                 guides_source.tobytes(),  # sourceGuideData (width * height * numGuideChannels) bytes, scan-line order
                 t_w,  # targetWidth
                 t_h,  # targetHeight
