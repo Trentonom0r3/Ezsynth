@@ -13,8 +13,8 @@ import numpy as np
 class Config:
     """
     Initialize Ebsynth.
-    :param style_image: path to the style image, or a numpy array.
-    :param guides: list of tuples containing source and target guide images, as file paths or as numpy arrays.
+    :param style_image: Path to the image, or a numpy array.
+    :param guides: List of tuples containing: source image, target image, weight.
     :param uniformity: uniformity weight for the style transfer. Defaults to 3500.0.
     :param patch_size: size of the patches. Must be an odd number. Defaults to 5. [5x5 patches]
     :param num_pyramid_levels: number of pyramid levels. Larger Values useful for things like color transfer. Defaults to 6.
