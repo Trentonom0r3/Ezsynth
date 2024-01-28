@@ -66,7 +66,6 @@ class Ebsynth:
         """
         Clear all the guides.
         """
-
         self.guides = []
 
     def add_guide(self, source, target, weight = None):
@@ -77,7 +76,6 @@ class Ebsynth:
         :param target: Path to the target guide image or a numpy array.
         :param weight: Weight for the guide pair. Defaults to 1.0.
         """
-
         if not isinstance(source, (str, np.ndarray)):
             raise ValueError("source should be either a file path or a numpy array.")
         if not isinstance(target, (str, np.ndarray)):
@@ -94,7 +92,6 @@ class Ebsynth:
         
         :return: styled image as a numpy array.
         """
-
         # with self.lock:
         if isinstance(self.style, np.ndarray):
             style = self.style
