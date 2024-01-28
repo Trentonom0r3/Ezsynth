@@ -112,7 +112,7 @@ def _run_sequences(
         a: Config,
         guides: Guides,
         seq: Sequence,
-        direction: bool,
+        direction: int,
 ):
     with threading.Lock():
         stylized_frames = []
