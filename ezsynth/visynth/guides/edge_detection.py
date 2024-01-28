@@ -64,13 +64,13 @@ class EdgeDetector:
         """
         os.makedirs(output_dir, exist_ok = True)
 
-        edge_result = Image.fromarray((result_array * 255).astype(np.uint8))
+        result = Image.fromarray((result_array * 255).astype(np.uint8))
 
-        output_file_path = os.path.join(output_dir, base_file_name)
+        path = os.path.join(output_dir, base_file_name)
 
-        edge_result.save(output_file_path)
+        result.save(path)
 
-        return output_file_path
+        return path
 
     @staticmethod
     def create_gaussian_kernel(size, sigma):
