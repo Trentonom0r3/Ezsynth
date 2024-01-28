@@ -119,25 +119,25 @@ def _run_sequences(
         err_list = []
 
         if reverse:
-            start, step, style, init, final = (seq.final, -1, seq.style_end, seq.endFrame, seq.begFrame)
+            start_frame, step, style, init, final = (seq.final, -1, seq.style_end, seq.endFrame, seq.begFrame)
         else:
-            start, step, style, init, final = (seq.init, 1, seq.style_start, seq.begFrame, seq.endFrame)
+            start_frame, step, style, init, final = (seq.init, 1, seq.style_start, seq.begFrame, seq.endFrame)
 
         eb = Ebsynth()
-        warp = Warp(imgseq[start])
+        warp = Warp(imgseq[start_frame])
 
         for i in range(init, final, step):
             config = ebsynth.Config(
                 style_image = style,
                 guides = [
-                    (edge[start], edge[i], 1.0),
-                    (imgseq[start], imgseq[i], 6.0),
+                    (edge[start_frame], edge[i], 1.0),
+                    (imgseq[start_frame], imgseq[i], 6.0),
                 ]
             )
 
             # Commented out section: additional guide and warping
-            if i != start:
-                eb.add_guide(positional[start - 1] if reverse else positional[start], positional[i], 2.0)
+            if i != start_frame:
+                eb.add_guide(positional[start_frame - 1] if reverse else positional[start_frame], positional[i], 2.0)
 
                 stylized_img = stylized_frames[-1] / 255.0  # Assuming stylized_frames[-1] is already in BGR format
 
