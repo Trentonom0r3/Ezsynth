@@ -39,16 +39,16 @@ class EdgeDetector:
         else:
             raise ValueError("Unknown edge detection method.")
 
-    def compute_edge(self, input_data):
+    def compute_edge(self, image):
         """
         Compute the edge map.
 
-        :param input_data: Either a file path or a numpy array.
+        :param image: Either a file path or a numpy array.
 
         :return: Edge map as a numpy array.
         """
         if self.method == "PAGE":
-            input_data_path = _load_image(input_data)
+            input_data_path = _load_image(image)
             try:
                 # page_gpu = PAGE_GPU(direction_bins=10, device=self.device)
                 mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag = 0, 0.35, 0.05, 0.8, 0.8, 0.8, 0.1, 0.0, 0.9, 1
@@ -60,7 +60,7 @@ class EdgeDetector:
                 os.remove(input_data_path)
 
         elif self.method == "PST":
-            input_data_path = _load_image(input_data)
+            input_data_path = _load_image(image)
             try:
                 # pst_gpu = PST_GPU(device=self.device)
                 S, W, sigma_LPF, thresh_min, thresh_max, morph_flag = 0.3, 15, 0.15, 0.05, 0.9, 1
@@ -72,10 +72,10 @@ class EdgeDetector:
                 os.remove(input_data_path)
 
         elif self.method == "Classic":
-            if isinstance(input_data, np.ndarray):
-                img = input_data
-            elif isinstance(input_data, str):
-                img = cv2.imread(input_data)
+            if isinstance(image, np.ndarray):
+                img = image
+            elif isinstance(image, str):
+                img = cv2.imread(image)
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             blurred = cv2.filter2D(gray, -1, self.kernel)
             result = cv2.subtract(gray, blurred)
