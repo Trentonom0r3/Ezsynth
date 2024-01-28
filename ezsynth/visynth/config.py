@@ -34,7 +34,7 @@ class Config:
     edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE"
     flow_method: Literal["RAFT", "DeepFlow"] = "RAFT"
     flow_model: Literal["sintel", "kitti", "chairs"] = "sintel"
-    device: torch.device = "cpu"
+    device: torch.device = auto_device()
 
 
 def image_sequence_from_directory(path: str) -> List[tuple[int, np.ndarray]]:
