@@ -33,6 +33,7 @@ class OpticalFlowProcessor:
             raise ValueError("Unknown optical flow method.")
 
 
+# noinspection PyPep8Naming
 class RAFT_flow(Warp):
     device = 'mps'
 
