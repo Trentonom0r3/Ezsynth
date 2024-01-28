@@ -56,21 +56,6 @@ class EdgeDetector:
         else:
             raise ValueError("Invalid input. Provide either a file path or a numpy array.")
 
-    @staticmethod
-    def save_result(output_dir, base_file_name, result_array):
-        """
-        Save the numpy array result to the specified directory and return the file path.
-        """
-        os.makedirs(output_dir, exist_ok = True)
-
-        result = Image.fromarray((result_array * 255).astype(np.uint8))
-
-        path = os.path.join(output_dir, base_file_name)
-
-        result.save(path)
-
-        return path
-
     def compute_edge(self, input_data):
         """
         Compute the edge map.
