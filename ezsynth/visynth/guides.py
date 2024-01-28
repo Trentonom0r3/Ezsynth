@@ -24,7 +24,7 @@ def create_guides(a: Config) -> Guides:
     edge = [edge_detector(x) for i, x in a.frames]
 
     optical_flow_processor = OpticalFlowProcessor(model_name = a.flow_model, flow_method = a.flow_method)
-    flow_rev = optical_flow_processor.compute_flow([x for i, x in a.frames])
+    flow_rev = optical_flow_processor([x for i, x in a.frames])
     flow_rev = [x for x in flow_rev]
     flow_fwd = [x * -1 for x in flow_rev]
 

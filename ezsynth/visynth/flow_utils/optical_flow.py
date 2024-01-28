@@ -26,7 +26,7 @@ class OpticalFlowProcessor():
 
         self.optical_flow = []
 
-    def compute_flow(self, imgsequence):
+    def __call__(self, imgsequence):
         if self.flow_method == "RAFT":
             return self._compute_raft_flow(imgsequence)
         elif self.flow_method == "DeepFlow":
