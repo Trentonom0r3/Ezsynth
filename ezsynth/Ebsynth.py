@@ -130,6 +130,7 @@ class Ebsynth:
         buffer = self._get_or_create_buffer((target_height, target_width, style_channels))
         err_buffer = self._get_or_create_err_buffer((target_height, target_width))
 
+        print("Calling Ebsynth.")
         with self.lib_lock:
             self.lib.ebsynthRun(
                 self.BACKEND_AUTO,  # backend
