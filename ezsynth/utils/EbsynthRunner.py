@@ -2,6 +2,7 @@ import os
 import sys
 import threading
 from ctypes import *
+from typing import List, Tuple
 
 import numpy as np
 
@@ -93,15 +94,15 @@ class EbsynthRunner:
 
     def run(
             self,
-            img_style,
-            guides,
-            patch_size = 5,
-            num_pyramid_levels = -1,
-            num_search_vote_iters = 6,
-            num_patch_match_iters = 4,
-            stop_threshold = 5,
-            uniformity_weight = 3500.0,
-            extra_pass3x3 = False,
+            img_style: np.ndarray,
+            guides: List[Tuple[np.ndarray, np.ndarray, float]],
+            patch_size: int = 5,
+            num_pyramid_levels: int = -1,
+            num_search_vote_iters: int = 6,
+            num_patch_match_iters: int = 4,
+            stop_threshold: int = 5,
+            uniformity_weight: float = 3500.0,
+            extra_pass3x3: bool = False,
     ):
         self.init_lib()
 
