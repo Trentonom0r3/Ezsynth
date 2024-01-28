@@ -92,7 +92,7 @@ class Ebsynth:
                     c_void_p
                 )
 
-    def run(self, a: Config) -> Tuple[np.ndarray, np.ndarray]:
+    def __call__(self, a: Config) -> Tuple[np.ndarray, np.ndarray]:
         self.init_lib()
 
         # Validation checks
