@@ -3,7 +3,6 @@ from .utils.guides.guides import *
 
 
 class Imagesynth:
-    INVALID_GUIDE_FORMAT = 'guides must be a list of lists in the format [guide 1, guide 2, weight]'
     INVALID_OUTPUT_PATH = 'output_path must be a str leading to a valid file path or None'
 
     def __init__(self, style_img, guides = [], uniformity = 3500.0,
@@ -84,7 +83,7 @@ class Imagesynth:
 
     def _validate_guide(self, guide):
         if len(guide) != 3:
-            raise ValueError(Imagesynth.INVALID_GUIDE_FORMAT)
+            raise ValueError('guides must be a list of lists in the format [guide 1, guide 2, weight]')
         self._validate_image(guide[0])
         self._validate_image(guide[1])
         if not isinstance(guide[2], float):
