@@ -19,6 +19,7 @@ class Config:
     :param num_pyramid_levels: number of pyramid levels. Larger Values useful for things like color transfer. Defaults to 6.
     :param num_search_vote_iters: number of search/vote iterations. Defaults to 12.
     :param num_patch_match_iters: number of Patch-Match iterations. Defaults to 6.
+    :param stop_threshold: stop threshold
     :param extra_pass3x3: whether to perform an extra pass with 3x3 patches. Defaults to False.
     """
 
