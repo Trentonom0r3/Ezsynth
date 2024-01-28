@@ -4,12 +4,9 @@ import cv2
 
 from ezsynth.Visynth import Visynth, Config, image_sequence_from_directory
 
-config = image_sequence_from_directory(
-    style_path = "styles",
-    input_path = "input",
-    edge_method = "Classic",
-    flow_method = "RAFT",
-    model_name = "sintel",
+config = Config(
+    images = image_sequence_from_directory("input"),
+    styles = image_sequence_from_directory("styles"),
 )
 
 guides = create_guides(config)
