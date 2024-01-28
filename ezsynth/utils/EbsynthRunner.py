@@ -156,15 +156,15 @@ class EbsynthRunner:
         style_weights = [1.0 / sc for i in range(sc)]
         style_weights = (c_float * sc)(*style_weights)
 
-        maxPyramidLevels = 0
+        max_pyramid_levels = 0
         for level in range(32, -1, -1):
             if min(min(sh, t_h) * pow(2.0, -level), min(sw, t_w) * pow(2.0, -level)) >= (2 * patch_size + 1):
-                maxPyramidLevels = level + 1
+                max_pyramid_levels = level + 1
                 break
 
         if num_pyramid_levels == -1:
-            num_pyramid_levels = maxPyramidLevels
-        num_pyramid_levels = min(num_pyramid_levels, maxPyramidLevels)
+            num_pyramid_levels = max_pyramid_levels
+        num_pyramid_levels = min(num_pyramid_levels, max_pyramid_levels)
 
         num_search_vote_iters_per_level = (c_int * num_pyramid_levels)(*[num_search_vote_iters] * num_pyramid_levels)
         num_patch_match_iters_per_level = (c_int * num_pyramid_levels)(*[num_patch_match_iters] * num_pyramid_levels)
