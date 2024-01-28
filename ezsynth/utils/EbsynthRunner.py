@@ -106,11 +106,12 @@ class EbsynthRunner:
 
         # Validation checks
         if patch_size < 3:
-            raise ValueError("patch_size is too small")
+            raise ValueError("Patch size is too small.")
         if patch_size % 2 == 0:
-            raise ValueError("patch_size must be an odd number")
+            raise ValueError("Patch size must be an odd number.")
+
         if len(guides) == 0:
-            raise ValueError("at least one guide must be specified")
+            raise ValueError("At least one guide must be specified.")
 
         # Initialize libebsynth if not already done
         self.init_lib()
@@ -134,15 +135,15 @@ class EbsynthRunner:
             nt_h, nt_w, nt_c = target_guide.shape
 
             if s_h != sh or s_w != sw:
-                raise ValueError("guide source and style resolution must match style resolution.")
+                raise ValueError("Guide source and style resolution must match style resolution.")
 
             if t_c == 0:
                 t_h, t_w, t_c = nt_h, nt_w, nt_c
             elif nt_h != t_h or nt_w != t_w:
-                raise ValueError("guides target resolutions must be equal")
+                raise ValueError("Guides target resolutions must be equal.")
 
             if s_c != nt_c:
-                raise ValueError("guide source and target channels must match exactly.")
+                raise ValueError("Guide source and target channels must match exactly.")
 
             guides_source.append(source_guide)
             guides_target.append(target_guide)
