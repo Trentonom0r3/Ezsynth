@@ -120,12 +120,12 @@ def _run_sequences(
 
         if direction == 1:
             start_frame = seq.start_frame
-            end_frame = seq.endFrame
+            end_frame = seq.end_frame
             step = 1
             style = seq.style_start
         else:
             start_frame = seq.end_frame
-            end_frame = seq.begFrame
+            end_frame = seq.start_frame
             step = -1
             style = seq.style_end
 
