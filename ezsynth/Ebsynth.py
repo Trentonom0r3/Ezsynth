@@ -74,7 +74,7 @@ class Ebsynth:
             self,
             source: Union[str, np.ndarray],
             target: Union[str, np.ndarray],
-            weight: Union[float, None] = None
+            weight: Union[int, float, None] = None
     ):
         """
         Add a new guide pair.
