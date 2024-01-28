@@ -41,16 +41,16 @@ class EdgeDetector:
             raise ValueError("Unknown edge detection method.")
 
     @staticmethod
-    def load_image(input_data):
+    def load_image(image):
         """Load image from either a file path or directly from a numpy array."""
-        if isinstance(input_data, str):
-            return input_data
+        if isinstance(image, str):
+            return image
 
         # If it's a numpy array, save it as a temporary file
-        elif isinstance(input_data, np.ndarray):
+        elif isinstance(image, np.ndarray):
             with tempfile.NamedTemporaryFile(suffix = ".png", delete = False) as temp_file:
                 temp_file_path = temp_file.name
-                img = Image.fromarray(input_data)
+                img = Image.fromarray(image)
                 img.save(temp_file_path)
 
             return temp_file_path
