@@ -5,6 +5,7 @@ from typing import Literal
 import cv2
 import numpy as np
 import phycv
+import torch
 from PIL import Image
 
 
@@ -12,7 +13,7 @@ class EdgeDetector:
     def __init__(
             self,
             method: Literal["PAGE", "PST", "Classic"] = "PAGE",
-            device: str = "cpu",
+            device: torch.device = torch.device("cpu"),
     ):
         """
         Initialize the edge detector.
