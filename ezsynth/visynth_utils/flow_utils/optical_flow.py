@@ -1,4 +1,5 @@
 import os
+from typing import Literal
 
 import cv2
 import torch
@@ -14,8 +15,8 @@ class OpticalFlowProcessor():
 
     def __init__(
             self,
-            method = 'RAFT',
-            model = 'Sintel',
+            method: Literal["RAFT", "DeepFlow"] = "RAFT",
+            model: Literal["sintel", "kitti", "chairs"] = "sintel",
     ):
 
         if method not in self.valid_flow_methods:
