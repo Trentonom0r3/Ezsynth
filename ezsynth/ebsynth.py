@@ -3,7 +3,6 @@ import sys
 import threading
 from ctypes import *
 from dataclasses import dataclass
-from pathlib import Path
 from typing import List, Tuple, Union
 
 import cv2
@@ -169,11 +168,11 @@ class Ebsynth:
         with self.lib_lock:
             if self.lib is None:
                 if sys.platform[0:3] == "win":
-                    self.lib = CDLL(os.path.join(Path(__file__).parent, "lib", "ebsynth.dll"))
+                    self.lib = CDLL(os.path.join(os.path.dirname(__file__), "lib", "ebsynth.dll"))
                 elif sys.platform == "darwin":
-                    self.lib = CDLL(os.path.join(Path(__file__).parent, "lib", "ebsynth.so"))
+                    self.lib = CDLL(os.path.join(os.path.dirname(__file__), "lib", "ebsynth.so"))
                 elif sys.platform[0:5] == "linux":
-                    self.lib = CDLL(os.path.join(Path(__file__).parent, "lib", "ebsynth.so"))
+                    self.lib = CDLL(os.path.join(os.path.dirname(__file__), "lib", "ebsynth.so"))
 
                 if self.lib is None:
                     raise RuntimeError("Unsupported platform.")
