@@ -55,9 +55,7 @@ class RAFT_flow(Warp):
         # noinspection PyTypeChecker
         self.model = torch.nn.DataParallel(RAFT(self._instantiate_raft_model(model_name)))
         self.model.load_state_dict(torch.load(model_path, map_location = self.device))
-
         self.model = self.model.module
-        self.model.to(self.device)
         self.model.eval()
 
     # noinspection PyMethodMayBeStatic
