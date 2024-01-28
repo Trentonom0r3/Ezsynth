@@ -70,7 +70,7 @@ cv2.imwrite("output/000.jpg", image)
 
 ```py
 import cv2
-from ezsynth.Visynth import Visynth, Config, image_sequence_from_directory
+from ezsynth.visynth import Visynth, Config, image_sequence_from_directory
 
 visynth = Visynth()
 

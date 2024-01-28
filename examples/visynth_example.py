@@ -1,6 +1,6 @@
 import cv2
 
-from ezsynth.Visynth import Visynth, Config, image_sequence_from_directory
+from ezsynth.visynth import Visynth, Config, image_sequence_from_directory
 
 visynth = Visynth()
 
