@@ -118,7 +118,7 @@ def _run_sequences(
         stylized_frames = []
         err_list = []
 
-        if direction:
+        if direction == 1:
             start_frame, step, style, init, final = (seq.final, -1, seq.style_end, seq.endFrame, seq.begFrame)
         else:
             start_frame, step, style, init, final = (seq.init, 1, seq.style_start, seq.begFrame, seq.endFrame)
