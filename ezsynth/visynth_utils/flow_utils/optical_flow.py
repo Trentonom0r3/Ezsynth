@@ -98,6 +98,6 @@ class RAFT_flow(Warp):
         for img1, img2 in zip(images[:-1], images[1:]):
             yield self._compute_flow(img1, img2)
 
-    def compute_optical_flow(self, imgsequence):
-        self.optical_flow = self.__iter__(imgsequence)
+    def compute_optical_flow(self, images):
+        self.optical_flow = self.__iter__(images)
         return self.optical_flow
