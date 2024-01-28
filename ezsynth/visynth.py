@@ -21,6 +21,8 @@ class Visynth:
     def __call__(self, a: Config) -> List[tuple[int, np.ndarray]]:
         if len(a.frames) == 0:
             raise ValueError("At least one video frame must be specified.")
+        if len(a.style_frames) == 0:
+            raise ValueError("At least one style video frame must be specified.")
 
         guides = create_guides(a)
 
