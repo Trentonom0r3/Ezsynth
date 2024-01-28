@@ -1,6 +1,7 @@
 from .utils.ezutils import *
 from .utils.guides.guides import *
 
+
 class Ezsynth:
     """
     `ezsynth` is the main class for the ezsynth package.
@@ -21,31 +22,31 @@ class Ezsynth:
         The model name for optical flow, default is "sintel".
         Options are "sintel", "kitti", and "chairs".
     """
+
     def __init__(self, styles, imgsequence, edge_method = "PAGE",
                  flow_method = "RAFT", model = "sintel", output_folder = None):
-        
+
         self.setup = Setup(styles, imgsequence, edge_method, flow_method, model)
         self.output_folder = output_folder
         self.results = None
 
-        
     def run(self):
         runner = Runner(self.setup)
         self.results = runner.run()
         if self.output_folder is not None:
             self.save()
         return self.results
-    
+
     @staticmethod
     def save_results(output_folder, base_file_name, result_array):
         """
         Save the numpy array result to the specified directory and return the file path.
         """
-        os.makedirs(output_folder, exist_ok=True)
+        os.makedirs(output_folder, exist_ok = True)
         output_file_path = os.path.join(output_folder, base_file_name)
         cv2.imwrite(output_file_path, result_array)
         return output_file_path
-    
+
     def save(self, base_name = "output", extension = ".png"):
         """
         Save the results to the specified directory.
@@ -62,12 +63,14 @@ class Ezsynth:
             self.save_results(self.output_folder, base_name + str(i).zfill(3) + extension, self.results[i])
         return
 
+
 class Imagesynth:
     INVALID_STYLE_IMG = 'style_img must be a str leading to a valid file path or a 3-channel numpy array'
     INVALID_GUIDE_FORMAT = 'guides must be a list of lists in the format [guide 1, guide 2, weight]'
     INVALID_OUTPUT_PATH = 'output_path must be a str leading to a valid file path or None'
-    def __init__(self, style_img, guides = [], uniformity = 3500.0, 
-                 patchsize = 5, pyramidlevels = 6, searchvoteiters = 12, 
+
+    def __init__(self, style_img, guides = [], uniformity = 3500.0,
+                 patchsize = 5, pyramidlevels = 6, searchvoteiters = 12,
                  patchmatchiters = 6, extrapass3x3 = True, backend = 'cuda'):
         """
         Initialize the ebsynth object.
@@ -101,10 +104,10 @@ class Imagesynth:
         self.style_img = self._validate_style_img(style_img)
         self.device = 'cuda'
         self.eb = ebsynth(style = style_img, guides = [], uniformity = uniformity,
-                            patchsize = patchsize, pyramidlevels = pyramidlevels,
-                            searchvoteiters = searchvoteiters, patchmatchiters = patchmatchiters,
-                            extrapass3x3 = extrapass3x3, backend = backend)
-    
+                          patchsize = patchsize, pyramidlevels = pyramidlevels,
+                          searchvoteiters = searchvoteiters, patchmatchiters = patchmatchiters,
+                          extrapass3x3 = extrapass3x3, backend = backend)
+
     def add_guide(self, source, target, weight):
         """
         Add a guide to the ebsynth object.
@@ -119,13 +122,13 @@ class Imagesynth:
         
         weight: float
         """
-        
+
         self._validate_guide([source, target, weight])
         self.eb.add_guide(source, target, weight)
-        
+
     def clear_guides(self):
         self.eb.clear_guide()
-    
+
     @staticmethod
     def _validate_image(img):
         if isinstance(img, str):
@@ -138,10 +141,10 @@ class Imagesynth:
         else:
             raise ValueError(Imagesynth.INVALID_STYLE_IMG)
         return img
-    
+
     def _validate_style_img(self, style_img):
         return self._validate_image(style_img)
-    
+
     def _validate_guide(self, guide):
         if len(guide) != 3:
             raise ValueError(Imagesynth.INVALID_GUIDE_FORMAT)
@@ -149,7 +152,7 @@ class Imagesynth:
         self._validate_image(guide[1])
         if not isinstance(guide[2], float):
             raise ValueError('weight must be a float')
-        
+
     def _validate_output_path(self, output_path):
         if not (isinstance(output_path, str) or output_path is None):
             raise ValueError(Imagesynth.INVALID_OUTPUT_PATH)
@@ -172,5 +175,5 @@ class Imagesynth:
 
         if output_path:
             cv2.imwrite(output_path, result)
-            
+
         return result
