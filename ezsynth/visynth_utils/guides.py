@@ -4,10 +4,10 @@ from typing import List
 import cv2
 import numpy as np
 
+from .config import Config
 from .edge_detection import EdgeDetector
-from ..visynth.flow_utils.optical_flow import OpticalFlowProcessor
-from ..visynth.flow_utils.warp import Warp
-from ..visynth import Config
+from .flow_utils.optical_flow import OpticalFlowProcessor
+from .flow_utils.warp import Warp
 
 
 @dataclass
