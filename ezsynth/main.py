@@ -5,7 +5,7 @@ from .utils.guides.guides import *
 def imagesynth(
         self,
         style_img,
-        guides = [],
+        guides = None,
         uniformity = 3500.0,
         patchsize = 5,
         pyramidlevels = 6,
@@ -16,7 +16,7 @@ def imagesynth(
 ):
     return ebsynth(
         style = _validate_image(style_img),
-        guides = [],
+        guides = guides,
         uniformity = uniformity,
         patchsize = patchsize,
         pyramidlevels = pyramidlevels,
