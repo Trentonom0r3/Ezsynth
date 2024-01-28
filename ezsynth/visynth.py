@@ -149,9 +149,7 @@ def _run_sequences(
 
                 stylized_img = frames[-1] / 255.0  # Assuming frames[-1] is already in BGR format
 
-                # Changed from run_warping_from_np to run_warping
                 warped_img = warp.run_warping(stylized_img, flow[i] if direction else flow[i - 1])
-
                 warped_img = cv2.resize(warped_img, imgseq[0].shape[1::-1])
 
                 eb.add_guide(style, warped_img, 0.5)
