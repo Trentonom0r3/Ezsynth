@@ -6,7 +6,7 @@ class Warp:
     def __init__(self, img):
         # self.lock = threading.Lock()
         height, width, _ = img.shape
-        self.H = height
+        self.height = height
         self.W = width
         self.grid = self._create_grid(height, width)
 
@@ -16,7 +16,7 @@ class Warp:
 
     def _warp(self, img, flo):
         # with self.lock:
-        flo_resized = cv2.resize(flo, (self.W, self.H), interpolation = cv2.INTER_LINEAR)
+        flo_resized = cv2.resize(flo, (self.W, self.height), interpolation = cv2.INTER_LINEAR)
         map_x = self.grid[..., 0] + flo_resized[..., 0]
         map_y = self.grid[..., 1] + flo_resized[..., 1]
         warped_img = cv2.remap(img, map_x, map_y, interpolation = cv2.INTER_LINEAR, borderMode = cv2.BORDER_REFLECT)

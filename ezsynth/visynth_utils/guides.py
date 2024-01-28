@@ -73,7 +73,7 @@ class PositionalGuide:
 
     def _create_and_warp_coord_map(self, flow_up):
         if self.coord_map is None:
-            h, w = self.warp.H, self.warp.W
+            h, w = self.warp.height, self.warp.W
             self.coord_map = np.zeros((h, w, 3), dtype = np.float32)
             self.coord_map[:, :, 0] = np.linspace(0, 1, w)
             self.coord_map[:, :, 1] = np.linspace(0, 1, h)[:, np.newaxis]
