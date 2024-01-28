@@ -60,7 +60,6 @@ class Ebsynth:
             raise ValueError("Patch size is too small.")
         if a.patch_size % 2 == 0:
             raise ValueError("Patch size must be an odd number.")
-
         if len(a.guides) == 0:
             raise ValueError("At least one guide must be specified.")
 
