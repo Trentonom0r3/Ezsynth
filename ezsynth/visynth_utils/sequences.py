@@ -1,27 +1,15 @@
+from dataclasses import dataclass
+from typing import Union
+
 import cv2
 
 
+@dataclass
 class Sequence:
-    def __init__(self, begFrame, endFrame, style_start = None, style_end = None):
-        self.begFrame = begFrame
-        self.endFrame = endFrame
-
-        # Check explicitly for None
-        self.style_start = style_start if style_start is not None else None
-        self.style_end = style_end if style_end is not None else None
-
-        self.init = begFrame
-        self.final = endFrame
-
-        # Check if both style_start and style_end are None
-        if self.style_start is None and self.style_end is None:
-            raise ValueError("At least one style attribute should be provided.")
-
-    def __str__(self):
-        # Use a more informative string representation
-        start_info = str(self.style_start) if self.style_start is not None else "None"
-        end_info = str(self.style_end) if self.style_end is not None else "None"
-        return f"Sequence: {self.begFrame} - {self.endFrame} | Style Start: {start_info} - Style End: {end_info}"
+    start_frame: int
+    end_frame: int
+    style_start_frame: Union[None, int]
+    style_end_frame: Union[None, int]
 
 
 def config_to_sequences(self, begFrame, endFrame, styles, style_indexes, imgindexes):
