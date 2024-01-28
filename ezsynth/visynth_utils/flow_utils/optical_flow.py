@@ -25,8 +25,9 @@ class OpticalFlowProcessor:
             self.flow = RAFT_flow(images[0], self.model)
             self.optical_flow = self.flow.compute_optical_flow(images)
             return self.optical_flow
+
         elif self.method == "DeepFlow":
-            return self._compute_deepflow(images)
+            raise NotImplementedError("DeepFlow method is not implemented.")
 
 
 class RAFT_flow(Warp):
