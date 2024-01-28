@@ -113,14 +113,6 @@ def _run_sequences(
         seq,
         reverse = False
 ):
-    """
-    Run the sequence for ebsynth based on the provided parameters.
-    Parameters:
-        # [Description of each parameter]
-    Returns:
-        stylized_frames: List of stylized images.
-        err_list: List of errors.
-    """
     with threading.Lock():
         stylized_frames = []
         err_list = []
