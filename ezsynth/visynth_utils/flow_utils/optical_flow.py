@@ -14,8 +14,8 @@ class OpticalFlowProcessor():
 
     def __init__(
             self,
-            model = 'Sintel',
             method = 'RAFT',
+            model = 'Sintel',
     ):
 
         if method not in self.valid_flow_methods:
