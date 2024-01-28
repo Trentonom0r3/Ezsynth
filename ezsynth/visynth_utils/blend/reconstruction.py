@@ -7,7 +7,7 @@ import numpy as np
 import scipy.sparse
 
 
-class reconstructor:
+class Reconstructor:
     """Wraps the Poisson Reconstruction functionality into a simple class.
     Class should use '__call__' methods for actual execution.
     Example:

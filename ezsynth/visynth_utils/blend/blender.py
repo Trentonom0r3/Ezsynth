@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 
 from .histogram_blend import HistogramBlender
-from .reconstruction import reconstructor
+from .reconstruction import Reconstructor
 from ..flow_utils.warp import Warp
 
 
@@ -92,7 +92,7 @@ class Blend:
         return hist_blends
 
     def _reconstruct(self, hist_blends):
-        blends = reconstructor(hist_blends, self.style_fwd, self.style_bwd, self.err_masks)
+        blends = Reconstructor(hist_blends, self.style_fwd, self.style_bwd, self.err_masks)
         final_blends = blends()
         final_blends = [blend for blend in final_blends if blend is not None]
         return final_blends
