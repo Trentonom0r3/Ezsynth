@@ -80,17 +80,17 @@ class Ebsynth:
             guide_weight = _validate_weight(guide_weight)
 
             s_h, s_w, s_c = source_guide.shape
-            nt_h, nt_w, nt_c = target_guide.shape
+            t_h, t_w, t_c = target_guide.shape
 
             if s_h != style_height or s_w != style_weight:
                 raise ValueError("Guide source and style resolution must match style resolution.")
 
             if target_channels == 0:
-                target_height, target_width, target_channels = nt_h, nt_w, nt_c
-            elif nt_h != target_height or nt_w != target_width:
+                target_height, target_width, target_channels = t_h, t_w, t_c
+            elif t_h != target_height or t_w != target_width:
                 raise ValueError("Guides target resolutions must be equal.")
 
-            if s_c != nt_c:
+            if s_c != t_c:
                 raise ValueError("Guide source and target channels must match exactly.")
 
             guides_source.append(source_guide)
