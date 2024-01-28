@@ -6,6 +6,7 @@ from typing import Literal
 
 import cv2
 import numpy as np
+import torch
 
 
 @dataclass
@@ -17,12 +18,23 @@ class Config:
     :param edge_method: Method for edge detection. PAGE, PST or Classic. Default is PAGE.
     :param flow_method: Method for optical flow computation. RAFT or DeepFlow. Default is RAFT.
     :param flow_model: Model name for optical flow. sintel, kitti or chairs. Default is sintel.
+    :param device: What processing unit to use.
     """
     frames: List[tuple[int, np.ndarray]]
     style_frames: List[tuple[int, np.ndarray]]
     edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE"
     flow_method: Literal["RAFT", "DeepFlow"] = "RAFT"
     flow_model: Literal["sintel", "kitti", "chairs"] = "sintel"
+    device: torch.device = "cpu"
+
+
+def auto_device():
+    if torch.backends.mps.is_available():
+        return "mps"
+    elif torch.cuda.is_available():
+        return "cuda"
+    else:
+        "cpu"
 
 
 def image_sequence_from_directory(path: str) -> List[tuple[int, np.ndarray]]:
