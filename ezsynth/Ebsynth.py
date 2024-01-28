@@ -126,14 +126,14 @@ class Ebsynth:
         return img, err
 
 
-def _validate_image(img):
-    if isinstance(img, str):
-        img = cv2.imread(img)
-        if img is None:
+def _validate_image(a):
+    if isinstance(a, str):
+        a = cv2.imread(a)
+        if a is None:
             raise ValueError('Image must be a str leading to a valid file path or a 3-channel numpy array')
-    elif isinstance(img, np.ndarray):
-        if img.shape[-1] != 3:
+    elif isinstance(a, np.ndarray):
+        if a.shape[-1] != 3:
             raise ValueError('Image must be a str leading to a valid file path or a 3-channel numpy array')
     else:
         raise ValueError('Image must be a str leading to a valid file path or a 3-channel numpy array')
-    return img
+    return a
