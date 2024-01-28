@@ -1,7 +1,7 @@
+import os.path
 import sys
 import threading
 from ctypes import *
-from pathlib import Path
 
 import numpy as np
 
@@ -27,14 +27,11 @@ class EbsynthRunner:
         with self.lock:
             if self.lib is None:
                 if sys.platform[0:3] == 'win':
-                    libebsynth_path = str(Path(__file__).parent / 'ebsynth.dll')
-                    self.lib = CDLL(libebsynth_path)
+                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.dll'))
                 elif sys.platform == 'darwin':
-                    libebsynth_path = str(Path(__file__).parent / 'ebsynth.so')
-                    self.lib = CDLL(libebsynth_path)
+                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.so'))
                 elif sys.platform[0:5] == 'linux':
-                    libebsynth_path = str(Path(__file__).parent / 'ebsynth.so')
-                    self.lib = CDLL(libebsynth_path)
+                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.so'))
                 else:
                     raise RuntimeError("Unsupported platform.")
 
