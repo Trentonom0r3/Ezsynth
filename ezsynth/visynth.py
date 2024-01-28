@@ -1,6 +1,6 @@
 import threading
 from concurrent.futures import ThreadPoolExecutor
-from typing import List
+from typing import List, Tuple, Union
 
 import cv2
 import numpy as np
@@ -112,6 +112,7 @@ def _run_sequences(
         a: Config,
         guides: Guides,
         seq: Sequence,
+        style_frame: Tuple[Union[None, np.ndarray], Union[None, np.ndarray]],
         direction: int,
 ):
     with threading.Lock():
@@ -122,12 +123,12 @@ def _run_sequences(
             start_frame = seq.start_frame
             end_frame = seq.end_frame
             step = 1
-            style = seq.style_start
+            style = style_frame[0]
         else:
             start_frame = seq.end_frame
             end_frame = seq.start_frame
             step = -1
-            style = seq.style_end
+            style = style_frame[1]
 
         eb = Ebsynth()
         warp = Warp(imgseq[start_frame])
