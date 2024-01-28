@@ -3,7 +3,6 @@ from .utils.guides.guides import *
 
 
 class Imagesynth:
-    INVALID_STYLE_IMG = 'style_img must be a str leading to a valid file path or a 3-channel numpy array'
     INVALID_GUIDE_FORMAT = 'guides must be a list of lists in the format [guide 1, guide 2, weight]'
     INVALID_OUTPUT_PATH = 'output_path must be a str leading to a valid file path or None'
 
@@ -72,12 +71,12 @@ class Imagesynth:
         if isinstance(img, str):
             img = cv2.imread(img)
             if img is None:
-                raise ValueError(Imagesynth.INVALID_STYLE_IMG)
+                raise ValueError('style_img must be a str leading to a valid file path or a 3-channel numpy array')
         elif isinstance(img, np.ndarray):
             if img.shape[-1] != 3:
-                raise ValueError(Imagesynth.INVALID_STYLE_IMG)
+                raise ValueError('style_img must be a str leading to a valid file path or a 3-channel numpy array')
         else:
-            raise ValueError(Imagesynth.INVALID_STYLE_IMG)
+            raise ValueError('style_img must be a str leading to a valid file path or a 3-channel numpy array')
         return img
 
     def _validate_style_img(self, style_img):
