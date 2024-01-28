@@ -6,6 +6,7 @@ import cv2
 import numpy
 
 from .Ebsynth import Ebsynth
+# noinspection PyUnresolvedReferences
 from .visynth.Config import Config, image_sequence_from_directory
 from .visynth.blend.blender import Blend
 from .visynth.flow_utils.warp import Warp
