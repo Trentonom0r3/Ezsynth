@@ -9,12 +9,12 @@ class Imagesynth:
                  patchmatchiters = 6, extrapass3x3 = True, backend = 'cuda'):
         """
         Initialize the ebsynth object.
-        
+
         Parameters
         ----------
         style_img: str or numpy array
             str leading to file path, or numpy array
-        
+
         guides: tuple of lists
             [[guide 1, guide 2, weight], [guide 1, guide 2, weight], ...]
             guide 1: str leading to file path, or numpy array
@@ -37,7 +37,6 @@ class Imagesynth:
         
         """
         self.style_img = self._validate_style_img(style_img)
-        self.device = 'cuda'
         self.eb = ebsynth(style = style_img, guides = [], uniformity = uniformity,
                           patchsize = patchsize, pyramidlevels = pyramidlevels,
                           searchvoteiters = searchvoteiters, patchmatchiters = patchmatchiters,
