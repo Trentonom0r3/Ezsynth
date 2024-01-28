@@ -58,6 +58,7 @@ class EdgeDetector:
             result = result.cpu().numpy()
             result = cv2.GaussianBlur(result, (5, 5), 3)
             result = (result * 255).astype(np.uint8)
+            return result
 
         elif self.method == "PST":
             # noinspection PyPep8Naming
@@ -69,6 +70,7 @@ class EdgeDetector:
             result = result.cpu().numpy()
             result = cv2.GaussianBlur(result, (5, 5), 3)
             result = (result * 255).astype(np.uint8)
+            return result
 
         elif self.method == "Classic":
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -76,11 +78,11 @@ class EdgeDetector:
             result = cv2.subtract(gray, blurred)
             result = cv2.add(result, 0.5 * 255)
             result = np.clip(result, 0, 255)
+            return result
 
         else:
             raise ValueError("Unknown edge detection method.")
 
-        return result
 
 
 def _create_gaussian_kernel(size, sigma):
