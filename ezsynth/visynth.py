@@ -128,12 +128,14 @@ def _run_sequences(
             step = 1
             style = style_frame[0]
             flow = guides.flow_fwd
+            positional = guides.positional_fwd
         else:
             start_frame = seq.end_frame - frame_offset
             end_frame = seq.start_frame - frame_offset
             step = -1
             style = style_frame[1]
             flow = guides.flow_rev
+            positional = guides.positional_rev
 
         eb = Ebsynth()
 
