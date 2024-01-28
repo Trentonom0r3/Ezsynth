@@ -60,7 +60,7 @@ class EdgeDetector:
 
         elif self.method == "PST":
             S, W, sigma_LPF, thresh_min, thresh_max, morph_flag = 0.3, 15, 0.15, 0.05, 0.9, True
-            result = self.pst_gpu.run(input_data_path, S, W, sigma_LPF, thresh_min, thresh_max, morph_flag)
+            result = self.pst_gpu.pst_output
             result = result.cpu().numpy()
             result = cv2.GaussianBlur(result, (5, 5), 3)
             result = (result * 255).astype(np.uint8)
