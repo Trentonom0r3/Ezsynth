@@ -83,14 +83,9 @@ class Ebsynth:
         :param target: Path to the target guide image or a numpy array.
         :param weight: Weight for the guide pair. Defaults to 1.0.
         """
-        if not isinstance(source, (str, np.ndarray)):
-            raise ValueError("source should be either a file path or a numpy array.")
-        if not isinstance(target, (str, np.ndarray)):
-            raise ValueError("target should be either a file path or a numpy array.")
-        if not isinstance(weight, (float, int)):
-            raise ValueError("weight should be a float or an integer.")
-
-        weight = weight if weight is not None else 1.0
+        source = _validate_image(source)
+        target = _validate_image(target)
+        weight = _validate_weight(weight)
         self.guides.append((source, target, weight))
 
     def run(self):
