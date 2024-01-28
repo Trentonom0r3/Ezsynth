@@ -41,6 +41,9 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
     with ThreadPoolExecutor(max_workers = 2) as executor:
         futures = []
         for seq in sequences:
+            style_start = next(x.image for x in a.style_frames if x.index == seq.start_frame)
+            style_end = next(x.image for x in a.style_frames if x.index == seq.end_frame)
+
             if style_start is not None and style_end is not None:
                 futures.append(("fwd", executor.submit(_run_sequences, imgseq, edge_maps, flow_fwd, pos_fwd, seq)))
                 futures.append(("bwd", executor.submit(_run_sequences, imgseq, edge_maps, flow_bwd, pos_bwd, seq, True)))
