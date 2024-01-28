@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import List
 
 import cv2
-import numpy
 import numpy as np
 
 from .edge_detection import EdgeDetector
@@ -13,11 +12,11 @@ from ...visynth import Config
 
 @dataclass
 class Guides:
-    edge: List[numpy.ndarray]
-    flow_rev: List[numpy.ndarray]
-    flow_fwd: List[numpy.ndarray]
-    positional_rev: List[numpy.ndarray]
-    positional_fwd: List[numpy.ndarray]
+    edge: List[np.ndarray]
+    flow_rev: List[np.ndarray]
+    flow_fwd: List[np.ndarray]
+    positional_rev: List[np.ndarray]
+    positional_fwd: List[np.ndarray]
 
 
 def create_guides(a: Config) -> Guides:
