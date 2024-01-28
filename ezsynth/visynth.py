@@ -26,10 +26,10 @@ class Visynth:
 
         sequences = SequenceManager(a)._set_sequence()
 
-        return process(a, guides, sequences)
+        return _process(a, guides, sequences)
 
 
-def process(config: Config, guides: Guides, sequences: List[Sequence]):
+def _process(config: Config, guides: Guides, sequences: List[Sequence]):
     """
     Process sub-sequences using multiprocessing.
 
