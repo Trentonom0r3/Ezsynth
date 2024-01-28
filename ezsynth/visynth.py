@@ -122,19 +122,17 @@ def _run_sequences(
             start_frame = seq.start_frame
             step = 1
             style = seq.style_start
-            init = seq.begFrame
             final = seq.endFrame
         else:
             start_frame = seq.end_frame
             step = -1
             style = seq.style_end
-            init = seq.endFrame
             final = seq.begFrame
 
         eb = Ebsynth()
         warp = Warp(imgseq[start_frame])
 
-        for i in range(init, final, step):
+        for i in range(start_frame, final, step):
             config = ebsynth.Config(
                 style_image = style,
                 guides = [
