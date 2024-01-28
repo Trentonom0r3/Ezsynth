@@ -168,7 +168,13 @@ def _run_sequences(
                 warped_img = warp.run_warping(frame, flow[i] if direction else flow[i - 1])
                 warped_img = cv2.resize(warped_img, imgseq[0].shape[1::-1])
 
-                eb.add_guide(style, warped_img, 0.5)
+                guides.append(
+                    (
+                        style,
+                        warped_img,
+                        0.5,
+                    )
+                )
 
             config = ebsynth.Config(
                 style_image = style,
