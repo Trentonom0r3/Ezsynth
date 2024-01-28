@@ -144,7 +144,7 @@ def _run_sequences(
         for i in range(start_frame, end_frame, step):
             print("Processing frame " + str(i + frame_offset) + ".")
 
-            guides = [
+            ebsynth_guides = [
                 (
                     guides.edge[start_frame],
                     guides.edge[i],
@@ -158,7 +158,7 @@ def _run_sequences(
             ]
 
             if i != start_frame:
-                guides.append(
+                ebsynth_guides.append(
                     (
                         positional[start_frame] if direction == 1 else positional[start_frame - 1],
                         positional[i],
@@ -172,7 +172,7 @@ def _run_sequences(
                 warped_img = warp.run_warping(frame, flow[i - 1] if direction == 1 else flow[i])
                 warped_img = cv2.resize(warped_img, a.frames[0].image.shape[1::-1])
 
-                guides.append(
+                ebsynth_guides.append(
                     (
                         style,
                         warped_img,
@@ -182,7 +182,7 @@ def _run_sequences(
 
             config = ebsynth.Config(
                 style_image = style,
-                guides = guides,
+                guides = ebsynth_guides,
             )
             frame, err = eb(config)
             frames.append(frame)
