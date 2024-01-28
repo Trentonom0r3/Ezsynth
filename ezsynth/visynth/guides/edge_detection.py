@@ -87,8 +87,7 @@ class EdgeDetector:
         elif method == 'PAGE':
             input_data_path = self.load_image(input_data)
         else:
-            raise ValueError(
-                "Invalid method. Choose from 'PST', 'Classic', or 'PAGE'.")
+            raise ValueError("Invalid method. Choose from 'PST', 'Classic', or 'PAGE'.")
 
         try:
             if method == "PST":
@@ -122,8 +121,7 @@ class EdgeDetector:
 
 
             else:
-                raise ValueError(
-                    "Invalid method. Choose from 'PST', 'Guide', or 'PAGE'.")
+                raise ValueError("Invalid method. Choose from 'PST', 'Guide', or 'PAGE'.")
         finally:
             # If the input_data was a numpy array and the method is not 'Classic', delete the temporary file
             if method != 'Classic' and isinstance(input_data, np.ndarray):
