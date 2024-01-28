@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import Union, List
 
 import cv2
-import numpy as np
 
 from .config import Config
 
@@ -11,8 +10,8 @@ from .config import Config
 class Sequence:
     start_frame: int
     end_frame: int
-    style_start_frame: Union[None, np.ndarray]
-    style_end_frame: Union[None, np.ndarray]
+    style_start_frame: Union[None, int]
+    style_end_frame: Union[None, int]
 
 
 def config_to_sequences(a: Config) -> List[Sequence]:
