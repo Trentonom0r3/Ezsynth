@@ -96,21 +96,15 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
 
     sty_bwd = sty_bwd[::-1]
     err_bwd = err_bwd[::-1]
-    # check length of sty_fwd and sty_bwd
-    # if length of one is zero, skip blending and return the other
-    # Initialize the Blend class
+
     blend_instance = Blend(style_fwd = sty_fwd,
                            style_bwd = sty_bwd,
                            err_fwd = err_fwd,
                            err_bwd = err_bwd,
                            flow_fwd = flow_fwd)
 
-    # Invoke the __call__ method to perform blending
     final_blends = blend_instance()
     final_blends = [blends for blends in final_blends if blends is not None]
-
-    # t2 = time.time()
-    # print(f"Time taken to blend: {t2 - t1}")
 
     return final_blends
 
