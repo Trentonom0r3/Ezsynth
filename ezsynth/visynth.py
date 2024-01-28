@@ -126,7 +126,7 @@ def _run_sequences(
 
         eb = Ebsynth(style, guides = [])
         warp = Warp(imgseq[start])
-        # Loop through frames.
+
         for i in range(init, final, step):
             eb.clear_guide()
             eb.add_guide(edge[start], edge[i], 1.0)
