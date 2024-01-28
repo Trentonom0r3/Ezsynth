@@ -94,8 +94,8 @@ class RAFT_flow(Warp):
             cv2.resize(flow_np, original_size)
             return flow_np
 
-    def __iter__(self, imgsequence):
-        for img1, img2 in zip(imgsequence[:-1], imgsequence[1:]):
+    def __iter__(self, images):
+        for img1, img2 in zip(images[:-1], images[1:]):
             yield self._compute_flow(img1, img2)
 
     def compute_optical_flow(self, imgsequence):
