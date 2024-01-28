@@ -21,7 +21,7 @@ class Guides:
 
 def create_guides(a: Config) -> Guides:
     print("Analyzing edges.")
-    edge_detector = EdgeDetector(method = a.edge_method)
+    edge_detector = EdgeDetector(method = a.edge_method, device = a.device)
     edge = [edge_detector(x) for i, x in a.frames]
 
     print("Analyzing optical flow.")
