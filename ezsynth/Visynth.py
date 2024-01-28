@@ -33,7 +33,7 @@ class Config:
     flow_model: Literal["sintel", "kitti", "chairs"] = "sintel"
 
 
-def config_from_directory(
+def images_from_directory(
         style_path: str = "styles",
         input_path: str = "input",
         edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE",
