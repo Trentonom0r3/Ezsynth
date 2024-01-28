@@ -99,7 +99,7 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
         style_bwd = sty_bwd,
         err_fwd = err_fwd,
         err_bwd = err_bwd,
-        flow_fwd = flow_fwd,
+        flow_fwd = guides.flow_fwd,
     )
 
     final_blends = blend_instance()
