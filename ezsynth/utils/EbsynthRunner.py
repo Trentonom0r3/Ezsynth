@@ -110,15 +110,15 @@ class EbsynthRunner:
         self.init_lib()
 
         # Validation checks
-        if patch_size < 3:
+        if a.patch_size < 3:
             raise ValueError("Patch size is too small.")
-        if patch_size % 2 == 0:
+        if a.patch_size % 2 == 0:
             raise ValueError("Patch size must be an odd number.")
 
-        if len(guides) == 0:
+        if len(a.guides) == 0:
             raise ValueError("At least one guide must be specified.")
 
-        style_image = self._normalize_img_shape(style_image)
+        style_image = self._normalize_img_shape(a.style_image)
         sh, sw, sc = style_image.shape
         t_h, t_w, t_c = 0, 0, 0
 
@@ -129,8 +129,8 @@ class EbsynthRunner:
         guides_target = []
         guides_weights = []
 
-        for i in range(len(guides)):
-            source_guide, target_guide, guide_weight = guides[i]
+        for i in range(len(a.guides)):
+            source_guide, target_guide, guide_weight = a.guides[i]
             source_guide = self._normalize_img_shape(source_guide)
             target_guide = self._normalize_img_shape(target_guide)
             s_h, s_w, s_c = source_guide.shape
@@ -162,20 +162,20 @@ class EbsynthRunner:
 
         max_pyramid_levels = 0
         for level in range(32, -1, -1):
-            if min(min(sh, t_h) * pow(2.0, -level), min(sw, t_w) * pow(2.0, -level)) >= (2 * patch_size + 1):
+            if min(min(sh, t_h) * pow(2.0, -level), min(sw, t_w) * pow(2.0, -level)) >= (2 * a.patch_size + 1):
                 max_pyramid_levels = level + 1
                 break
 
-        if num_pyramid_levels == -1:
+        if a.num_pyramid_levels == -1:
             num_pyramid_levels = max_pyramid_levels
         num_pyramid_levels = min(num_pyramid_levels, max_pyramid_levels)
 
         # noinspection PyCallingNonCallable,PyTypeChecker
-        num_search_vote_iters_per_level = (c_int * num_pyramid_levels)(*[num_search_vote_iters] * num_pyramid_levels)
+        num_search_vote_iters_per_level = (c_int * num_pyramid_levels)(*[a.num_search_vote_iters] * num_pyramid_levels)
         # noinspection PyCallingNonCallable,PyTypeChecker
-        num_patch_match_iters_per_level = (c_int * num_pyramid_levels)(*[num_patch_match_iters] * num_pyramid_levels)
+        num_patch_match_iters_per_level = (c_int * num_pyramid_levels)(*[a.num_patch_match_iters] * num_pyramid_levels)
         # noinspection PyCallingNonCallable,PyTypeChecker
-        stop_threshold_per_level = (c_int * num_pyramid_levels)(*[stop_threshold] * num_pyramid_levels)
+        stop_threshold_per_level = (c_int * num_pyramid_levels)(*[a.stop_threshold] * num_pyramid_levels)
 
         # Get or create buffers
         buffer = self._get_or_create_buffer((t_h, t_w, sc))
@@ -196,14 +196,14 @@ class EbsynthRunner:
                 None,  # targetModulationData (width * height * numGuideChannels) bytes, scan-line order; pass NULL to switch off the modulation
                 style_weights,  # styleWeights (numStyleChannels) floats
                 guides_weights,  # guideWeights (numGuideChannels) floats
-                uniformity_weight,  # uniformityWeight reasonable values are between 500-15000, 3500 is a good default
-                patch_size,  # patchSize odd sizes only, use 5 for 5x5 patch, 7 for 7x7, etc.
+                a.uniformity_weight,  # uniformityWeight reasonable values are between 500-15000, 3500 is a good default
+                a.patch_size,  # patchSize odd sizes only, use 5 for 5x5 patch, 7 for 7x7, etc.
                 self.VOTEMODE_WEIGHTED,  # voteMode use VOTEMODE_WEIGHTED for sharper result
                 num_pyramid_levels,  # numPyramidLevels
                 num_search_vote_iters_per_level,  # numSearchVoteItersPerLevel how many search/vote iters to perform at each level (array of ints, coarse first, fine last)
                 num_patch_match_iters_per_level,  # numPatchMatchItersPerLevel how many Patch-Match iters to perform at each level (array of ints, coarse first, fine last)
                 stop_threshold_per_level,  # stopThresholdPerLevel stop improving pixel when its change since last iteration falls under this threshold
-                1 if extra_pass3x3 else 0,  # extraPass3x3 perform additional polishing pass with 3x3 patches at the finest level, use 0 to disable
+                1 if a.extra_pass3x3 else 0,  # extraPass3x3 perform additional polishing pass with 3x3 patches at the finest level, use 0 to disable
                 None,  # outputNnfData (width * height * 2) ints, scan-line order; pass NULL to ignore
                 buffer,  # outputImageData  (width * height * numStyleChannels) bytes, scan-line order
                 err_buffer,  # outputErrorData (width * height) floats, scan-line order; pass NULL to ignore
