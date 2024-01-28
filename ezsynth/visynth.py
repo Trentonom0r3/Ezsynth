@@ -149,9 +149,9 @@ def _run_sequences(
                 eb.add_guide(positional[start_frame - 1] if direction else positional[start_frame], positional[i], 2.0)
 
                 # Assuming frames[-1] is already in BGR format
-                stylized_img = frames[-1] / 255.0
+                frame = frames[-1] / 255.0
 
-                warped_img = warp.run_warping(stylized_img, flow[i] if direction else flow[i - 1])
+                warped_img = warp.run_warping(frame, flow[i] if direction else flow[i - 1])
                 warped_img = cv2.resize(warped_img, imgseq[0].shape[1::-1])
 
                 eb.add_guide(style, warped_img, 0.5)
@@ -160,8 +160,8 @@ def _run_sequences(
                 style_image = style,
                 guides = guides,
             )
-            stylized_img, err = eb(config)
-            frames.append(stylized_img)
+            frame, err = eb(config)
+            frames.append(frame)
             errors.append(err)
 
         return frames, errors
