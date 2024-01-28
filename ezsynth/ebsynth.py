@@ -242,7 +242,7 @@ def _normalize_image(a: Union[str, np.ndarray]) -> np.ndarray:
 
     elif isinstance(a, np.ndarray):
         if a.shape[-1] != 3:
-            raise ValueError("Image a 3-channel numpy array.")
+            raise ValueError("Image must be a 3-channel numpy array.")
         return a
 
     else:
