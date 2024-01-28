@@ -33,9 +33,9 @@ class Visynth:
 
 
 def _process(config: Config, sequences: List[Sequence], guides: Guides):
-    style_imgs_fwd = []
+    style_images_fwd = []
     err_fwd = []
-    style_imgs_bwd = []
+    style_images_bwd = []
     err_bwd = []
 
     with ThreadPoolExecutor(max_workers = 2) as executor:
@@ -72,20 +72,20 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
                 if direction == "fwd":
                     print("Forward")
                     if img:
-                        style_imgs_fwd.append(img)
+                        style_images_fwd.append(img)
                     if err:
                         err_fwd.append(err)
                 else:
                     print("Backward")
                     if img:
-                        style_imgs_bwd.append(img)
+                        style_images_bwd.append(img)
                     if err:
                         err_bwd.append(err)
             except Exception as e:
                 print(f"List Creation Exception: {e}")
 
-    style_images_b = [img for img in style_imgs_bwd if img is not None]
-    style_images_f = [img for img in style_imgs_fwd if img is not None]
+    style_images_b = [img for img in style_images_bwd if img is not None]
+    style_images_f = [img for img in style_images_fwd if img is not None]
 
     sty_fwd = [img for sublist in style_images_f for img in sublist]
     sty_bwd = [img for sublist in style_images_b for img in sublist]
