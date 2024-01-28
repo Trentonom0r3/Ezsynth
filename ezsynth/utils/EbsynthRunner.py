@@ -64,7 +64,7 @@ class EbsynthRunner:
                     c_void_p
                 )
 
-    def get_or_create_buffer(self, key):
+    def _get_or_create_buffer(self, key):
         with self.cache_lock:
             a = self.cached_buffer.get(key, None)
             if a is None:
@@ -72,7 +72,7 @@ class EbsynthRunner:
                 self.cached_buffer[key] = a
             return a
 
-    def get_or_create_err_buffer(self, key):
+    def _get_or_create_err_buffer(self, key):
         with self.cache_lock:
             a = self.cached_err_buffer.get(key, None)
             if a is None:
@@ -175,8 +175,8 @@ class EbsynthRunner:
         stop_threshold_per_level = (c_int * num_pyramid_levels)(*[stop_threshold] * num_pyramid_levels)
 
         # Get or create buffers
-        buffer = self.get_or_create_buffer((t_h, t_w, sc))
-        err_buffer = self.get_or_create_err_buffer((t_h, t_w))
+        buffer = self._get_or_create_buffer((t_h, t_w, sc))
+        err_buffer = self._get_or_create_err_buffer((t_h, t_w))
 
         with self.lib_lock:
             self.lib.ebsynthRun(
