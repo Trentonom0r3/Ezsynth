@@ -79,7 +79,7 @@ class RAFT_flow(Warp):
             tensor = torch.tensor(np_array, dtype = torch.float32).permute(2, 0, 1).unsqueeze(0).to(self.device)
             return tensor
         except Exception as e:
-            print(f"[ERROR] Exception in load_tensor_from_numpy: {e}")
+            print(f"Exception in load_tensor_from_numpy: {e}")
             raise e
 
     def _compute_flow(self, img1, img2):
