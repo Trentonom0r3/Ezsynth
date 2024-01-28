@@ -9,11 +9,11 @@ from typing import Literal
 import cv2
 import numpy
 
-from ezsynth.Ebsynth import Ebsynth
-from utils.blend.blender import Blend
-from utils.flow_utils.warp import Warp
-from utils.guides.guides import Guides
-from utils.sequences import Sequence
+from .Ebsynth import Ebsynth
+from .utils.blend.blender import Blend
+from .utils.flow_utils.warp import Warp
+from .utils.guides.guides import Guides
+from .utils.sequences import Sequence
 
 
 @dataclass
