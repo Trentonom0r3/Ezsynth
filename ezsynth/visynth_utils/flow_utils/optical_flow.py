@@ -41,22 +41,6 @@ class RAFT_flow(Warp):
             img,
             model_name = 'Sintel',
     ):
-        """
-        
-        Parameters
-        ----------
-        model_name : str, optional
-            DESCRIPTION. The default is 'Sintel'.
-            
-        Example
-        -------
-            flow = RAFT_flow()
-            flow.compute_flow(img1, img2)
-        For an imgsequence, use the compute_optical_flow method.
-        
-            flow = RAFT_flow()
-            flow.compute_optical_flow(imgsequence)
-        """
         super().__init__(img)
 
         model_name = "raft-" + model_name + ".pth"
