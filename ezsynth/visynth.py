@@ -158,5 +158,4 @@ def _run_sequences(
             frames.append(stylized_img)
             errors.append(err)
 
-        print(f"Final Length, Reverse = {direction}: {len(frames)}. Error Length: {len(errors)}")
         return frames, errors
