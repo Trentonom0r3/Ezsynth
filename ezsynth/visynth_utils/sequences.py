@@ -42,14 +42,6 @@ class Subsequence:
 
 class SequenceManager:
     def __init__(self, begFrame, endFrame, styles, style_indexes, imgindexes):
-        self.begFrame = begFrame
-        self.endFrame = endFrame
-        self.styles = styles
-        self.style_indexes = style_indexes
-        self.imgindexes = imgindexes
-        self.num_styles = len(styles)
-
-    def _set_sequence(self):
         """
         Setup Sequence Information.
         Compares the style indexes with the image indexes to determine the sequence information.
