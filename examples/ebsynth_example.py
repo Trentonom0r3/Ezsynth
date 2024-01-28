@@ -1,3 +1,5 @@
+import cv2
+
 from ezsynth import *
 
 ebsynth = Ebsynth()
