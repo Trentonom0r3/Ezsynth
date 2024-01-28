@@ -34,7 +34,7 @@ class EdgeDetector:
             self.pst_gpu = phycv.PST_GPU(device = self.device)
 
         elif method == "Classic":
-            self.kernel = _create_gaussian_kernel(5, 6.0)
+            self.kernel = _create_gaussian_kernel(size = 5, sigma = 6.0)
 
         else:
             raise ValueError("Unknown edge detection method.")
