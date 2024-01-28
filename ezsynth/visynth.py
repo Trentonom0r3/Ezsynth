@@ -116,13 +116,11 @@ def _run_sequences(
     with threading.Lock():
         stylized_frames = []
         err_list = []
-        # Initialize variables based on the 'reverse' flag.
+
         if reverse:
-            start, step, style, init, final = (
-                seq.final, -1, seq.style_end, seq.endFrame, seq.begFrame)
+            start, step, style, init, final = (seq.final, -1, seq.style_end, seq.endFrame, seq.begFrame)
         else:
-            start, step, style, init, final = (
-                seq.init, 1, seq.style_start, seq.begFrame, seq.endFrame)
+            start, step, style, init, final = (seq.init, 1, seq.style_start, seq.begFrame, seq.endFrame)
 
         eb = Ebsynth()
         warp = Warp(imgseq[start])
