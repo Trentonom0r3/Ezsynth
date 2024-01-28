@@ -123,14 +123,14 @@ def _run_sequences(
         frame_offset = a.frames[0].index
 
         if direction == 1:
-            start_frame = seq.start_frame
-            end_frame = seq.end_frame
+            start_frame = seq.start_frame - frame_offset
+            end_frame = seq.end_frame - frame_offset
             step = 1
             style = style_frame[0]
             flow = guides.flow_fwd
         else:
-            start_frame = seq.end_frame
-            end_frame = seq.start_frame
+            start_frame = seq.end_frame - frame_offset
+            end_frame = seq.start_frame - frame_offset
             step = -1
             style = style_frame[1]
             flow = guides.flow_rev
