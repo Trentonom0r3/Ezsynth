@@ -81,7 +81,7 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
                     if err:
                         err_bwd.append(err)
             except Exception as e:
-                print(f"List Creation Exception: {e}")
+                print(f"Process error {e}")
 
     style_images_b = [img for img in style_images_bwd if img is not None]
     style_images_f = [img for img in style_images_fwd if img is not None]
