@@ -165,12 +165,12 @@ class Ebsynth:
     def init_lib(self):
         with self.lib_lock:
             if self.lib is None:
-                if sys.platform[0:3] == 'win':
-                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.dll'))
-                elif sys.platform == 'darwin':
-                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.so'))
-                elif sys.platform[0:5] == 'linux':
-                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.so'))
+                if sys.platform[0:3] == "win":
+                    self.lib = CDLL(os.path.join(__file__, "..", "ebsynth.dll"))
+                elif sys.platform == "darwin":
+                    self.lib = CDLL(os.path.join(__file__, "..", "ebsynth.so"))
+                elif sys.platform[0:5] == "linux":
+                    self.lib = CDLL(os.path.join(__file__, "..", "ebsynth.so"))
 
                 if self.lib is None:
                     raise RuntimeError("Unsupported platform.")
