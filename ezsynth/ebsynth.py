@@ -241,12 +241,10 @@ def _normalize_image(a: Union[str, np.ndarray]) -> np.ndarray:
         return b
 
     elif isinstance(a, np.ndarray):
-        if a.shape[-1] != 3:
-            raise ValueError("Image must be a 3-channel numpy array.")
         return a
 
     else:
-        raise ValueError("Image must valid file path or a 3-channel numpy array.")
+        raise ValueError("Image must valid file path or numpy array.")
 
 
 def _normalize_weight(a: Union[int, float, None]) -> float:
