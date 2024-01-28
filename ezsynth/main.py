@@ -66,7 +66,6 @@ def clear_guides(self):
     self.eb.clear_guide()
 
 
-@staticmethod
 def _validate_image(img):
     if isinstance(img, str):
         img = cv2.imread(img)
