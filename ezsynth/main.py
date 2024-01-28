@@ -3,7 +3,6 @@ from .utils.guides.guides import *
 
 
 def imagesynth(
-        self,
         style_img,
         guides = None,
         uniformity = 3500.0,
