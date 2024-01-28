@@ -24,7 +24,7 @@ class Visynth:
 
         guides = create_guides(a)
 
-        sequences = SequenceManager(a)._set_sequence()
+        sequences = SequenceManager(a)
 
         return _process(a, guides, sequences)
 
