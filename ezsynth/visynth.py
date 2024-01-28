@@ -137,7 +137,7 @@ def _run_sequences(
 
         eb = Ebsynth()
 
-        warp = Warp(a.frames[start_frame])
+        warp = Warp(a.frames[start_frame].image)
 
         for i in range(start_frame, end_frame, step):
             guides = [
@@ -147,8 +147,8 @@ def _run_sequences(
                     1.0,
                 ),
                 (
-                    a.frames[start_frame],
-                    a.frames[i],
+                    a.frames[start_frame].image,
+                    a.frames[i].image,
                     6.0,
                 ),
             ]
