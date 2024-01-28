@@ -55,8 +55,7 @@ class EdgeDetector:
 
             return temp_file_path
         else:
-            raise ValueError(
-                "Invalid input. Provide either a file path or a numpy array.")
+            raise ValueError("Invalid input. Provide either a file path or a numpy array.")
 
     @staticmethod
     def save_result(output_dir, base_file_name, result_array):
