@@ -3,9 +3,9 @@ import numpy as np
 
 
 class Warp:
-    def __init__(self, img):
+    def __init__(self, image):
         # self.lock = threading.Lock()
-        height, width, _ = img.shape
+        height, width, _ = image.shape
         self.height = height
         self.width = width
         self.grid = self._create_grid(height, width)
