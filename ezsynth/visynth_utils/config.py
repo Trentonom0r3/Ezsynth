@@ -8,6 +8,8 @@ import cv2
 import numpy as np
 import torch
 
+from .frame import Frame
+
 
 def auto_device() -> torch.device:
     if torch.backends.mps.is_available():
@@ -29,8 +31,8 @@ class Config:
     :param flow_model: Model name for optical flow. sintel, kitti or chairs. Default is sintel.
     :param device: What processing unit to use.
     """
-    frames: List[tuple[int, np.ndarray]]
-    style_frames: List[tuple[int, np.ndarray]]
+    frames: List[Frame]
+    style_frames: List[Frame]
     edge_method: Literal["PAGE", "PST", "classic"] = "PAGE"
     flow_method: Literal["RAFT", "DeepFlow"] = "RAFT"
     flow_model: Literal["sintel", "kitti", "chairs"] = "sintel"
