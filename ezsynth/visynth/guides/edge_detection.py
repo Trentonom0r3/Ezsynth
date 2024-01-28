@@ -1,4 +1,3 @@
-import os
 from typing import Literal
 
 import cv2
@@ -46,28 +45,20 @@ class EdgeDetector:
         :return: Edge map as a numpy array.
         """
         if self.method == "PAGE":
-            input_data_path = _load_image(image)
-            try:
-                # page_gpu = PAGE_GPU(direction_bins=10, device=self.device)
-                mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag = 0, 0.35, 0.05, 0.8, 0.8, 0.8, 0.1, 0.0, 0.9, 1
-                result = self.page_gpu.run(input_data_path, mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag)
-                result = result.cpu().numpy()
-                result = cv2.GaussianBlur(result, (5, 5), 3)
-                result = (result * 255).astype(np.uint8)
-            finally:
-                os.remove(input_data_path)
+            # page_gpu = PAGE_GPU(direction_bins=10, device=self.device)
+            mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag = 0, 0.35, 0.05, 0.8, 0.8, 0.8, 0.1, 0.0, 0.9, 1
+            result = self.page_gpu.run(input_data_path, mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag)
+            result = result.cpu().numpy()
+            result = cv2.GaussianBlur(result, (5, 5), 3)
+            result = (result * 255).astype(np.uint8)
 
         elif self.method == "PST":
-            input_data_path = _load_image(image)
-            try:
-                # pst_gpu = PST_GPU(device=self.device)
-                S, W, sigma_LPF, thresh_min, thresh_max, morph_flag = 0.3, 15, 0.15, 0.05, 0.9, 1
-                result = self.pst_gpu.run(input_data_path, S, W, sigma_LPF, thresh_min, thresh_max, morph_flag)
-                result = result.cpu().numpy()
-                result = cv2.GaussianBlur(result, (5, 5), 3)
-                result = (result * 255).astype(np.uint8)
-            finally:
-                os.remove(input_data_path)
+            # pst_gpu = PST_GPU(device=self.device)
+            S, W, sigma_LPF, thresh_min, thresh_max, morph_flag = 0.3, 15, 0.15, 0.05, 0.9, 1
+            result = self.pst_gpu.run(input_data_path, S, W, sigma_LPF, thresh_min, thresh_max, morph_flag)
+            result = result.cpu().numpy()
+            result = cv2.GaussianBlur(result, (5, 5), 3)
+            result = (result * 255).astype(np.uint8)
 
         elif self.method == "Classic":
             if isinstance(image, np.ndarray):
