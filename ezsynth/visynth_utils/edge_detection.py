@@ -9,7 +9,7 @@ import torch
 class EdgeDetector:
     def __init__(
             self,
-            method: Literal["PAGE", "PST", "Classic"] = "PAGE",
+            method: Literal["PAGE", "PST", "classic"] = "PAGE",
             device: torch.device = torch.device("cpu"),
     ):
         """
@@ -33,7 +33,7 @@ class EdgeDetector:
         elif method == "PST":
             self.pst_gpu = phycv.PST_GPU(device = self.device)
 
-        elif method == "Classic":
+        elif method == "classic":
             self.kernel = _create_gaussian_kernel(size = 5, sigma = 6.0)
 
         else:
@@ -74,7 +74,7 @@ class EdgeDetector:
             result = (result * 255).astype(np.uint8)
             return result
 
-        elif self.method == "Classic":
+        elif self.method == "classic":
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             blurred = cv2.filter2D(gray, -1, self.kernel)
             result = cv2.subtract(gray, blurred)

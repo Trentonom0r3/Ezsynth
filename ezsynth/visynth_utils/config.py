@@ -31,7 +31,7 @@ class Config:
     """
     frames: List[tuple[int, np.ndarray]]
     style_frames: List[tuple[int, np.ndarray]]
-    edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE"
+    edge_method: Literal["PAGE", "PST", "classic"] = "PAGE"
     flow_method: Literal["RAFT", "DeepFlow"] = "RAFT"
     flow_model: Literal["sintel", "kitti", "chairs"] = "sintel"
     device: torch.device = auto_device()
