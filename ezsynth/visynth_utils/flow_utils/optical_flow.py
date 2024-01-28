@@ -15,9 +15,11 @@ class OpticalFlowProcessor:
             self,
             method: Literal["RAFT", "DeepFlow"] = "RAFT",
             model: Literal["sintel", "kitti", "chairs"] = "sintel",
+            device: torch.device = torch.device("cpu"),
     ):
         self.method = method
         self.model = model
+        self.device = device
 
     def __call__(self, images: List[np.ndarray]):
         if self.method == "RAFT":
