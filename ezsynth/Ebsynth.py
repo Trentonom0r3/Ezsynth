@@ -36,6 +36,8 @@ class Config:
     extra_pass3x3: bool = False
 
 
+########
+
 class Ebsynth:
     BACKEND_CPU = 0x0001
     BACKEND_CUDA = 0x0002
