@@ -6,7 +6,7 @@ from ezsynth.Visynth import Visynth, Config, image_sequence_from_directory
 
 config = Config(
     frames = image_sequence_from_directory("input"),
-    styles = image_sequence_from_directory("styles"),
+    style_frames = image_sequence_from_directory("styles"),
 )
 
 guides = create_guides(config)
