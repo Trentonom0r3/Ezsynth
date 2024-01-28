@@ -24,7 +24,7 @@ class Config:
     :param styles: List of tuples containing frame index and style video frame.
     :param edge_method: Method for edge detection. PAGE, PST or Classic. Default is PAGE.
     :param flow_method: Method for optical flow computation. RAFT or DeepFlow. Default is RAFT.
-    :param flow_model: The model name for optical flow. sintel, kitti or chairs. Default is sintel.
+    :param flow_model: Model name for optical flow. sintel, kitti or chairs. Default is sintel.
     """
     images: List[tuple[int, numpy.ndarray]]
     styles: List[tuple[int, numpy.ndarray]]
