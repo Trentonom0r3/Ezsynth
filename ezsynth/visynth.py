@@ -142,7 +142,7 @@ def _run_sequences(
         warp = Warp(a.frames[start_frame].image)
 
         for i in range(start_frame, end_frame, step):
-            print("Processing frame " + str(i + frame_offset))
+            print("Processing frame " + str(i + frame_offset) + ".")
 
             guides = [
                 (
