@@ -85,7 +85,7 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
                 print("TimeoutError")
             except Exception as e:
                 print(f"List Creation Exception: {e}")
-    # C:\Users\tjerf\Desktop\Testing\src\Testvids\Output
+
     style_imgs_b = [img for img in style_imgs_bwd if img is not None]
     style_imgs_f = [img for img in style_imgs_fwd if img is not None]
 
