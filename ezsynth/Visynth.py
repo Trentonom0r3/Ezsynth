@@ -33,7 +33,7 @@ class Config:
     flow_model: Literal["sintel", "kitti", "chairs"] = "sintel"
 
 
-def images_from_directory(path: str) -> List[tuple[int, numpy.ndarray]]:
+def image_sequence_from_directory(path: str) -> List[tuple[int, numpy.ndarray]]:
     return _read_images(_get_image_paths(path))
 
 

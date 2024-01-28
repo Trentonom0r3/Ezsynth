@@ -2,9 +2,9 @@ import os
 
 import cv2
 
-from ezsynth.Visynth import Visynth, Config, images_from_directory
+from ezsynth.Visynth import Visynth, Config, image_sequence_from_directory
 
-config = images_from_directory(
+config = image_sequence_from_directory(
     style_path = "styles",
     input_path = "input",
     edge_method = "Classic",
