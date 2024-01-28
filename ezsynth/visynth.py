@@ -65,15 +65,17 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
     for direction, future in futures:
         with threading.Lock():
             try:
-                img, err = future.result()
                 if direction == "fwd":
                     print("Forward")
+                    img, err = future.result()
                     if img:
                         style_images_fwd.append(img)
                     if err:
                         err_fwd.append(err)
+
                 else:
                     print("Backward")
+                    img, err = future.result()
                     if img:
                         style_images_bwd.append(img)
                     if err:
