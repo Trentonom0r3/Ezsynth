@@ -19,12 +19,12 @@ class EbsynthRunner:
         self.lib = None
         self.cached_buffer = {}
         self.cached_err_buffer = {}
-        self.lock = threading.Lock()
+        self.lib_lock = threading.Lock()
         self.cache_lock = threading.Lock()
         self.normalize_lock = threading.Lock()
 
     def init_lib(self):
-        with self.lock:
+        with self.lib_lock:
             if self.lib is None:
                 if sys.platform[0:3] == 'win':
                     self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.dll'))
@@ -174,7 +174,7 @@ class EbsynthRunner:
         buffer = self.get_or_create_buffer((t_h, t_w, sc))
         errbuffer = self.get_or_create_err_buffer((t_h, t_w))
 
-        with self.lock:
+        with self.lib_lock:
             self.lib.ebsynthRun(
                 self.EBSYNTH_BACKEND_AUTO,
                 sc,  # numStyleChannels
