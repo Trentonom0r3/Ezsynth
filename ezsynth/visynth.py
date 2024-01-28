@@ -142,7 +142,6 @@ def _run_sequences(
                 ]
             )
 
-            # Commented out section: additional guide and warping
             if i != start_frame:
                 eb.add_guide(positional[start_frame - 1] if direction else positional[start_frame], positional[i], 2.0)
 
