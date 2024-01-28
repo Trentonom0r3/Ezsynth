@@ -120,6 +120,7 @@ def _run_sequences(
     with threading.Lock():
         frames = []
         errors = []
+        frame_offset = a.frames[0].index
 
         if direction == 1:
             start_frame = seq.start_frame
