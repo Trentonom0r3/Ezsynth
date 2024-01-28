@@ -1,5 +1,3 @@
-import os
-
 import cv2
 
 from ezsynth.Visynth import Visynth, Config, image_sequence_from_directory
@@ -13,5 +11,5 @@ config = Config(
 
 images = visynth(config)
 
-for i, image in enumerate(images):
-    cv2.imwrite(os.path.join(output_folder, "output" + str(i).zfill(3) + ".png"), image)
+for i, image in images:
+    cv2.imwrite("output/output" + str(i).zfill(3) + ".jpg", image)
