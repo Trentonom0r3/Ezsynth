@@ -168,6 +168,8 @@ class EbsynthRunner:
 
         if a.num_pyramid_levels == -1:
             num_pyramid_levels = max_pyramid_levels
+        else:
+            num_pyramid_levels = a.num_pyramid_levels
         num_pyramid_levels = min(num_pyramid_levels, max_pyramid_levels)
 
         # noinspection PyCallingNonCallable,PyTypeChecker
