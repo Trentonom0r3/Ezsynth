@@ -39,23 +39,6 @@ class EdgeDetector:
         else:
             raise ValueError("Unknown edge detection method.")
 
-    @staticmethod
-    def load_image(image):
-        """Load image from either a file path or directly from a numpy array."""
-        if isinstance(image, str):
-            return image
-
-        elif isinstance(image, np.ndarray):
-            with tempfile.NamedTemporaryFile(suffix = ".png", delete = False) as temp_file:
-                path = temp_file.name
-                img = Image.fromarray(image)
-                img.save(path)
-
-            return path
-
-        else:
-            raise ValueError("Invalid input. Provide either a file path or a numpy array.")
-
     def compute_edge(self, input_data):
         """
         Compute the edge map.
@@ -112,6 +95,23 @@ class EdgeDetector:
                 os.remove(input_data_path)
 
         return edge_map
+
+
+def _load_image(image):
+    """Load image from either a file path or directly from a numpy array."""
+    if isinstance(image, str):
+        return image
+
+    elif isinstance(image, np.ndarray):
+        with tempfile.NamedTemporaryFile(suffix = ".png", delete = False) as temp_file:
+            path = temp_file.name
+            img = Image.fromarray(image)
+            img.save(path)
+
+        return path
+
+    else:
+        raise ValueError("Invalid input. Provide either a file path or a numpy array.")
 
 
 def _create_gaussian_kernel(size, sigma):
