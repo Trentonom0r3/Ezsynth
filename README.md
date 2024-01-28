@@ -50,7 +50,7 @@ cp ebsynth/bin/ebsynth.so ezsynth/utils
 
 ```py
 import cv2
-from ezsynth import *
+from ezsynth.Ebsynth import Ebsynth, Config
 
 ebsynth = Ebsynth()
 
