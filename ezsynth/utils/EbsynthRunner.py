@@ -115,7 +115,6 @@ class EbsynthRunner:
         if len(guides) == 0:
             raise ValueError("At least one guide must be specified.")
 
-
         img_style = self._normalize_img_shape(img_style)
         sh, sw, sc = img_style.shape
         t_h, t_w, t_c = 0, 0, 0
