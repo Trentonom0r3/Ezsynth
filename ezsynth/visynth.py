@@ -117,7 +117,7 @@ def _run_sequences(
         seq: Sequence,
         style_frame: Tuple[Union[None, np.ndarray], Union[None, np.ndarray]],
         direction: int,
-) -> List[Frame]:
+) -> Tuple[List[Frame], list[np.ndarray]]:
     with threading.Lock():
         frames = []
         errors = []
