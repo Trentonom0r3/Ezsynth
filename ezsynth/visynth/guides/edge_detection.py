@@ -43,7 +43,7 @@ class EdgeDetector:
         """
         Compute the edge map.
 
-        :param image: Either a file path or a numpy array.
+        :param image: A numpy array.
 
         :return: Edge map as a numpy array.
         """
