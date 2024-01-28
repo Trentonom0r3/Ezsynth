@@ -22,10 +22,11 @@ class Blend:
         print(f"Length of err_masks: {len(err_masks)}")
         print(f"Shape of err_masks[0]: {err_masks[0].shape}")
         print(f"Type of err_masks[0]: {type(err_masks[0])}")
-        # Check if err_masks is empty
+
         if not err_masks:
             print("Error: err_masks is empty.")
             return []
+
         # use err_masks with flow to create final err_masks
         self.prev_mask = None
 
