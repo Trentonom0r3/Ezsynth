@@ -75,7 +75,7 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
                         style_imgs_fwd.append(img)
                     if err:
                         err_fwd.append(err)
-                else:  # direction is "bwd"
+                else:
                     print("Backward")
                     if img:
                         style_imgs_bwd.append(img)
