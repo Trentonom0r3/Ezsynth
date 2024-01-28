@@ -118,7 +118,7 @@ class Ebsynth:
                                    num_search_vote_iters = self.searchvoteiters,
                                    num_patch_match_iters = self.patchmatchiters,
                                    uniformity_weight = self.uniformity,
-                                   extraPass3x3 = self.extrapass3x3
+                                   extra_pass3x3 = self.extrapass3x3
                                    )
 
         return img, err

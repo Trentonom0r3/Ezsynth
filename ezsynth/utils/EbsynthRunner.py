@@ -101,7 +101,7 @@ class EbsynthRunner:
             num_patch_match_iters = 4,
             stop_threshold = 5,
             uniformity_weight = 3500.0,
-            extraPass3x3 = False,
+            extra_pass3x3 = False,
     ):
 
         # Validation checks
@@ -207,7 +207,7 @@ class EbsynthRunner:
                                 # numPatchMatchItersPerLevel how many Patch-Match iters to perform at each level (array of ints, coarse first, fine last)
                                 stop_threshold_per_level,
                                 # stopThresholdPerLevel stop improving pixel when its change since last iteration falls under this threshold
-                                1 if extraPass3x3 else 0,
+                                1 if extra_pass3x3 else 0,
                                 # extraPass3x3 perform additional polishing pass with 3x3 patches at the finest level, use 0 to disable
                                 None,
                                 # outputNnfData (width * height * 2) ints, scan-line order; pass NULL to ignore
