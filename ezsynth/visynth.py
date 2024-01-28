@@ -133,6 +133,8 @@ def _run_sequences(
             style = style_frame[1]
 
         eb = Ebsynth()
+
+        start_frame_image = next(x.image for x in a.frames if x.index == start_frame)
         warp = Warp(imgseq[start_frame])
 
         for i in range(start_frame, end_frame, step):
