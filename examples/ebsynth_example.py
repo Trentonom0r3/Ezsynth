@@ -6,6 +6,6 @@ ebsynth = Ebsynth()
 
 config = Config(style_image = "input/000.jpg", guides = [("input/000.jpg", "styles/style000.jpg", 0.5)])
 
-img, err = ebsynth(config)
+image, error = ebsynth(config)
 
-cv2.imwrite("output/000.jpg", img)
+cv2.imwrite("output/000.jpg", image)
