@@ -58,23 +58,23 @@ def _process(config: Config, guides: Guides, sequences: List[Sequence]):
             # Your existing logic to submit tasks remains the same
             if seq.style_start is not None and seq.style_end is not None:
 
-                futures.append(("fwd", executor.submit(run_sequences, imgseq, edge_maps, flow_fwd,
+                futures.append(("fwd", executor.submit(_run_sequences, imgseq, edge_maps, flow_fwd,
                                                        pos_fwd, seq)))
 
-                futures.append(("bwd", executor.submit(run_sequences, imgseq, edge_maps,
+                futures.append(("bwd", executor.submit(_run_sequences, imgseq, edge_maps,
                                                        flow_bwd, pos_bwd, seq, True)))
 
             elif seq.style_start is not None and seq.style_end is None:
 
-                fwd_img, fwd_err = run_sequences(imgseq, edge_maps, flow_fwd,
-                                                 pos_fwd, seq)
+                fwd_img, fwd_err = _run_sequences(imgseq, edge_maps, flow_fwd,
+                                                  pos_fwd, seq)
                 fwd_imgs = [img for img in fwd_img if img is not None]
 
                 return fwd_imgs
             elif seq.style_start is None and seq.style_end is not None:
 
-                bwd_img, bwd_err = run_sequences(imgseq, edge_maps,
-                                                 flow_bwd, pos_bwd, seq, True)
+                bwd_img, bwd_err = _run_sequences(imgseq, edge_maps,
+                                                  flow_bwd, pos_bwd, seq, True)
                 bwd_imgs = [img for img in bwd_img if img is not None]
 
                 return bwd_imgs
@@ -131,8 +131,8 @@ def _process(config: Config, guides: Guides, sequences: List[Sequence]):
     return final_blends
 
 
-def run_sequences(imgseq, edge, flow,
-                  positional, seq, reverse = False):
+def _run_sequences(imgseq, edge, flow,
+                   positional, seq, reverse = False):
     """
     Run the sequence for ebsynth based on the provided parameters.
     Parameters:
