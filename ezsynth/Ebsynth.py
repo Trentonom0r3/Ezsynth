@@ -92,34 +92,6 @@ class Ebsynth:
                     c_void_p
                 )
 
-    def _get_or_create_buffer(self, key):
-        with self.cache_lock:
-            a = self.cached_buffer.get(key, None)
-            if a is None:
-                a = create_string_buffer(key[0] * key[1] * key[2])
-                self.cached_buffer[key] = a
-            return a
-
-    def _get_or_create_err_buffer(self, key):
-        with self.cache_lock:
-            a = self.cached_err_buffer.get(key, None)
-            if a is None:
-                a = (c_float * (key[0] * key[1]))()
-                self.cached_err_buffer[key] = a
-            return a
-
-    def _normalize_img_shape(self, img):
-        with self.normalize_lock:
-            if len(img.shape) == 2:
-                sc = 0
-            elif len(img.shape) == 3:
-                sh, sw, sc = img.shape
-
-            if sc == 0:
-                img = img[..., np.newaxis]
-
-            return img
-
     def run(self, a: Config) -> Tuple[np.ndarray, np.ndarray]:
         self.init_lib()
 
@@ -229,6 +201,34 @@ class Ebsynth:
         err = np.frombuffer(err_buffer, dtype = np.float32).reshape((t_h, t_w)).copy()
 
         return img, err
+
+    def _get_or_create_buffer(self, key):
+        with self.cache_lock:
+            a = self.cached_buffer.get(key, None)
+            if a is None:
+                a = create_string_buffer(key[0] * key[1] * key[2])
+                self.cached_buffer[key] = a
+            return a
+
+    def _get_or_create_err_buffer(self, key):
+        with self.cache_lock:
+            a = self.cached_err_buffer.get(key, None)
+            if a is None:
+                a = (c_float * (key[0] * key[1]))()
+                self.cached_err_buffer[key] = a
+            return a
+
+    def _normalize_img_shape(self, img):
+        with self.normalize_lock:
+            if len(img.shape) == 2:
+                sc = 0
+            elif len(img.shape) == 3:
+                sh, sw, sc = img.shape
+
+            if sc == 0:
+                img = img[..., np.newaxis]
+
+            return img
 
 
 def _validate_image(a: Union[str, np.ndarray]) -> np.ndarray:
