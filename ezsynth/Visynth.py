@@ -65,6 +65,9 @@ class Visynth:
     def __init__(self):
         pass
 
+    def __call__(self, a: Config):
+        pass
+
 
 def process(config: Config, guides: Guides, sequences: List[Sequence]):
     """
