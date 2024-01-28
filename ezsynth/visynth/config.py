@@ -9,13 +9,13 @@ import numpy as np
 import torch
 
 
-def auto_device() -> str:
+def auto_device() -> torch.device:
     if torch.backends.mps.is_available():
-        return "mps"
+        return torch.device("mps")
     elif torch.cuda.is_available():
-        return "cuda"
+        return torch.device("cuda")
     else:
-        "cpu"
+        torch.device("cpu")
 
 
 @dataclass
