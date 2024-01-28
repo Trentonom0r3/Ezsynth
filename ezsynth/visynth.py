@@ -116,7 +116,7 @@ def _run_sequences(
         direction: int,
 ):
     with threading.Lock():
-        stylized_frames = []
+        frames = []
         err_list = []
 
         if direction == 1:
@@ -145,7 +145,7 @@ def _run_sequences(
             if i != start_frame:
                 eb.add_guide(positional[start_frame - 1] if direction else positional[start_frame], positional[i], 2.0)
 
-                stylized_img = stylized_frames[-1] / 255.0  # Assuming stylized_frames[-1] is already in BGR format
+                stylized_img = frames[-1] / 255.0  # Assuming frames[-1] is already in BGR format
 
                 # Changed from run_warping_from_np to run_warping
                 warped_img = warp.run_warping(stylized_img, flow[i] if direction else flow[i - 1])
@@ -155,8 +155,8 @@ def _run_sequences(
                 eb.add_guide(style, warped_img, 0.5)
 
             stylized_img, err = eb(config)
-            stylized_frames.append(stylized_img)
+            frames.append(stylized_img)
             err_list.append(err)
 
-        print(f"Final Length, Reverse = {direction}: {len(stylized_frames)}. Error Length: {len(err_list)}")
-        return stylized_frames, err_list
+        print(f"Final Length, Reverse = {direction}: {len(frames)}. Error Length: {len(err_list)}")
+        return frames, err_list
