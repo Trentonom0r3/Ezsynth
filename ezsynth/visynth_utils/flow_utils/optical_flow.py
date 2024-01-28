@@ -38,8 +38,8 @@ class RAFT_flow(Warp):
 
     def __init__(
             self,
-            image,
-            model_name = 'Sintel',
+            image: np.ndarray,
+            model_name: Literal["sintel", "kitti", "chairs"] = "sintel",
     ):
         super().__init__(image)
 
