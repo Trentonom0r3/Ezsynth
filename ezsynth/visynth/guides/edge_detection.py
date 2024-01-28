@@ -45,6 +45,7 @@ class EdgeDetector:
         """Load image from either a file path or directly from a numpy array."""
         if isinstance(input_data, str):  # If it's a file path
             return input_data
+
         # If it's a numpy array, save it as a temporary file
         elif isinstance(input_data, np.ndarray):
             with tempfile.NamedTemporaryFile(suffix = ".png", delete = False) as temp_file:
