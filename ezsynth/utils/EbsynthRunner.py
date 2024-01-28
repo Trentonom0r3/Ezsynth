@@ -32,37 +32,36 @@ class EbsynthRunner:
                     self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.so'))
                 elif sys.platform[0:5] == 'linux':
                     self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.so'))
-                else:
+
+                if self.lib is None:
                     raise RuntimeError("Unsupported platform.")
 
-                if self.lib is not None:
-                    self.lib.ebsynthRun.argtypes = (
-                        c_int,
-                        c_int,
-                        c_int,
-                        c_int,
-                        c_int,
-                        c_void_p,
-                        c_void_p,
-                        c_int,
-                        c_int,
-                        c_void_p,
-                        c_void_p,
-                        POINTER(c_float),
-                        POINTER(c_float),
-                        c_float,
-                        c_int,
-                        c_int,
-                        c_int,
-                        POINTER(c_int),
-                        POINTER(c_int),
-                        POINTER(c_int),
-                        c_int,
-                        c_void_p,
-                        c_void_p,
-                        c_void_p
-                    )
-                    pass
+                self.lib.ebsynthRun.argtypes = (
+                    c_int,
+                    c_int,
+                    c_int,
+                    c_int,
+                    c_int,
+                    c_void_p,
+                    c_void_p,
+                    c_int,
+                    c_int,
+                    c_void_p,
+                    c_void_p,
+                    POINTER(c_float),
+                    POINTER(c_float),
+                    c_float,
+                    c_int,
+                    c_int,
+                    c_int,
+                    POINTER(c_int),
+                    POINTER(c_int),
+                    POINTER(c_int),
+                    c_int,
+                    c_void_p,
+                    c_void_p,
+                    c_void_p
+                )
 
     def get_or_create_buffer(self, key):
         with self.cache_lock:
