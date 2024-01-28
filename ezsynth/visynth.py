@@ -33,22 +33,6 @@ class Visynth:
 
 
 def _process(config: Config, sequences: List[Sequence], guides: Guides):
-    """
-    Process sub-sequences using multiprocessing.
-
-    Parameters:
-    - subseq: List of sub-sequences to process.
-    - imgseq: The sequence of images.
-    - edge_maps: The edge maps.
-    - flow_fwd: Forward optical flow.
-    - flow_bwd: Backward optical flow.
-    - pos_fwd: Forward position.
-    - pos_bwd: Backward position.
-
-    Returns:
-    - imgs: List of processed images.
-    """
-    # Initialize empty lists to store results
     style_imgs_fwd = []
     err_fwd = []
     style_imgs_bwd = []
