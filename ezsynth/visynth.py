@@ -45,7 +45,7 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
             style_end = next((x.image for x in a.style_frames if x.index == seq.end_frame), None)
 
             if style_start is not None and style_end is not None:
-                print("Running forward & backward " + str(seq.start_frame) + "-" + str(seq.end_frame) + ".")
+                print("Running forward & backward " + str(seq.start_frame) + "<->" + str(seq.end_frame) + ".")
                 # noinspection PyTypeChecker
                 futures.append(("fwd", executor.submit(_run_sequences, guides, seq, (style_start, style_end), 1)))
                 # noinspection PyTypeChecker
