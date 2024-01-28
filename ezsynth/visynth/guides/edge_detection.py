@@ -39,7 +39,7 @@ class EdgeDetector:
         else:
             raise ValueError("Unknown edge detection method.")
 
-    def compute_edge(self, image: np.ndarray) -> np.ndarray:
+    def __call__(self, image: np.ndarray) -> np.ndarray:
         """
         Compute the edge map.
 
