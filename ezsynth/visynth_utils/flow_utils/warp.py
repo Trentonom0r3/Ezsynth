@@ -23,12 +23,12 @@ class Warp:
         warped_img = cv2.remap(image, map_x, map_y, interpolation = cv2.INTER_LINEAR, borderMode = cv2.BORDER_REFLECT)
         return warped_img
 
-    def run_warping(self, img, flow):
-        img = img.astype(np.float32)
+    def run_warping(self, image, flow):
+        image = image.astype(np.float32)
         flow = flow.astype(np.float32)
 
         try:
-            warped_img = self._warp(img, flow)
+            warped_img = self._warp(image, flow)
             warped_image = (warped_img * 255).astype(np.uint8)
             return warped_image
         except Exception as e:
