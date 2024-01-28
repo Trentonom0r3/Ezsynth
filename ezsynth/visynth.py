@@ -124,7 +124,7 @@ def _run_sequences(
             start, step, style, init, final = (
                 seq.init, 1, seq.style_start, seq.begFrame, seq.endFrame)
 
-        eb = Ebsynth(style, guides = [])
+        eb = Ebsynth()
         warp = Warp(imgseq[start])
 
         for i in range(init, final, step):
