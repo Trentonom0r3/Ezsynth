@@ -86,10 +86,10 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
     style_images_b = [img for img in style_images_bwd if img is not None]
     style_images_f = [img for img in style_images_fwd if img is not None]
 
-    sty_fwd = [img for sublist in style_images_f for img in sublist]
-    sty_bwd = [img for sublist in style_images_b for img in sublist]
-    err_fwd = [img for sublist in err_fwd for img in sublist]
-    err_bwd = [img for sublist in err_bwd for img in sublist]
+    sty_fwd = [x for sublist in style_images_f for x in sublist]
+    sty_bwd = [x for sublist in style_images_b for x in sublist]
+    err_fwd = [x for sublist in err_fwd for x in sublist]
+    err_bwd = [x for sublist in err_bwd for x in sublist]
 
     sty_bwd = sty_bwd[::-1]
     err_bwd = err_bwd[::-1]
