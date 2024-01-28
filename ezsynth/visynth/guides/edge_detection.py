@@ -43,7 +43,7 @@ class EdgeDetector:
     @staticmethod
     def load_image(input_data):
         """Load image from either a file path or directly from a numpy array."""
-        if isinstance(input_data, str):  # If it's a file path
+        if isinstance(input_data, str):
             return input_data
 
         # If it's a numpy array, save it as a temporary file
