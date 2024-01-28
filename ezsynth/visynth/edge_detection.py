@@ -84,7 +84,6 @@ class EdgeDetector:
             raise ValueError("Unknown edge detection method.")
 
 
-
 def _create_gaussian_kernel(size, sigma):
     """
     Create a Gaussian kernel.
