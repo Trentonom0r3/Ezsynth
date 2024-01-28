@@ -50,12 +50,12 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
                 futures.append(("bwd", executor.submit(_run_sequences, imgseq, edge_maps, flow_bwd, pos_bwd, seq, True)))
 
             elif style_start is not None and style_end is None:
-                fwd_img, fwd_err = _run_sequences(imgseq, edge_maps, flow_fwd, pos_fwd, seq)
+                fwd_img, fwd_err = _run_sequences(a, guides, seq, False)
                 fwd_imgs = [img for img in fwd_img if img is not None]
                 return fwd_imgs
 
             elif style_start is None and style_end is not None:
-                bwd_img, bwd_err = _run_sequences(imgseq, edge_maps, flow_bwd, pos_bwd, seq, True)
+                bwd_img, bwd_err = _run_sequences(a, guides, seq, True)
                 bwd_imgs = [img for img in bwd_img if img is not None]
                 return bwd_imgs
 
