@@ -6,7 +6,7 @@ class Ebsynth:
     def __init__(
             self,
             style,
-            guides = [],
+            guides = None,
             uniformity = 3500.0,
             patchsize = 5,
             pyramidlevels = 6,
