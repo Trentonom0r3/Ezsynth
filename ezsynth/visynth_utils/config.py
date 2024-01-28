@@ -23,8 +23,8 @@ def auto_device() -> torch.device:
 class Config:
     """
     Visynth config.
-    :param frames: List of tuples containing frame index and video frame.
-    :param style_frames: List of tuples containing frame index and style video frame.
+    :param frames: List of video frames.
+    :param style_frames: List of style video frames.
     :param edge_method: Method for edge detection. PAGE, PST or Classic. Default is PAGE.
     :param flow_method: Method for optical flow computation. RAFT or DeepFlow. Default is RAFT.
     :param flow_model: Model name for optical flow. sintel, kitti or chairs. Default is sintel.
