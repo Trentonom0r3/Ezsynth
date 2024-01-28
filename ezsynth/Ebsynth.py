@@ -115,8 +115,7 @@ class Ebsynth:
         guides_target = []
         guides_weights = []
 
-        for i in range(len(a.guides)):
-            source_guide, target_guide, guide_weight = a.guides[i]
+        for source_guide, target_guide, guide_weight in a.guides:
             source_guide = self._normalize_img_shape(source_guide)
             target_guide = self._normalize_img_shape(target_guide)
             s_h, s_w, s_c = source_guide.shape
