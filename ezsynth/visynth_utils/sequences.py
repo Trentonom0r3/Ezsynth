@@ -23,8 +23,8 @@ def config_to_sequences(a: Config) -> List[Sequence]:
             Sequence(
                 start_frame = a.frames[0][0],
                 end_frame = a.frames[-1][0],
-                style_start = 0,
-                style_end = None,
+                style_start_frame = 0,
+                style_end_frame = None,
             )
         ]
 
@@ -33,8 +33,8 @@ def config_to_sequences(a: Config) -> List[Sequence]:
             Sequence(
                 start_frame = a.frames[0][0],
                 end_frame = a.frames[-1][0],
-                style_start = None,
-                style_end = 0,
+                style_start_frame = None,
+                style_end_frame = 0,
             )
         ]
 
