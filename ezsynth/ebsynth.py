@@ -2,13 +2,6 @@ from ezsynth.utils._eb import *
 
 
 class Ebsynth:
-    """
-    EBSynth class provides a wrapper around the ebsynth style transfer method.
-
-    Usage:
-        ebsynth = ebsynth.ebsynth(style='style.png', guides=[('source1.png', 'target1.png'), 1.0])
-        result_img = ebsynth.run()
-    """
 
     def __init__(self, style, guides = [], uniformity = 3500.0,
                  patchsize = 5, pyramidlevels = 6, searchvoteiters = 12,
