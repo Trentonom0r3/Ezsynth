@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from typing import Union, List
 
-import cv2
-
 from .config import Config
 
 
@@ -25,7 +23,7 @@ def config_to_sequences(a: Config) -> List[Sequence]:
             Sequence(
                 start_frame = a.frames[0][0],
                 end_frame = a.frames[-1][0],
-                style_start = cv2.imread(styles[0]),
+                style_start = 0,
                 style_end = None,
             )
         ]
@@ -36,7 +34,7 @@ def config_to_sequences(a: Config) -> List[Sequence]:
                 start_frame = a.frames[0][0],
                 end_frame = a.frames[-1][0],
                 style_start = None,
-                style_end = styles[0],
+                style_end = 0,
             )
         ]
 
