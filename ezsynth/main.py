@@ -32,10 +32,17 @@ class Imagesynth:
         
         """
         self.style_img = self._validate_image(style_img)
-        self.eb = ebsynth(style = style_img, guides = [], uniformity = uniformity,
-                          patchsize = patchsize, pyramidlevels = pyramidlevels,
-                          searchvoteiters = searchvoteiters, patchmatchiters = patchmatchiters,
-                          extrapass3x3 = extrapass3x3, backend = backend)
+        self.eb = ebsynth(
+            style = style_img,
+            guides = [],
+            uniformity = uniformity,
+            patchsize = patchsize,
+            pyramidlevels = pyramidlevels,
+            searchvoteiters = searchvoteiters,
+            patchmatchiters = patchmatchiters,
+            extrapass3x3 = extrapass3x3,
+            backend = backend,
+        )
 
     def add_guide(self, source, target, weight):
         """
