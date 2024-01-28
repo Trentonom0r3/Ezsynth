@@ -22,7 +22,7 @@ class Config:
     Visynth config.
     :param images: List of tuples containing frame index and video frame.
     :param styles: List of tuples containing frame index and style video frame.
-    :param edge_method: Method for edge detection, default is "PAGE". Options are "PAGE", "PST", and "Classic".
+    :param edge_method: Method for edge detection. Options are "PAGE", "PST", and "Classic". Default is "PAGE".
     :param flow_method: Method for optical flow computation, default is "RAFT". Options are "RAFT" and "DeepFlow".
     :param model: The model name for optical flow, default is "sintel". Options are "sintel", "kitti", and "chairs".
     """
