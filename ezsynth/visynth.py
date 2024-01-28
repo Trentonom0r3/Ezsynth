@@ -40,7 +40,7 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
 
     with ThreadPoolExecutor(max_workers = 2) as executor:
         futures = []
-        for seq in subseq:
+        for seq in sequences:
             print(f"Submitting sequence:")
             # Your existing logic to submit tasks remains the same
             if seq.style_start is not None and seq.style_end is not None:
