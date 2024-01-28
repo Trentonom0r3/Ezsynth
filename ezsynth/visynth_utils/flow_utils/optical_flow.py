@@ -27,13 +27,13 @@ class OpticalFlowProcessor():
         if model not in self.valid_model_names:
             raise ValueError(f"Invalid model name {model}. Valid names are {self.valid_model_names}")
         else:
-            self.model_name = model
+            self.model = model
 
         self.optical_flow = []
 
     def __call__(self, imgsequence):
         if self.method == "RAFT":
-            self.flow = RAFT_flow(imgsequence[0], self.model_name)
+            self.flow = RAFT_flow(imgsequence[0], self.model)
             self.optical_flow = self.flow.compute_optical_flow(imgsequence)
             return self.optical_flow
         elif self.method == "DeepFlow":
