@@ -154,8 +154,7 @@ class EbsynthRunner:
         guides_target = np.concatenate(guides_target, axis = -1)
         guides_weights = (c_float * len(guides_weights))(*guides_weights)
 
-        styleWeight = 1.0
-        style_weights = [styleWeight / sc for i in range(sc)]
+        style_weights = [1.0 / sc for i in range(sc)]
         style_weights = (c_float * sc)(*style_weights)
 
         maxPyramidLevels = 0
