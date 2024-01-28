@@ -65,7 +65,7 @@ class Ebsynth:
 
         style_image = self._normalize_img_shape(_validate_image(a.style_image))
         style_height, style_weight, style_channels = style_image.shape
-        t_h, t_w, t_c = 0, 0, 0
+        target_height, target_width, target_channels = 0, 0, 0
 
         if style_channels > self.MAX_STYLE_CHANNELS:
             raise ValueError(f"Too many style channels {style_channels}, maximum number is {self.MAX_STYLE_CHANNELS}.")
@@ -85,9 +85,9 @@ class Ebsynth:
             if s_h != style_height or s_w != style_weight:
                 raise ValueError("Guide source and style resolution must match style resolution.")
 
-            if t_c == 0:
-                t_h, t_w, t_c = nt_h, nt_w, nt_c
-            elif nt_h != t_h or nt_w != t_w:
+            if target_channels == 0:
+                target_height, target_width, target_channels = nt_h, nt_w, nt_c
+            elif nt_h != target_height or nt_w != target_width:
                 raise ValueError("Guides target resolutions must be equal.")
 
             if s_c != nt_c:
@@ -108,7 +108,7 @@ class Ebsynth:
 
         max_pyramid_levels = 0
         for level in range(32, -1, -1):
-            if min(min(style_height, t_h) * pow(2.0, -level), min(style_weight, t_w) * pow(2.0, -level)) >= (2 * a.patch_size + 1):
+            if min(min(style_height, target_height) * pow(2.0, -level), min(style_weight, target_width) * pow(2.0, -level)) >= (2 * a.patch_size + 1):
                 max_pyramid_levels = level + 1
                 break
 
@@ -126,8 +126,8 @@ class Ebsynth:
         stop_threshold_per_level = (c_int * num_pyramid_levels)(*[a.stop_threshold] * num_pyramid_levels)
 
         # Get or create buffers
-        buffer = self._get_or_create_buffer((t_h, t_w, style_channels))
-        err_buffer = self._get_or_create_err_buffer((t_h, t_w))
+        buffer = self._get_or_create_buffer((target_height, target_width, style_channels))
+        err_buffer = self._get_or_create_err_buffer((target_height, target_width))
 
         with self.lib_lock:
             self.lib.ebsynthRun(
@@ -138,8 +138,8 @@ class Ebsynth:
                 style_height,  # sourceHeight
                 style_image.tobytes(),  # sourceStyleData (width * height * numStyleChannels) bytes, scan-line order
                 guides_source.tobytes(),  # sourceGuideData (width * height * numGuideChannels) bytes, scan-line order
-                t_w,  # targetWidth
-                t_h,  # targetHeight
+                target_width,  # targetWidth
+                target_height,  # targetHeight
                 guides_target.tobytes(),  # targetGuideData (width * height * numGuideChannels) bytes, scan-line order
                 None,  # targetModulationData (width * height * numGuideChannels) bytes, scan-line order; pass NULL to switch off the modulation
                 style_weights,  # styleWeights (numStyleChannels) floats
@@ -157,8 +157,8 @@ class Ebsynth:
                 err_buffer,  # outputErrorData (width * height) floats, scan-line order; pass NULL to ignore
             )
 
-        img = np.frombuffer(buffer, dtype = np.uint8).reshape((t_h, t_w, style_channels)).copy()
-        err = np.frombuffer(err_buffer, dtype = np.float32).reshape((t_h, t_w)).copy()
+        img = np.frombuffer(buffer, dtype = np.uint8).reshape((target_height, target_width, style_channels)).copy()
+        err = np.frombuffer(err_buffer, dtype = np.float32).reshape((target_height, target_width)).copy()
 
         return img, err
 
