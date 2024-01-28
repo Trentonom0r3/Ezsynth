@@ -24,7 +24,7 @@ class OpticalFlowProcessor:
     def __call__(self, images: List[np.ndarray]):
         if self.method == "RAFT":
             self.flow = RAFT_flow(images[0], self.model)
-            return self.flow.compute_optical_flow(images)
+            return self.flow.__iter__(images)
 
         elif self.method == "DeepFlow":
             raise NotImplementedError("DeepFlow method is not implemented.")
@@ -97,7 +97,3 @@ class RAFT_flow(Warp):
     def __iter__(self, images):
         for img1, img2 in zip(images[:-1], images[1:]):
             yield self._compute_flow(img1, img2)
-
-    def compute_optical_flow(self, images):
-        self.optical_flow = self.__iter__(images)
-        return self.optical_flow
