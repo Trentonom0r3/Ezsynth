@@ -24,14 +24,14 @@ class Visynth:
         if len(a.style_frames) == 0:
             raise ValueError("At least one style video frame must be specified.")
 
-        guides = create_guides(a)
-
         sequences = config_to_sequences(a)
 
-        return _process(a, guides, sequences)
+        guides = create_guides(a)
+
+        return _process(a, sequences, guides)
 
 
-def _process(config: Config, guides: Guides, sequences: List[Sequence]):
+def _process(config: Config, sequences: List[Sequence], guides: Guides):
     """
     Process sub-sequences using multiprocessing.
 
