@@ -5,6 +5,7 @@ from ctypes import *
 from dataclasses import dataclass
 from typing import List, Tuple
 
+import cv2
 import numpy as np
 
 
@@ -228,3 +229,33 @@ class EbsynthRunner:
         err = np.frombuffer(err_buffer, dtype = np.float32).reshape((t_h, t_w)).copy()
 
         return img, err
+
+
+def _validate_image(a: Union[str, np.ndarray]) -> np.ndarray:
+    if isinstance(a, str):
+        b = cv2.imread(a)
+        if b is None:
+            raise ValueError("Cannot read image: " + str(a))
+        return b
+
+    elif isinstance(a, np.ndarray):
+        if a.shape[-1] != 3:
+            raise ValueError("Image a 3-channel numpy array.")
+        return a
+
+    else:
+        raise ValueError("Image must valid file path or a 3-channel numpy array.")
+
+
+def _validate_weight(a: Union[int, float, None]) -> float:
+    if isinstance(a, int):
+        return float(a)
+
+    elif isinstance(a, float):
+        return a
+
+    elif a is None:
+        return 1.0
+
+    else:
+        raise ValueError("Weight should be int or float or none.")
