@@ -23,7 +23,7 @@ class EbsynthRunner:
         self.cache_lock = threading.Lock()
         self.normalize_lock = threading.Lock()
 
-    def initialize_libebsynth(self):
+    def init_lib(self):
         with self.libebsynth_lock:
             if self.libebsynth is None:
                 if sys.platform[0:3] == 'win':
@@ -111,7 +111,7 @@ class EbsynthRunner:
             raise ValueError("at least one guide must be specified")
 
         # Initialize libebsynth if not already done
-        self.initialize_libebsynth()
+        self.init_lib()
 
         img_style = self._normalize_img_shape(img_style)
         sh, sw, sc = img_style.shape
