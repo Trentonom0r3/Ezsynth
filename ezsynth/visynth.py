@@ -86,11 +86,11 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
             except Exception as e:
                 print(f"List Creation Exception: {e}")
 
-    style_imgs_b = [img for img in style_imgs_bwd if img is not None]
-    style_imgs_f = [img for img in style_imgs_fwd if img is not None]
+    style_images_b = [img for img in style_imgs_bwd if img is not None]
+    style_images_f = [img for img in style_imgs_fwd if img is not None]
 
-    sty_fwd = [img for sublist in style_imgs_f for img in sublist]
-    sty_bwd = [img for sublist in style_imgs_b for img in sublist]
+    sty_fwd = [img for sublist in style_images_f for img in sublist]
+    sty_bwd = [img for sublist in style_images_b for img in sublist]
     err_fwd = [img for sublist in err_fwd for img in sublist]
     err_bwd = [img for sublist in err_bwd for img in sublist]
 
