@@ -29,10 +29,13 @@ class EdgeDetector:
 
         if method == "PAGE":
             self.page_gpu = phycv.PAGE_GPU(direction_bins = 10, device = self.device)
+
         elif method == "PST":
             self.pst_gpu = phycv.PST_GPU(device = self.device)
+
         elif method == "Classic":
             self.kernel = _create_gaussian_kernel(5, 6.0)
+
         else:
             raise ValueError("Unknown edge detection method.")
 
