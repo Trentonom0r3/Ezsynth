@@ -140,12 +140,13 @@ def _run_sequences(
         warp = Warp(a.frames[start_frame])
 
         for i in range(start_frame, end_frame, step):
+            guides = [
+                (guides.edge[start_frame - frame_offset], guides.edge[i - frame_offset], 1.0),
+                (a.frames[start_frame - frame_offset], a.frames[i - frame_offset], 6.0),
+            ]
             config = ebsynth.Config(
                 style_image = style,
-                guides = [
-                    (guides.edge[start_frame - frame_offset], guides.edge[i - frame_offset], 1.0),
-                    (a.frames[start_frame - frame_offset], a.frames[i - frame_offset], 6.0),
-                ]
+                guides = guides,
             )
 
             if i != start_frame:
