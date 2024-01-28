@@ -10,10 +10,10 @@ import cv2
 import numpy
 
 from .Ebsynth import Ebsynth
-from .utils.blend.blender import Blend
-from .utils.flow_utils.warp import Warp
-from .utils.guides.guides import Guides, create_guides
-from .utils.sequences import Sequence, SequenceManager
+from .visynth.blend.blender import Blend
+from .visynth.flow_utils.warp import Warp
+from .visynth.guides.guides import Guides, create_guides
+from .visynth.sequences import Sequence, SequenceManager
 
 
 @dataclass
