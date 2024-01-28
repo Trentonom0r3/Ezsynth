@@ -1,7 +1,8 @@
 import os
-from typing import Literal
+from typing import Literal, List
 
 import cv2
+import numpy as np
 import torch
 
 from .core.raft import RAFT
@@ -19,7 +20,7 @@ class OpticalFlowProcessor:
         self.model = model
         self.optical_flow = []
 
-    def __call__(self, images):
+    def __call__(self, images: List[np.ndarray]):
         if self.method == "RAFT":
             self.flow = RAFT_flow(images[0], self.model)
             self.optical_flow = self.flow.compute_optical_flow(images)
