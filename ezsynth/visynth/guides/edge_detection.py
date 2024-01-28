@@ -35,8 +35,7 @@ class EdgeDetector:
         elif method == "PST":
             self.pst_gpu = phycv.PST_GPU(device = self.device)
         elif method == "Classic":
-            size, sigma = 5, 6.0
-            self.kernel = self.create_gaussian_kernel(size, sigma)
+            self.kernel = _create_gaussian_kernel(5, 6.0)
         else:
             raise ValueError("Unknown edge detection method.")
 
@@ -71,19 +70,6 @@ class EdgeDetector:
         result.save(path)
 
         return path
-
-    @staticmethod
-    def create_gaussian_kernel(size, sigma):
-        """
-        Create a Gaussian kernel.
-
-        """
-        kernel = np.fromfunction(
-            lambda x, y: (1 / (2 * np.pi * sigma ** 2)) *
-                         np.exp(-((x - (size - 1) / 2) ** 2 + (y - (size - 1) / 2) ** 2) / (2 * sigma ** 2)),
-            (size, size))
-
-        return kernel / np.sum(kernel)
 
     def compute_edge(self, input_data):
         """
@@ -144,3 +130,16 @@ class EdgeDetector:
                 os.remove(input_data_path)
 
         return edge_map
+
+
+def _create_gaussian_kernel(size, sigma):
+    """
+    Create a Gaussian kernel.
+
+    """
+    kernel = np.fromfunction(
+        lambda x, y: (1 / (2 * np.pi * sigma ** 2)) *
+                     np.exp(-((x - (size - 1) / 2) ** 2 + (y - (size - 1) / 2) ** 2) / (2 * sigma ** 2)),
+        (size, size))
+
+    return kernel / np.sum(kernel)
