@@ -19,7 +19,7 @@ from .utils.sequences import Sequence
 @dataclass
 class Config:
     """
-    Ebsynth config.
+    Visynth config.
     :param styles: List of tuples containing frame index and style video frame.
     :param images: List of tuples containing frame index and video frame.
     :param edge_method: The method for edge detection, default is "PAGE". Options are "PAGE", "PST", and "Classic".
