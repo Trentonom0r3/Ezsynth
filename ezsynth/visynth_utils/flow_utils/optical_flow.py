@@ -33,14 +33,11 @@ class OpticalFlowProcessor():
 
     def __call__(self, imgsequence):
         if self.flow_method == "RAFT":
-            return self._compute_raft_flow(imgsequence)
+            self.flow = RAFT_flow(imgsequence[0], self.model_name)
+            self.optical_flow = self.flow.compute_optical_flow(imgsequence)
+            return self.optical_flow
         elif self.flow_method == "DeepFlow":
             return self._compute_deepflow(imgsequence)
-
-    def _compute_raft_flow(self, imgsequence):
-        self.flow = RAFT_flow(imgsequence[0], self.model_name)
-        self.optical_flow = self.flow.compute_optical_flow(imgsequence)
-        return self.optical_flow
 
 
 class RAFT_flow(Warp):
