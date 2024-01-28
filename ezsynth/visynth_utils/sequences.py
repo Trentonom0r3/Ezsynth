@@ -25,7 +25,7 @@ def config_to_sequences(a: Config) -> List[Sequence]:
             Sequence(start_frame = start_frame, end_frame = end_frame, style_start = cv2.imread(styles[0]))
         ]
 
-    if style_indexes[0] == end_frame and num_styles == 1:
+    if num_styles == 1 and style_indexes[0] == end_frame:
         return [
             Sequence(start_frame = start_frame, end_frame = end_frame, style_end = styles[0])
         ]
