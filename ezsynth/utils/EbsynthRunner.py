@@ -65,19 +65,19 @@ class EbsynthRunner:
 
     def get_or_create_buffer(self, key):
         with self.cache_lock:
-            buffer = self.cached_buffer.get(key, None)
-            if buffer is None:
-                buffer = create_string_buffer(key[0] * key[1] * key[2])
-                self.cached_buffer[key] = buffer
-            return buffer
+            a = self.cached_buffer.get(key, None)
+            if a is None:
+                a = create_string_buffer(key[0] * key[1] * key[2])
+                self.cached_buffer[key] = a
+            return a
 
     def get_or_create_err_buffer(self, key):
         with self.cache_lock:
-            buffer = self.cached_err_buffer.get(key, None)
-            if buffer is None:
-                buffer = (c_float * (key[0] * key[1]))()
-                self.cached_err_buffer[key] = buffer
-            return buffer
+            a = self.cached_err_buffer.get(key, None)
+            if a is None:
+                a = (c_float * (key[0] * key[1]))()
+                self.cached_err_buffer[key] = a
+            return a
 
     def _normalize_img_shape(self, img):
         with self.normalize_lock:
