@@ -52,7 +52,7 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
                 futures.append(("bwd", executor.submit(_run_sequences, guides, seq, (style_start, style_end), -1)))
 
             elif style_start is not None and style_end is None:
-                print("Running forward " + str(seq.start_frame) + "-" + str(seq.end_frame) + ".")
+                print("Running forward " + str(seq.start_frame) + "->" + str(seq.end_frame) + ".")
                 images, _ = _run_sequences(a, guides, seq, (style_start, style_end), 1)
                 return [x for x in images if x is not None]
 
