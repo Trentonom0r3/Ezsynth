@@ -39,7 +39,7 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
     err_bwd = []
 
     with ThreadPoolExecutor(max_workers = 2) as executor:
-        futures = []  # Keep your existing list to store the futures
+        futures = []
         for seq in subseq:
             print(f"Submitting sequence:")
             # Your existing logic to submit tasks remains the same
