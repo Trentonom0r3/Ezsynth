@@ -41,7 +41,6 @@ def config_to_sequences(a: Config) -> List[Sequence]:
     sequences = []
     for i in range(num_styles - 1):
 
-        # If both style indexes are not None
         if a.style_frames[i][0] is not None and a.style_frames[i + 1][0] is not None:
             if a.style_frames[i][0] == a.frames[0][0] and a.style_frames[i + 1][0] == a.frames[-1][0]:
                 sequences.append(
