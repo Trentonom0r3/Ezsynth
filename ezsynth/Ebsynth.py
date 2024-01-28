@@ -25,7 +25,7 @@ class Config:
     """
 
     style_image: Union[str, np.ndarray]
-    guides: List[Tuple[Union[str, np.ndarray], Union[str, np.ndarray], float]]
+    guides: List[Tuple[Union[str, np.ndarray], Union[str, np.ndarray], Union[int, float, None]]]
     uniformity: float = 3500.0
     patch_size: int = 5
     num_pyramid_levels: int = 6
