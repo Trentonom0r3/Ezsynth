@@ -19,38 +19,38 @@ def config_to_sequences(a: Config) -> List[Sequence]:
     Compares style frame indexes with image frame indexes to determine the sequences.
     """
     sequences = []
-    if self.num_styles == 1 and self.begFrame == self.style_indexes[0]:
+    if num_styles == 1 and begFrame == style_indexes[0]:
         sequences.append(
-            Sequence(begFrame = self.begFrame, endFrame = self.endFrame, style_start = cv2.imread(self.styles[0])))
+            Sequence(begFrame = begFrame, endFrame = endFrame, style_start = cv2.imread(styles[0])))
 
         return sequences
 
-    if self.style_indexes[0] == self.endFrame and self.num_styles == 1:
+    if style_indexes[0] == endFrame and num_styles == 1:
         sequences.append(
-            Sequence(begFrame = self.begFrame, endFrame = self.endFrame, style_end = self.styles[0]))
+            Sequence(begFrame = begFrame, endFrame = endFrame, style_end = styles[0]))
 
         return sequences
 
-    for i in range(self.num_styles - 1):
+    for i in range(num_styles - 1):
 
         # If both style indexes are not None
-        if self.style_indexes[i] is not None and self.style_indexes[i + 1] is not None:
-            if self.style_indexes[i] == self.begFrame and self.style_indexes[i + 1] == self.endFrame:
+        if style_indexes[i] is not None and style_indexes[i + 1] is not None:
+            if style_indexes[i] == begFrame and style_indexes[i + 1] == endFrame:
                 sequences.append(
-                    Sequence(self.begFrame, self.endFrame, self.styles[i], self.styles[i + 1]))
+                    Sequence(begFrame, endFrame, styles[i], styles[i + 1]))
 
             # If the first style index is the first frame in the sequence
-            elif self.style_indexes[i] == self.begFrame and self.style_indexes[i + 1] != self.endFrame:
+            elif style_indexes[i] == begFrame and style_indexes[i + 1] != endFrame:
                 sequences.append(Sequence(
-                    self.begFrame, self.style_indexes[i + 1], self.styles[i], self.styles[i + 1]))
+                    begFrame, style_indexes[i + 1], styles[i], styles[i + 1]))
 
             # If the second style index is the last frame in the sequence
-            elif self.style_indexes[i] != self.begFrame and self.style_indexes[i + 1] == self.endFrame:
+            elif style_indexes[i] != begFrame and style_indexes[i + 1] == endFrame:
                 sequences.append(Sequence(
-                    self.style_indexes[i], self.endFrame, self.styles[i], self.styles[i + 1]))
+                    style_indexes[i], endFrame, styles[i], styles[i + 1]))
 
-            elif self.style_indexes[i] != self.begFrame and self.style_indexes[i + 1] != self.endFrame and self.style_indexes[i] in self.imgindexes and self.style_indexes[i + 1] in self.imgindexes:
+            elif style_indexes[i] != begFrame and style_indexes[i + 1] != endFrame and style_indexes[i] in imgindexes and style_indexes[i + 1] in imgindexes:
                 sequences.append(Sequence(
-                    self.style_indexes[i], self.style_indexes[i + 1], self.styles[i], self.styles[i + 1]))
+                    style_indexes[i], style_indexes[i + 1], styles[i], styles[i + 1]))
 
     return sequences
