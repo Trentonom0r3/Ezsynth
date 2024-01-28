@@ -9,7 +9,7 @@ from .core.utils.utils import InputPadder
 from .warp import Warp
 
 
-class OpticalFlowProcessor():
+class OpticalFlowProcessor:
     def __init__(
             self,
             method: Literal["RAFT", "DeepFlow"] = "RAFT",
