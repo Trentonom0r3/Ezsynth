@@ -57,8 +57,7 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
                 return fwd_imgs
             elif seq.style_start is None and seq.style_end is not None:
 
-                bwd_img, bwd_err = _run_sequences(imgseq, edge_maps,
-                                                  flow_bwd, pos_bwd, seq, True)
+                bwd_img, bwd_err = _run_sequences(imgseq, edge_maps, flow_bwd, pos_bwd, seq, True)
                 bwd_imgs = [img for img in bwd_img if img is not None]
 
                 return bwd_imgs
