@@ -28,6 +28,7 @@ def config_to_sequences(a: Config) -> List[Sequence]:
             Sequence(begFrame = begFrame, endFrame = endFrame, style_end = styles[0])
         ]
 
+    sequences = []
     for i in range(num_styles - 1):
 
         # If both style indexes are not None
