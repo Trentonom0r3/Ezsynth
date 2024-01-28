@@ -45,7 +45,7 @@ def create_guides(a: Config) -> Guides:
 
 
 class PositionalGuide:
-    def __init__(self, images: List[numpy.ndarray], flow: List[numpy.ndarray]):
+    def __init__(self, images: List[np.ndarray], flow: List[np.ndarray]):
         self.coord_map = None
         self.coord_map_warped = None
         self.warp = Warp(images[0])  # Assuming Warp class has been modified to work with NumPy
