@@ -62,11 +62,7 @@ class EdgeDetector:
             result = (result * 255).astype(np.uint8)
 
         elif self.method == "Classic":
-            if isinstance(image, np.ndarray):
-                img = image
-            elif isinstance(image, str):
-                img = cv2.imread(image)
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             blurred = cv2.filter2D(gray, -1, self.kernel)
             result = cv2.subtract(gray, blurred)
             result = cv2.add(result, 0.5 * 255)
