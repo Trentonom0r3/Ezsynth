@@ -79,10 +79,10 @@ config = Config(
     style_frames = image_sequence_from_directory("styles"),
 )
 
-images = visynth(config)
+frames = visynth(config)
 
-for i, image in images:
-    cv2.imwrite("output/output" + str(i).zfill(3) + ".jpg", image)
+for f in frames:
+    cv2.imwrite("output/output" + str(f.index).zfill(3) + ".jpg", f.image)
 ```
 
 ## FAQ
