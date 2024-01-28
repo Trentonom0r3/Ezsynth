@@ -45,10 +45,6 @@ def add_guide(self, source, target, weight):
     self.eb.add_guide(source, target, weight)
 
 
-def clear_guides(self):
-    self.eb.clear_guide()
-
-
 def _validate_image(img):
     if isinstance(img, str):
         img = cv2.imread(img)
