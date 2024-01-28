@@ -45,11 +45,12 @@ class RAFT_flow(Warp):
 
         model_name = "raft-" + model + ".pth"
         self.model = torch.nn.DataParallel(RAFT(self._instantiate_raft_model(model_name)))
+
         model_path = os.path.join(os.path.dirname(__file__), 'models', model_name)
         if not os.path.exists(model_path):
             raise ValueError(f"[ERROR] Model file '{model_path}' not found.")
-
         self.model.load_state_dict(torch.load(model_path, map_location = self.device))
+
         self.model = self.model.module
         self.model.to(self.device)
         self.model.eval()
