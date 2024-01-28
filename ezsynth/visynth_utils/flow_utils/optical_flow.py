@@ -1,5 +1,5 @@
 import os
-from typing import Literal, List
+from typing import Literal, List, Iterator
 
 import cv2
 import numpy as np
@@ -21,7 +21,7 @@ class OpticalFlowProcessor:
         self.model = model
         self.device = device
 
-    def __call__(self, images: List[np.ndarray]):
+    def __call__(self, images: List[np.ndarray]) -> Iterator[np.ndarray]:
         if self.method == "RAFT":
             self.flow = RAFT_flow(image = images[0], model = self.model, device = self.device)
             return self.flow.__iter__(images)
