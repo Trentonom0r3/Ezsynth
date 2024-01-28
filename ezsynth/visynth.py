@@ -26,7 +26,6 @@ class Visynth:
             raise ValueError("At least one style video frame must be specified.")
 
         sequences = config_to_sequences(a)
-        print("Sequences: " + ", ".join(map(lambda x: str(x.start_frame) + "-" + str(x.end_frame), sequences)))
 
         guides = create_guides(a)
 
