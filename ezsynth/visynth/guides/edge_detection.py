@@ -4,8 +4,8 @@ from typing import Literal
 
 import cv2
 import numpy as np
+import phycv
 from PIL import Image
-from phycv import PST_GPU, PAGE_GPU
 
 
 class EdgeDetector:
@@ -30,9 +30,9 @@ class EdgeDetector:
         self.device = "mps"
 
         if method == "PST":
-            self.pst_gpu = PST_GPU(device = self.device)
+            self.pst_gpu = phycv.PST_GPU(device = self.device)
         elif method == "PAGE":
-            self.page_gpu = PAGE_GPU(direction_bins = 10, device = self.device)
+            self.page_gpu = phycv.PAGE_GPU(direction_bins = 10, device = self.device)
         elif method == "Classic":
             size, sigma = 5, 6.0
             self.kernel = self.create_gaussian_kernel(size, sigma)
