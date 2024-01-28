@@ -151,6 +151,7 @@ class EbsynthRunner:
 
         guides_source = np.concatenate(guides_source, axis = -1)
         guides_target = np.concatenate(guides_target, axis = -1)
+        # noinspection PyCallingNonCallable,PyTypeChecker
         guides_weights = (c_float * len(guides_weights))(*guides_weights)
 
         style_weights = [1.0 / sc for i in range(sc)]
@@ -166,8 +167,11 @@ class EbsynthRunner:
             num_pyramid_levels = max_pyramid_levels
         num_pyramid_levels = min(num_pyramid_levels, max_pyramid_levels)
 
+        # noinspection PyCallingNonCallable,PyTypeChecker
         num_search_vote_iters_per_level = (c_int * num_pyramid_levels)(*[num_search_vote_iters] * num_pyramid_levels)
+        # noinspection PyCallingNonCallable,PyTypeChecker
         num_patch_match_iters_per_level = (c_int * num_pyramid_levels)(*[num_patch_match_iters] * num_pyramid_levels)
+        # noinspection PyCallingNonCallable,PyTypeChecker
         stop_threshold_per_level = (c_int * num_pyramid_levels)(*[stop_threshold] * num_pyramid_levels)
 
         # Get or create buffers
