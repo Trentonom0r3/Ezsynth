@@ -52,46 +52,6 @@ class Ebsynth:
         self.cache_lock = threading.Lock()
         self.normalize_lock = threading.Lock()
 
-    def init_lib(self):
-        with self.lib_lock:
-            if self.lib is None:
-                if sys.platform[0:3] == 'win':
-                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.dll'))
-                elif sys.platform == 'darwin':
-                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.so'))
-                elif sys.platform[0:5] == 'linux':
-                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.so'))
-
-                if self.lib is None:
-                    raise RuntimeError("Unsupported platform.")
-
-                self.lib.ebsynthRun.argtypes = (
-                    c_int,
-                    c_int,
-                    c_int,
-                    c_int,
-                    c_int,
-                    c_void_p,
-                    c_void_p,
-                    c_int,
-                    c_int,
-                    c_void_p,
-                    c_void_p,
-                    POINTER(c_float),
-                    POINTER(c_float),
-                    c_float,
-                    c_int,
-                    c_int,
-                    c_int,
-                    POINTER(c_int),
-                    POINTER(c_int),
-                    POINTER(c_int),
-                    c_int,
-                    c_void_p,
-                    c_void_p,
-                    c_void_p
-                )
-
     def __call__(self, a: Config) -> Tuple[np.ndarray, np.ndarray]:
         self.init_lib()
 
@@ -200,6 +160,46 @@ class Ebsynth:
         err = np.frombuffer(err_buffer, dtype = np.float32).reshape((t_h, t_w)).copy()
 
         return img, err
+
+    def init_lib(self):
+        with self.lib_lock:
+            if self.lib is None:
+                if sys.platform[0:3] == 'win':
+                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.dll'))
+                elif sys.platform == 'darwin':
+                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.so'))
+                elif sys.platform[0:5] == 'linux':
+                    self.lib = CDLL(os.path.join(__file__, "..", 'ebsynth.so'))
+
+                if self.lib is None:
+                    raise RuntimeError("Unsupported platform.")
+
+                self.lib.ebsynthRun.argtypes = (
+                    c_int,
+                    c_int,
+                    c_int,
+                    c_int,
+                    c_int,
+                    c_void_p,
+                    c_void_p,
+                    c_int,
+                    c_int,
+                    c_void_p,
+                    c_void_p,
+                    POINTER(c_float),
+                    POINTER(c_float),
+                    c_float,
+                    c_int,
+                    c_int,
+                    c_int,
+                    POINTER(c_int),
+                    POINTER(c_int),
+                    POINTER(c_int),
+                    c_int,
+                    c_void_p,
+                    c_void_p,
+                    c_void_p
+                )
 
     def _get_or_create_buffer(self, key):
         with self.cache_lock:
