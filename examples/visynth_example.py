@@ -12,7 +12,7 @@ config = Config(
     device = torch.device("cpu"),
 )
 
-images = visynth(config)
+frames = visynth(config)
 
-for f in images:
+for f in frames:
     cv2.imwrite("output/output" + str(f.index).zfill(3) + ".jpg", f.image)
