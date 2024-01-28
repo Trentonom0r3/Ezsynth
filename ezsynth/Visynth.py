@@ -61,6 +61,9 @@ def _read_images(a: List[tuple[int, str]]) -> List[tuple[int, numpy.ndarray]]:
         raise ValueError(f"Error reading image: {e}")
 
 
+########
+
+
 class Visynth:
     def __init__(self):
         pass
