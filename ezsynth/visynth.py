@@ -120,14 +120,14 @@ def _run_sequences(
 
         if direction == 1:
             start_frame = seq.start_frame
+            end_frame = seq.endFrame
             step = 1
             style = seq.style_start
-            end_frame = seq.endFrame
         else:
             start_frame = seq.end_frame
+            end_frame = seq.begFrame
             step = -1
             style = seq.style_end
-            end_frame = seq.begFrame
 
         eb = Ebsynth()
         warp = Warp(imgseq[start_frame])
