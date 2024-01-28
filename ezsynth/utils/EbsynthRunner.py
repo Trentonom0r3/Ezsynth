@@ -10,6 +10,18 @@ import numpy as np
 
 @dataclass
 class Config:
+    """
+    Initialize Ebsynth.
+    :param style_image: path to the style image, or a numpy array.
+    :param guides: list of tuples containing source and target guide images, as file paths or as numpy arrays.
+    :param uniformity: uniformity weight for the style transfer. Defaults to 3500.0.
+    :param patch_size: size of the patches. Must be an odd number. Defaults to 5. [5x5 patches]
+    :param num_pyramid_levels: number of pyramid levels. Larger Values useful for things like color transfer. Defaults to 6.
+    :param num_search_vote_iters: number of search/vote iterations. Defaults to 12.
+    :param num_patch_match_iters: number of Patch-Match iterations. Defaults to 6.
+    :param extra_pass3x3: whether to perform an extra pass with 3x3 patches. Defaults to False.
+    """
+
     style_image: np.ndarray
     guides: List[Tuple[np.ndarray, np.ndarray, float]]
     patch_size: int = 5
