@@ -5,7 +5,7 @@ import cv2
 from ezsynth.Visynth import Visynth, Config, image_sequence_from_directory
 
 config = Config(
-    images = image_sequence_from_directory("input"),
+    frames = image_sequence_from_directory("input"),
     styles = image_sequence_from_directory("styles"),
 )
 
