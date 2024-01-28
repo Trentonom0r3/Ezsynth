@@ -1,3 +1,5 @@
+import cv2
+
 from ezsynth.utils.EbsynthRunner import *
 
 
@@ -122,3 +124,16 @@ class Ebsynth:
                                    )
 
         return img, err
+
+
+def _validate_image(img):
+    if isinstance(img, str):
+        img = cv2.imread(img)
+        if img is None:
+            raise ValueError('Image must be a str leading to a valid file path or a 3-channel numpy array')
+    elif isinstance(img, np.ndarray):
+        if img.shape[-1] != 3:
+            raise ValueError('Image must be a str leading to a valid file path or a 3-channel numpy array')
+    else:
+        raise ValueError('Image must be a str leading to a valid file path or a 3-channel numpy array')
+    return img
