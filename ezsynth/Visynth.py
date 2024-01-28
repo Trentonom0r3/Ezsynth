@@ -33,20 +33,8 @@ class Config:
     flow_model: Literal["sintel", "kitti", "chairs"] = "sintel"
 
 
-def images_from_directory(
-        style_path: str = "styles",
-        input_path: str = "input",
-        edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE",
-        flow_method: Literal["RAFT", "DeepFlow"] = "RAFT",
-        model_name: Literal["sintel", "kitti", "chairs"] = "sintel"
-) -> Config:
-    return Config(
-        _read_images(_get_image_paths(style_path)),
-        _read_images(_get_image_paths(input_path)),
-        edge_method,
-        flow_method,
-        model_name,
-    )
+def images_from_directory(path: str) -> List[tuple[int, numpy.ndarray]]:
+    return _read_images(_get_image_paths(path))
 
 
 def _get_image_paths(path: str) -> List[tuple[int, str]]:
