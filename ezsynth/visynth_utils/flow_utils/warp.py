@@ -10,6 +10,7 @@ class Warp:
         self.width = width
         self.grid = self._create_grid(height, width)
 
+    # noinspection PyMethodMayBeStatic
     def _create_grid(self, height, width):
         x, y = np.meshgrid(np.arange(width), np.arange(height))
         return np.stack((x, y), axis = -1).astype(np.float32)
