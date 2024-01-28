@@ -38,10 +38,10 @@ class RAFT_flow(Warp):
 
     def __init__(
             self,
-            img,
+            image,
             model_name = 'Sintel',
     ):
-        super().__init__(img)
+        super().__init__(image)
 
         model_name = "raft-" + model_name + ".pth"
         self.model = torch.nn.DataParallel(RAFT(args = self._instantiate_raft_model(model_name)))
