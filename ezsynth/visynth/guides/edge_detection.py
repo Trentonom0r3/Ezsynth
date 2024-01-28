@@ -48,17 +48,9 @@ class EdgeDetector:
         :return: Edge map as a numpy array.
         """
         method = self.method
-        if method == 'Classic':
-            pass
-        elif method == 'PST':
-            input_data_path = self.load_image(input_data)
-        elif method == 'PAGE':
-            input_data_path = self.load_image(input_data)
-        else:
-            raise ValueError("Unknown edge detection method.")
-
         try:
             if method == "PAGE":
+                input_data_path = self.load_image(input_data)
                 # page_gpu = PAGE_GPU(direction_bins=10, device=self.device)
                 mu_1, mu_2, sigma_1, sigma_2, S1, S2, sigma_LPF, thresh_min, thresh_max, morph_flag = 0, 0.35, 0.05, 0.8, 0.8, 0.8, 0.1, 0.0, 0.9, 1
                 edge_map = self.page_gpu.run(
@@ -68,6 +60,7 @@ class EdgeDetector:
                 edge_map = (edge_map * 255).astype(np.uint8)
 
             elif method == "PST":
+                input_data_path = self.load_image(input_data)
                 # pst_gpu = PST_GPU(device=self.device)
                 S, W, sigma_LPF, thresh_min, thresh_max, morph_flag = 0.3, 15, 0.15, 0.05, 0.9, 1
                 edge_map = self.pst_gpu.run(
