@@ -51,8 +51,7 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
 
             elif style_start is not None and style_end is None:
                 fwd_img, fwd_err = _run_sequences(a, guides, seq, False)
-                fwd_imgs = [img for img in fwd_img if img is not None]
-                return fwd_imgs
+                return [img for img in fwd_img if img is not None]
 
             elif style_start is None and style_end is not None:
                 bwd_img, bwd_err = _run_sequences(a, guides, seq, True)
