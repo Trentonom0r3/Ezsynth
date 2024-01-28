@@ -1,4 +1,3 @@
-import cv2
 import threading
 from concurrent.futures import ProcessPoolExecutor
 
