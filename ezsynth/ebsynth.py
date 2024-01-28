@@ -3,10 +3,18 @@ from ezsynth.utils._eb import *
 
 class Ebsynth:
 
-    def __init__(self, style, guides = [], uniformity = 3500.0,
-                 patchsize = 5, pyramidlevels = 6, searchvoteiters = 12,
-                 patchmatchiters = 6, extrapass3x3 = True, backend = 'auto'):
-
+    def __init__(
+            self,
+            style,
+            guides = [],
+            uniformity = 3500.0,
+            patchsize = 5,
+            pyramidlevels = 6,
+            searchvoteiters = 12,
+            patchmatchiters = 6,
+            extrapass3x3 = True,
+            backend = 'auto'
+    ):
         """
         Initialize the EBSynth wrapper.      
         :param style: path to the style image, or a numpy array.
