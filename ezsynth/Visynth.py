@@ -20,14 +20,14 @@ from .utils.sequences import Sequence
 class Config:
     """
     Visynth config.
-    :param styles: List of tuples containing frame index and style video frame.
     :param images: List of tuples containing frame index and video frame.
+    :param styles: List of tuples containing frame index and style video frame.
     :param edge_method: Method for edge detection, default is "PAGE". Options are "PAGE", "PST", and "Classic".
     :param flow_method: Method for optical flow computation, default is "RAFT". Options are "RAFT" and "DeepFlow".
     :param model: The model name for optical flow, default is "sintel". Options are "sintel", "kitti", and "chairs".
     """
-    styles: List[tuple[int, numpy.ndarray]]
     images: List[tuple[int, numpy.ndarray]]
+    styles: List[tuple[int, numpy.ndarray]]
     edge_method: Literal["PAGE", "PST", "Classic"]
     flow_method: Literal["RAFT", "DeepFlow"]
     model_name: Literal["sintel", "kitti", "chairs"]
