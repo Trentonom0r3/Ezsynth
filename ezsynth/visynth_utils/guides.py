@@ -22,16 +22,16 @@ class Guides:
 def create_guides(a: Config) -> Guides:
     print("Analyzing edges.")
     edge_detector = EdgeDetector(method = a.edge_method, device = a.device)
-    edge = [edge_detector(x) for i, x in a.frames]
+    edge = [edge_detector(x.image) for x in a.frames]
 
     print("Analyzing optical flow.")
     optical_flow_processor = OpticalFlowProcessor(method = a.flow_method, model = a.flow_model, device = a.device)
-    flow_rev = list(optical_flow_processor([x for i, x in a.frames]))
+    flow_rev = list(optical_flow_processor([x.image for x in a.frames]))
     flow_fwd = [x * -1 for x in flow_rev]
 
     print("Analyzing position.")
-    positional_rev = PositionalGuide([x for i, x in a.frames], flow = flow_rev)()
-    positional_fwd = PositionalGuide([x for i, x in a.frames], flow = flow_rev[::-1])()
+    positional_rev = PositionalGuide([x.image for x in a.frames], flow = flow_rev)()
+    positional_fwd = PositionalGuide([x.image for x in a.frames], flow = flow_rev[::-1])()
     positional_fwd = positional_fwd[::-1]
 
     return Guides(
