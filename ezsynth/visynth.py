@@ -119,9 +119,9 @@ def _run_sequences(
         err_list = []
 
         if direction == 1:
-            start_frame, step, style, init, final = (seq.init, 1, seq.style_start, seq.begFrame, seq.endFrame)
+            start_frame, step, style, init, final = (seq.start_frame, 1, seq.style_start, seq.begFrame, seq.endFrame)
         else:
-            start_frame, step, style, init, final = (seq.final, -1, seq.style_end, seq.endFrame, seq.begFrame)
+            start_frame, step, style, init, final = (seq.end_frame, -1, seq.style_end, seq.endFrame, seq.begFrame)
 
         eb = Ebsynth()
         warp = Warp(imgseq[start_frame])
