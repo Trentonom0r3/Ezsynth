@@ -15,13 +15,13 @@ class OpticalFlowProcessor():
     def __init__(
             self,
             model = 'Sintel',
-            flow_method = 'RAFT'
+            method = 'RAFT'
     ):
 
-        if flow_method not in self.valid_flow_methods:
-            raise ValueError(f"Invalid flow method {flow_method}. Valid methods are {self.valid_flow_methods}")
+        if method not in self.valid_flow_methods:
+            raise ValueError(f"Invalid flow method {method}. Valid methods are {self.valid_flow_methods}")
         else:
-            self.flow_method = flow_method
+            self.flow_method = method
 
         if model not in self.valid_model_names:
             raise ValueError(f"Invalid model name {model}. Valid names are {self.valid_model_names}")
