@@ -168,7 +168,7 @@ def _run_sequences(
                 frame = frames[-1] / 255.0
 
                 warped_img = warp.run_warping(frame, flow[i - 1] if direction == 1 else flow[i])
-                warped_img = cv2.resize(warped_img, imgseq[0].shape[1::-1])
+                warped_img = cv2.resize(warped_img, a.frames[0].image.shape[1::-1])
 
                 guides.append(
                     (
