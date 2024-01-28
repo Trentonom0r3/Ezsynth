@@ -1,7 +1,9 @@
 from dataclasses import dataclass
-from typing import Union
+from typing import Union, List
 
 import cv2
+
+from .config import Config
 
 
 @dataclass
@@ -12,7 +14,7 @@ class Sequence:
     style_end_frame: Union[None, int]
 
 
-def config_to_sequences(self, begFrame, endFrame, styles, style_indexes, imgindexes):
+def config_to_sequences(a: Config) -> List[Sequence]:
     """
     Setup Sequence Information.
     Compares the style indexes with the image indexes to determine the sequence information.
