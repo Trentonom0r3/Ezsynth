@@ -103,6 +103,7 @@ class EbsynthRunner:
             uniformity_weight = 3500.0,
             extra_pass3x3 = False,
     ):
+        self.init_lib()
 
         # Validation checks
         if patch_size < 3:
@@ -113,8 +114,6 @@ class EbsynthRunner:
         if len(guides) == 0:
             raise ValueError("At least one guide must be specified.")
 
-        # Initialize libebsynth if not already done
-        self.init_lib()
 
         img_style = self._normalize_img_shape(img_style)
         sh, sw, sc = img_style.shape
