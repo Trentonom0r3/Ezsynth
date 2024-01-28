@@ -17,7 +17,7 @@ class Config:
     num_search_vote_iters: int = 6
     num_patch_match_iters: int = 4
     stop_threshold: int = 5
-    uniformity_weight: float = 3500.0
+    uniformity: float = 3500.0
     extra_pass3x3: bool = False
 
 
@@ -198,7 +198,7 @@ class EbsynthRunner:
                 None,  # targetModulationData (width * height * numGuideChannels) bytes, scan-line order; pass NULL to switch off the modulation
                 style_weights,  # styleWeights (numStyleChannels) floats
                 guides_weights,  # guideWeights (numGuideChannels) floats
-                a.uniformity_weight,  # uniformityWeight reasonable values are between 500-15000, 3500 is a good default
+                a.uniformity,  # uniformityWeight reasonable values are between 500-15000, 3500 is a good default
                 a.patch_size,  # patchSize odd sizes only, use 5 for 5x5 patch, 7 for 7x7, etc.
                 self.VOTEMODE_WEIGHTED,  # voteMode use VOTEMODE_WEIGHTED for sharper result
                 num_pyramid_levels,  # numPyramidLevels
