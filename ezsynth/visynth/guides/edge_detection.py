@@ -30,10 +30,10 @@ class EdgeDetector:
         self.method = method
         self.device = device
 
-        if method == "PST":
-            self.pst_gpu = phycv.PST_GPU(device = self.device)
-        elif method == "PAGE":
+        if method == "PAGE":
             self.page_gpu = phycv.PAGE_GPU(direction_bins = 10, device = self.device)
+        elif method == "PST":
+            self.pst_gpu = phycv.PST_GPU(device = self.device)
         elif method == "Classic":
             size, sigma = 5, 6.0
             self.kernel = self.create_gaussian_kernel(size, sigma)
