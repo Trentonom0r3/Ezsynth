@@ -109,8 +109,14 @@ def _process(config: Config, sequences: List[Sequence], guides: Guides):
     return final_blends
 
 
-def _run_sequences(imgseq, edge, flow,
-                   positional, seq, reverse = False):
+def _run_sequences(
+        imgseq,
+        edge,
+        flow,
+        positional,
+        seq,
+        reverse = False
+):
     """
     Run the sequence for ebsynth based on the provided parameters.
     Parameters:
