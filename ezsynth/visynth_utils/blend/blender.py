@@ -17,6 +17,12 @@ class Blend:
         self.err_masks = None
         self.blends = None
 
+    def __call__(self):
+        self.err_masks = self._create_final_err_masks()
+        hist_blends = self._hist_blend()
+        self.blends = self._reconstruct(hist_blends)
+        return self.blends
+
     def _create_final_err_masks(self):
         err_masks = self._create_selection_mask(self.err_fwd, self.err_bwd)
         print(f"Length of err_masks: {len(err_masks)}")
@@ -91,9 +97,3 @@ class Blend:
         final_blends = blends()
         final_blends = [blend for blend in final_blends if blend is not None]
         return final_blends
-
-    def __call__(self):
-        self.err_masks = self._create_final_err_masks()
-        hist_blends = self._hist_blend()
-        self.blends = self._reconstruct(hist_blends)
-        return self.blends
