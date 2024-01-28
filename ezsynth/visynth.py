@@ -5,6 +5,7 @@ from typing import List
 import cv2
 import numpy as np
 
+from . import ebsynth
 from .ebsynth import Ebsynth
 from .visynth_utils.blend.blender import Blend
 # noinspection PyUnresolvedReferences
@@ -126,9 +127,13 @@ def _run_sequences(
         warp = Warp(imgseq[start])
 
         for i in range(init, final, step):
-            eb.clear_guide()
-            eb.add_guide(edge[start], edge[i], 1.0)
-            eb.add_guide(imgseq[start], imgseq[i], 6.0)
+            config = ebsynth.Config(
+                style_image = style,
+                guides = [
+                    (edge[start], edge[i], 1.0),
+                    (imgseq[start], imgseq[i], 6.0),
+                ]
+            )
 
             # Commented out section: additional guide and warping
             if i != start:
