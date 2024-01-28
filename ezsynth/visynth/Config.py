@@ -5,7 +5,7 @@ from typing import List
 from typing import Literal
 
 import cv2
-import numpy
+import numpy as np
 
 
 @dataclass
@@ -18,14 +18,14 @@ class Config:
     :param flow_method: Method for optical flow computation. RAFT or DeepFlow. Default is RAFT.
     :param flow_model: Model name for optical flow. sintel, kitti or chairs. Default is sintel.
     """
-    frames: List[tuple[int, numpy.ndarray]]
-    style_frames: List[tuple[int, numpy.ndarray]]
+    frames: List[tuple[int, np.ndarray]]
+    style_frames: List[tuple[int, np.ndarray]]
     edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE"
     flow_method: Literal["RAFT", "DeepFlow"] = "RAFT"
     flow_model: Literal["sintel", "kitti", "chairs"] = "sintel"
 
 
-def image_sequence_from_directory(path: str) -> List[tuple[int, numpy.ndarray]]:
+def image_sequence_from_directory(path: str) -> List[tuple[int, np.ndarray]]:
     return _read_images(_get_image_paths(path))
 
 
@@ -46,7 +46,7 @@ def _extract_index(name: str):
         raise ValueError("Cannot extract index from: " + name)
 
 
-def _read_images(a: List[tuple[int, str]]) -> List[tuple[int, numpy.ndarray]]:
+def _read_images(a: List[tuple[int, str]]) -> List[tuple[int, np.ndarray]]:
     try:
         return [(i, cv2.imread(b)) for i, b in a]
     except Exception as e:
