@@ -81,16 +81,14 @@ class EbsynthRunner:
 
     def _normalize_img_shape(self, img):
         with self.normalize_lock:
-            img_len = len(img.shape)
-            if img_len == 2:
-                sh, sw = img.shape
+            if len(img.shape) == 2:
                 sc = 0
-            elif img_len == 3:
+            elif len(img.shape) == 3:
                 sh, sw, sc = img.shape
 
             if sc == 0:
-                sc = 1
                 img = img[..., np.newaxis]
+
             return img
 
     def run(self, img_style, guides, patch_size = 5, num_pyramid_levels = -1,
