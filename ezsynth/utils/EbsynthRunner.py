@@ -24,12 +24,12 @@ class Config:
 
     style_image: np.ndarray
     guides: List[Tuple[np.ndarray, np.ndarray, float]]
+    uniformity: float = 3500.0
     patch_size: int = 5
     num_pyramid_levels: int = -1
     num_search_vote_iters: int = 6
     num_patch_match_iters: int = 4
     stop_threshold: int = 5
-    uniformity: float = 3500.0
     extra_pass3x3: bool = False
 
 
