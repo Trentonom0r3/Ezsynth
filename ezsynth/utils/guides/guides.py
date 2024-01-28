@@ -20,19 +20,19 @@ class Guides:
     positional_fwd: List[numpy.ndarray]
 
 
-def create_guides(config: Config) -> Guides:
-    edge_detector = EdgeDetector(method = config.edge_method)
-    edge = [edge_detector.compute_edge(x) for i, x in config.frames]
+def create_guides(a: Config) -> Guides:
+    edge_detector = EdgeDetector(method = a.edge_method)
+    edge = [edge_detector.compute_edge(x) for i, x in a.frames]
 
-    optical_flow_processor = OpticalFlowProcessor(model_name = config.flow_model, flow_method = config.flow_method)
-    flow_rev = optical_flow_processor.compute_flow([x for i, x in config.frames])
+    optical_flow_processor = OpticalFlowProcessor(model_name = a.flow_model, flow_method = a.flow_method)
+    flow_rev = optical_flow_processor.compute_flow([x for i, x in a.frames])
     flow_rev = [x for x in flow_rev]
     flow_fwd = [x * -1 for x in flow_rev]
 
-    positional_rev = PositionalGuide([x for i, x in config.frames], flow = flow_rev)
+    positional_rev = PositionalGuide([x for i, x in a.frames], flow = flow_rev)
     positional_rev = positional_rev()
 
-    positional_fwd = PositionalGuide([x for i, x in config.frames], flow = flow_rev[::-1])
+    positional_fwd = PositionalGuide([x for i, x in a.frames], flow = flow_rev[::-1])
     positional_fwd = positional_fwd()
     positional_fwd = positional_fwd[::-1]
 
