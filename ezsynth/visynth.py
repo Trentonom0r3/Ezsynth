@@ -46,8 +46,8 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides):
             style_end = next(x.image for x in a.style_frames if x.index == seq.end_frame)
 
             if style_start is not None and style_end is not None:
-                futures.append(("fwd", executor.submit(_run_sequences, imgseq, edge_maps, flow_fwd, pos_fwd, seq)))
-                futures.append(("bwd", executor.submit(_run_sequences, imgseq, edge_maps, flow_bwd, pos_bwd, seq, True)))
+                futures.append(("fwd", executor.submit(_run_sequences, guides, seq, False)))
+                futures.append(("bwd", executor.submit(_run_sequences, guides, seq, True)))
 
             elif style_start is not None and style_end is None:
                 images, _ = _run_sequences(a, guides, seq, False)
