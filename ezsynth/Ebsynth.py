@@ -78,6 +78,8 @@ class Ebsynth:
         for source_guide, target_guide, guide_weight in a.guides:
             source_guide = self._normalize_img_shape(source_guide)
             target_guide = self._normalize_img_shape(target_guide)
+            guide_weight = _validate_weight(guide_weight)
+
             s_h, s_w, s_c = source_guide.shape
             nt_h, nt_w, nt_c = target_guide.shape
 
