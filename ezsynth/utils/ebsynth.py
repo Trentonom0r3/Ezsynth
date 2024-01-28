@@ -1,7 +1,7 @@
 from ._eb import *
 
 
-class ebsynth:
+class Ebsynth:
     """
     EBSynth class provides a wrapper around the ebsynth style transfer method.
 

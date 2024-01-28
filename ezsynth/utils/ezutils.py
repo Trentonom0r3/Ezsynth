@@ -4,7 +4,7 @@ from typing import List
 
 import cv2
 
-from .ebsynth import ebsynth
+from .ebsynth import Ebsynth
 from .blend.blender import Blend
 from .config import Config
 from .flow_utils.warp import Warp
@@ -135,7 +135,7 @@ def run_sequences(imgseq, edge, flow,
             start, step, style, init, final = (
                 seq.init, 1, seq.style_start, seq.begFrame, seq.endFrame)
 
-        eb = ebsynth(style, guides = [])
+        eb = Ebsynth(style, guides = [])
         warp = Warp(imgseq[start])
         ORIGINAL_SIZE = imgseq[0].shape[1::-1]
         # Loop through frames.

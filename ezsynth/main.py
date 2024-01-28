@@ -13,7 +13,7 @@ def imagesynth(
         extrapass3x3 = True,
         backend = 'cuda'
 ):
-    return ebsynth(
+    return Ebsynth(
         style = _validate_image(style_img),
         guides = guides,
         uniformity = uniformity,
