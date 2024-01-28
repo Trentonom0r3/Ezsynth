@@ -28,9 +28,9 @@ class Config:
     """
     images: List[tuple[int, numpy.ndarray]]
     styles: List[tuple[int, numpy.ndarray]]
-    edge_method: Literal["PAGE", "PST", "Classic"]
-    flow_method: Literal["RAFT", "DeepFlow"]
-    model_name: Literal["sintel", "kitti", "chairs"]
+    edge_method: Literal["PAGE", "PST", "Classic"] = "PAGE"
+    flow_method: Literal["RAFT", "DeepFlow"] = "RAFT"
+    model_name: Literal["sintel", "kitti", "chairs"] = "sintel"
 
 
 def config_from_directory(
