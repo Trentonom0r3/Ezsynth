@@ -35,7 +35,6 @@ class OpticalFlowProcessor:
 
 # noinspection PyPep8Naming
 class RAFT_flow(Warp):
-    device = 'mps'
 
     def __init__(self, img, model_name = 'Sintel'):
         """
