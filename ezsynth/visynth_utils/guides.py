@@ -63,7 +63,7 @@ class PositionalGuide:
         g_pos_files = []
         for i in range(len(flow_np)):
             flow = flow_np[i - 1] if i != 0 else flow_np[i]
-            self._create_and_warp_coord_map(flow, original_size)
+            self._create_and_warp_coord_map(flow)
 
             g_pos = cv2.resize(self.coord_map_warped, original_size)
             g_pos = np.clip(g_pos, 0, 1)
@@ -71,7 +71,7 @@ class PositionalGuide:
             g_pos_files.append(g_pos)
         return g_pos_files
 
-    def _create_and_warp_coord_map(self, flow_up, original_size):
+    def _create_and_warp_coord_map(self, flow_up):
         if self.coord_map is None:
             h, w = self.warp.H, self.warp.W
             self.coord_map = np.zeros((h, w, 3), dtype = np.float32)
