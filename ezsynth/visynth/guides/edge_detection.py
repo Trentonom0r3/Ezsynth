@@ -1,5 +1,6 @@
 import os
 import tempfile
+from typing import Literal
 
 import cv2
 import numpy as np
@@ -8,7 +9,10 @@ from phycv import PST_GPU, PAGE_GPU
 
 
 class EdgeDetector:
-    def __init__(self, method = "PAGE"):
+    def __init__(
+            self,
+            method: Literal["PAGE", "PST", "Classic"] = "PAGE"
+    ):
         """
         Initialize the edge detector.
 
