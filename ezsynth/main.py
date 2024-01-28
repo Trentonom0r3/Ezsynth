@@ -14,24 +14,8 @@ def imagesynth(
         extrapass3x3 = True,
         backend = 'cuda'
 ):
-    """
-    Initialize the ebsynth object.
-
-    Parameters
-    ----------
-    style_img: str or numpy array
-        str leading to file path, or numpy array
-
-    guides: tuple of lists
-        [[guide 1, guide 2, weight], [guide 1, guide 2, weight], ...]
-        guide 1: str leading to file path, or numpy array
-        guide 2: str leading to file path, or numpy array
-        weight: float
-
-    """
-    self.style_img = self._validate_image(style_img)
-    self.eb = ebsynth(
-        style = style_img,
+    return ebsynth(
+        style = _validate_image(style_img),
         guides = [],
         uniformity = uniformity,
         patchsize = patchsize,
