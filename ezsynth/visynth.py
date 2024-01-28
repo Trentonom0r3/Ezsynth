@@ -144,10 +144,6 @@ def _run_sequences(
                 (guides.edge[start_frame - frame_offset], guides.edge[i - frame_offset], 1.0),
                 (a.frames[start_frame - frame_offset], a.frames[i - frame_offset], 6.0),
             ]
-            config = ebsynth.Config(
-                style_image = style,
-                guides = guides,
-            )
 
             if i != start_frame:
                 eb.add_guide(positional[start_frame - 1] if direction else positional[start_frame], positional[i], 2.0)
@@ -160,6 +156,10 @@ def _run_sequences(
 
                 eb.add_guide(style, warped_img, 0.5)
 
+            config = ebsynth.Config(
+                style_image = style,
+                guides = guides,
+            )
             stylized_img, err = eb(config)
             frames.append(stylized_img)
             errors.append(err)
