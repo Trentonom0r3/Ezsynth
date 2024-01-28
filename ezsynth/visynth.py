@@ -135,14 +135,14 @@ def _run_sequences(
         eb = Ebsynth()
 
         start_frame_image = next(x.image for x in a.frames if x.index == start_frame)
-        warp = Warp(imgseq[start_frame])
+        warp = Warp(start_frame_image)
 
         for i in range(start_frame, end_frame, step):
             config = ebsynth.Config(
                 style_image = style,
                 guides = [
                     (edge[start_frame], edge[i], 1.0),
-                    (imgseq[start_frame], imgseq[i], 6.0),
+                    (start_frame_image, imgseq[i], 6.0),
                 ]
             )
 
