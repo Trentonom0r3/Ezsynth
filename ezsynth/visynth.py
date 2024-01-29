@@ -43,12 +43,12 @@ def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.nd
         if style_start:
             print("Running forward " + str(seq.start_frame) + " -> " + str(seq.end_frame) + ".")
             images, _ = _run_sequences(a, guides, seq, (style_start, style_end), 1)
-            return [x for x in images if x is not None]
+            acc += [x for x in images if x is not None]
 
         if style_end:
             print("Running backward " + str(seq.start_frame) + " <- " + str(seq.end_frame) + ".")
             images, _ = _run_sequences(a, guides, seq, (style_start, style_end), -1)
-            return [x for x in images if x is not None]
+            acc += [x for x in images if x is not None]
 
     return acc
 
