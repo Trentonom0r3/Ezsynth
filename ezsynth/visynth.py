@@ -32,6 +32,15 @@ class Visynth:
         return []
 
 
+def _process(configs: List[Tuple[int, ebsynth.Config]]) -> List[np.ndarray]:
+    eb = Ebsynth()
+    acc = []
+    for i, c in sorted(configs):
+        print("Frame " + str(i) + ".")
+        acc.append(eb(c)[0])
+    return acc
+
+
 def config_and_guides_and_sequences_to_ebsynth_configs_1pass(
         a: Config,
         guides: Guides,
