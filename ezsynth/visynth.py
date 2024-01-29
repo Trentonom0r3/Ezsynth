@@ -61,7 +61,7 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides) -> List[np.nd
                 raise ValueError("Cannot find style frame number " + str(seq.start_frame) + " or " + str(seq.end_frame) + ".")
 
 
-def do_blending(futures):
+def _do_blending(futures):
     style_images_fwd = []
     style_images_bwd = []
     err_fwd = []
