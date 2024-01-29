@@ -37,6 +37,9 @@ def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.nd
         style_start = next((x[1] for x in a.style_frames if x[0] == seq.start_frame), None)
         style_end = next((x[1] for x in a.style_frames if x[0] == seq.end_frame), None)
 
+        if style_start is None and style_end is None:
+            raise ValueError("Cannot find style frame number " + str(seq.start_frame) + " or " + str(seq.end_frame) + ".")
+
         if style_start:
             print("Running forward " + str(seq.start_frame) + " -> " + str(seq.end_frame) + ".")
             images, _ = _run_sequences(a, guides, seq, (style_start, style_end), 1)
@@ -46,9 +49,6 @@ def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.nd
             print("Running backward " + str(seq.start_frame) + " <- " + str(seq.end_frame) + ".")
             images, _ = _run_sequences(a, guides, seq, (style_start, style_end), -1)
             return [x for x in images if x is not None]
-
-        else:
-            raise ValueError("Cannot find style frame number " + str(seq.start_frame) + " or " + str(seq.end_frame) + ".")
 
     return acc
 
