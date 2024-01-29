@@ -51,6 +51,86 @@ def config_and_guides_and_sequences_to_ebsynth(a: Config, guides: Guides, sequen
     return acc
 
 
+def _to_ebsynth(
+        a: Config,
+        guides: Guides,
+        seq: Sequence,
+        style_frame: Tuple[Union[None, np.ndarray], Union[None, np.ndarray]],
+        direction: int,
+) -> ebsynth.Config:
+    with threading.Lock():
+        frames = []
+        errors = []
+
+        if direction == 1:
+            start_frame = seq.start_frame
+            end_frame = seq.end_frame
+            step = 1
+            style = style_frame[0]
+            flow = guides.flow_fwd
+            positional = guides.positional_fwd
+        else:
+            start_frame = seq.end_frame
+            end_frame = seq.start_frame
+            step = -1
+            style = style_frame[1]
+            flow = guides.flow_rev
+            positional = guides.positional_rev
+
+        eb = Ebsynth()
+
+        warp = Warp(a.frames[start_frame])
+
+        for i in range(start_frame, end_frame, step):
+            print("Frame " + str(i) + ".")
+
+            ebsynth_guides = [
+                (
+                    guides.edge[start_frame],
+                    guides.edge[i],
+                    1.0,
+                ),
+                (
+                    a.frames[start_frame],
+                    a.frames[i],
+                    6.0,
+                ),
+            ]
+
+            if i != start_frame:
+                ebsynth_guides.append(
+                    (
+                        positional[start_frame] if direction == 1 else positional[start_frame - 1],
+                        positional[i],
+                        2.0,
+                    )
+                )
+
+                # Assuming frames[-1] is already in BGR format
+                frame = frames[-1] / 255.0
+
+                warped_img = warp.run_warping(frame, flow[i - 1] if direction == 1 else flow[i])
+                warped_img = cv2.resize(warped_img, a.frames[0].shape[1::-1])
+
+                ebsynth_guides.append(
+                    (
+                        style,
+                        warped_img,
+                        0.5,
+                    )
+                )
+
+            config = ebsynth.Config(
+                style_image = style,
+                guides = ebsynth_guides,
+            )
+            frame, err = eb(config)
+            frames.append(frame)
+            errors.append(err)
+
+        return frames, errors
+
+
 def _run_sequences(
         a: Config,
         guides: Guides,
