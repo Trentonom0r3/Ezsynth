@@ -60,9 +60,6 @@ def _run_sequences(
         direction: int,
 ) -> Tuple[List[np.ndarray], List[np.ndarray]]:
     with threading.Lock():
-        frames = []
-        errors = []
-
         if direction == 1:
             start_frame = sequence.start_frame
             end_frame = sequence.end_frame
