@@ -83,8 +83,6 @@ def _to_ebsynth(
     warp = Warp(a.frames[start_frame])
 
     for i in range(start_frame, end_frame, step):
-        print("Frame " + str(i) + ".")
-
         ebsynth_guides = [
             (
                 guides.edge[start_frame],
