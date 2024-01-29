@@ -140,6 +140,7 @@ def config_and_guides_and_sequences_to_ebsynth_configs_2pass(
         a: Config,
         guides: Guides,
         sequences: List[Sequence],
+        frames: List[np.ndarray],
 ) -> List[Tuple[int, ebsynth.Config]]:
     acc: List[Tuple[int, ebsynth.Config]] = []
 
@@ -152,11 +153,11 @@ def config_and_guides_and_sequences_to_ebsynth_configs_2pass(
 
         if style_start is not None:
             print("Running forward " + str(b.start_frame) + " -> " + str(b.end_frame) + ".")
-            acc += _to_ebsynth_configs_helper_2pass(a, guides, b, style_start, 1)
+            acc += _to_ebsynth_configs_helper_2pass(a, guides, b, style_start, 1, frames)
 
         if style_end is not None:
             print("Running backward " + str(b.start_frame) + " <- " + str(b.end_frame) + ".")
-            acc += _to_ebsynth_configs_helper_2pass(a, guides, b, style_end, -1)
+            acc += _to_ebsynth_configs_helper_2pass(a, guides, b, style_end, -1, frames)
 
     return acc
 
@@ -167,6 +168,7 @@ def _to_ebsynth_configs_helper_2pass(
         sequence: Sequence,
         style_frame: np.ndarray,
         direction: int,
+        frames: List[np.ndarray],
 ) -> List[Tuple[int, ebsynth.Config]]:
     acc: List[Tuple[int, ebsynth.Config]] = []
 
