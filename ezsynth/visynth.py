@@ -31,7 +31,7 @@ class Visynth:
         return config_and_guides_and_sequences_to_ebsynth(a, guides, sequences)
 
 
-def config_and_guides_and_sequences_to_ebsynth(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.ndarray]:
+def config_and_guides_and_sequences_to_ebsynth(a: Config, guides: Guides, sequences: List[Sequence]) -> List[ebsynth.Config]:
     acc = []
     for seq in sequences:
         style_start = next((x[1] for x in a.style_frames if x[0] == seq.start_frame), None)
