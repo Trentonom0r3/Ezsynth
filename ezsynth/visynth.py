@@ -60,6 +60,7 @@ def _run_sequences(
         direction: int,
 ) -> List[Tuple[int, np.ndarray, np.ndarray]]:
     acc: List[Tuple[int, np.ndarray, np.ndarray]] = []
+
     with threading.Lock():
         if direction == 1:
             start_frame = sequence.start_frame
