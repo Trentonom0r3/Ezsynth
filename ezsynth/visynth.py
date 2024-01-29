@@ -32,7 +32,7 @@ class Visynth:
 
 
 def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.ndarray]:
-    acc = []
+    acc: List[Tuple[int, np.ndarray]] = []
     for b in sequences:
         style_start = next((x[1] for x in a.style_frames if x[0] == b.start_frame), None)
         style_end = next((x[1] for x in a.style_frames if x[0] == b.end_frame), None)
