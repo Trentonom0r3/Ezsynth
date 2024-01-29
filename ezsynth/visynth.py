@@ -185,7 +185,7 @@ def _run_sequences(
                 guides = ebsynth_guides,
             )
             frame, err = eb(config)
-            frames.append(Frame(index = i, image = frame))
+            frames.append(frame)
             errors.append(err)
 
         return frames, errors
