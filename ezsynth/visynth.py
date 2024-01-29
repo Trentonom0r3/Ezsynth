@@ -42,7 +42,7 @@ def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.nd
             images, _ = _run_sequences(a, guides, seq, (style_start, style_end), 1)
             return [x for x in images if x is not None]
 
-        elif style_start is None and style_end is not None:
+        if style_end:
             print("Running backward " + str(seq.start_frame) + " <- " + str(seq.end_frame) + ".")
             images, _ = _run_sequences(a, guides, seq, (style_start, style_end), -1)
             return [x for x in images if x is not None]
