@@ -29,10 +29,10 @@ class Visynth:
 
         guides = config_to_guides(a)
 
-        return _process(a, sequences, guides)
+        return _process(a, guides, sequences)
 
 
-def _process(a: Config, sequences: List[Sequence], guides: Guides) -> List[np.ndarray]:
+def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.ndarray]:
     with ThreadPoolExecutor(max_workers = 2) as executor:
         futures = []
         for seq in sequences:
