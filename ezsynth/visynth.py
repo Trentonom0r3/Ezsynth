@@ -61,21 +61,21 @@ def config_and_guides_and_sequences_to_ebsynth_configs(
 def _to_ebsynth(
         a: Config,
         guides: Guides,
-        seq: Sequence,
+        sequence: Sequence,
         style_frame: np.ndarray,
         direction: int,
 ) -> List[ebsynth.Config]:
     acc: List[ebsynth.Config] = []
 
     if direction == 1:
-        start_frame = seq.start_frame
-        end_frame = seq.end_frame
+        start_frame = sequence.start_frame
+        end_frame = sequence.end_frame
         step = 1
         flow = guides.flow_fwd
         positional = guides.positional_fwd
     else:
-        start_frame = seq.end_frame
-        end_frame = seq.start_frame
+        start_frame = sequence.end_frame
+        end_frame = sequence.start_frame
         step = -1
         flow = guides.flow_rev
         positional = guides.positional_rev
