@@ -12,7 +12,7 @@ def auto_device() -> torch.device:
     elif torch.cuda.is_available():
         return torch.device("cuda")
     else:
-        torch.device("cpu")
+        return torch.device("cpu")
 
 
 @dataclass
