@@ -42,8 +42,8 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides) -> List[np.nd
     with ThreadPoolExecutor(max_workers = 2) as executor:
         futures = []
         for seq in sequences:
-            style_start = next((x.image for x in a.style_frames if x.index == seq.start_frame), None)
-            style_end = next((x.image for x in a.style_frames if x.index == seq.end_frame), None)
+            style_start = next((x[1] for x in a.style_frames if x[0] == seq.start_frame), None)
+            style_end = next((x[1] for x in a.style_frames if x[0] == seq.end_frame), None)
 
             if style_start is not None and style_end is not None:
                 print("Running forward & backward " + str(seq.start_frame) + " <-> " + str(seq.end_frame) + ".")
