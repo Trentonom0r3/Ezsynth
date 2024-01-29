@@ -20,15 +20,15 @@ def config_to_sequences(a: Config) -> List[Sequence]:
         if start_frame < end_frame:
             acc.append(Sequence(start_frame = start_frame, end_frame = end_frame))
 
-    for b in a.style_frames:
+    for i, _ in a.style_frames:
         add(
-            a.frames[0].index if len(acc) == 0 else acc[-1].end_frame,
-            b.index,
+            0 if len(acc) == 0 else acc[-1].end_frame,
+            i,
         )
 
     add(
         acc[-1].end_frame,
-        a.frames[-1].index,
+        len(a.frames) - 1,
     )
 
     return acc
