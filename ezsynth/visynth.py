@@ -39,6 +39,7 @@ def config_and_guides_and_sequences_to_ebsynth_configs(
         sequences: List[Sequence],
 ) -> List[ebsynth.Config]:
     acc: List[ebsynth.Config] = []
+
     for b in sequences:
         style_start = next((x[1] for x in a.style_frames if x[0] == b.start_frame), None)
         style_end = next((x[1] for x in a.style_frames if x[0] == b.end_frame), None)
