@@ -37,8 +37,8 @@ def config_and_guides_and_sequences_to_ebsynth_configs(
         a: Config,
         guides: Guides,
         sequences: List[Sequence],
-) -> List[ebsynth.Config]:
-    acc: List[ebsynth.Config] = []
+) -> List[Tuple[int, ebsynth.Config]]:
+    acc: List[Tuple[int, ebsynth.Config]] = []
 
     for b in sequences:
         style_start = next((x[1] for x in a.style_frames if x[0] == b.start_frame), None)
@@ -64,8 +64,8 @@ def _to_ebsynth(
         sequence: Sequence,
         style_frame: np.ndarray,
         direction: int,
-) -> List[ebsynth.Config]:
-    acc: List[ebsynth.Config] = []
+) -> List[Tuple[int, ebsynth.Config]]:
+    acc: List[Tuple[int, ebsynth.Config]] = []
 
     if direction == 1:
         start_frame = sequence.start_frame
