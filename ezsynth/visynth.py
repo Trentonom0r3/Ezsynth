@@ -123,9 +123,7 @@ def _to_ebsynth(
             style_image = style_frame,
             guides = ebsynth_guides,
         )
-        frame, err = eb(config)
-        frames.append(frame)
-        errors.append(err)
+        acc.append((i, config))
 
     return acc
 
