@@ -66,14 +66,12 @@ def _run_sequences(
             start_frame = seq.start_frame
             end_frame = seq.end_frame
             step = 1
-            style = style_frame[0]
             flow = guides.flow_fwd
             positional = guides.positional_fwd
         else:
             start_frame = seq.end_frame
             end_frame = seq.start_frame
             step = -1
-            style = style_frame[1]
             flow = guides.flow_rev
             positional = guides.positional_rev
 
@@ -114,14 +112,14 @@ def _run_sequences(
 
                 ebsynth_guides.append(
                     (
-                        style,
+                        style_frame,
                         warped_img,
                         0.5,
                     )
                 )
 
             config = ebsynth.Config(
-                style_image = style,
+                style_image = style_frame,
                 guides = ebsynth_guides,
             )
             frame, err = eb(config)
