@@ -1,4 +1,3 @@
-import threading
 from typing import List, Tuple
 
 import cv2
