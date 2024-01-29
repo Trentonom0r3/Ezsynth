@@ -1,5 +1,4 @@
 import threading
-from concurrent.futures import ThreadPoolExecutor
 from typing import List, Tuple, Union
 
 import cv2
@@ -33,31 +32,29 @@ class Visynth:
 
 
 def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.ndarray]:
-    with ThreadPoolExecutor(max_workers = 2) as executor:
-        futures = []
-        for seq in sequences:
-            style_start = next((x[1] for x in a.style_frames if x[0] == seq.start_frame), None)
-            style_end = next((x[1] for x in a.style_frames if x[0] == seq.end_frame), None)
+    for seq in sequences:
+        style_start = next((x[1] for x in a.style_frames if x[0] == seq.start_frame), None)
+        style_end = next((x[1] for x in a.style_frames if x[0] == seq.end_frame), None)
 
-            if style_start is not None and style_end is not None:
-                print("Running forward & backward " + str(seq.start_frame) + " <-> " + str(seq.end_frame) + ".")
-                # noinspection PyTypeChecker
-                futures.append(("fwd", executor.submit(_run_sequences, guides, seq, (style_start, style_end), 1)))
-                # noinspection PyTypeChecker
-                futures.append(("bwd", executor.submit(_run_sequences, guides, seq, (style_start, style_end), -1)))
+        if style_start is not None and style_end is not None:
+            print("Running forward & backward " + str(seq.start_frame) + " <-> " + str(seq.end_frame) + ".")
+            # noinspection PyTypeChecker
+            futures.append(("fwd", executor.submit(_run_sequences, guides, seq, (style_start, style_end), 1)))
+            # noinspection PyTypeChecker
+            futures.append(("bwd", executor.submit(_run_sequences, guides, seq, (style_start, style_end), -1)))
 
-            elif style_start is not None and style_end is None:
-                print("Running forward " + str(seq.start_frame) + " -> " + str(seq.end_frame) + ".")
-                images, _ = _run_sequences(a, guides, seq, (style_start, style_end), 1)
-                return [x for x in images if x is not None]
+        elif style_start is not None and style_end is None:
+            print("Running forward " + str(seq.start_frame) + " -> " + str(seq.end_frame) + ".")
+            images, _ = _run_sequences(a, guides, seq, (style_start, style_end), 1)
+            return [x for x in images if x is not None]
 
-            elif style_start is None and style_end is not None:
-                print("Running backward " + str(seq.start_frame) + " <- " + str(seq.end_frame) + ".")
-                images, _ = _run_sequences(a, guides, seq, (style_start, style_end), -1)
-                return [x for x in images if x is not None]
+        elif style_start is None and style_end is not None:
+            print("Running backward " + str(seq.start_frame) + " <- " + str(seq.end_frame) + ".")
+            images, _ = _run_sequences(a, guides, seq, (style_start, style_end), -1)
+            return [x for x in images if x is not None]
 
-            else:
-                raise ValueError("Cannot find style frame number " + str(seq.start_frame) + " or " + str(seq.end_frame) + ".")
+        else:
+            raise ValueError("Cannot find style frame number " + str(seq.start_frame) + " or " + str(seq.end_frame) + ".")
 
 
 def _run_sequences(
