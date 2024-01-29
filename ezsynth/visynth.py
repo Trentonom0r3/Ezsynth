@@ -28,12 +28,12 @@ class Visynth:
 
         guides = config_to_guides(a)
 
-        configs = config_and_guides_and_sequences_to_ebsynth_configs(a, guides, sequences)
+        configs = config_and_guides_and_sequences_to_ebsynth_configs_1pass(a, guides, sequences)
 
         return []
 
 
-def config_and_guides_and_sequences_to_ebsynth_configs(
+def config_and_guides_and_sequences_to_ebsynth_configs_1pass(
         a: Config,
         guides: Guides,
         sequences: List[Sequence],
@@ -49,16 +49,16 @@ def config_and_guides_and_sequences_to_ebsynth_configs(
 
         if style_start is not None:
             print("Running forward " + str(b.start_frame) + " -> " + str(b.end_frame) + ".")
-            acc += _to_ebsynth_configs_helper(a, guides, b, style_start, 1)
+            acc += _to_ebsynth_configs_helper_1pass(a, guides, b, style_start, 1)
 
         if style_end is not None:
             print("Running backward " + str(b.start_frame) + " <- " + str(b.end_frame) + ".")
-            acc += _to_ebsynth_configs_helper(a, guides, b, style_end, -1)
+            acc += _to_ebsynth_configs_helper_1pass(a, guides, b, style_end, -1)
 
     return acc
 
 
-def _to_ebsynth_configs_helper(
+def _to_ebsynth_configs_helper_1pass(
         a: Config,
         guides: Guides,
         sequence: Sequence,
