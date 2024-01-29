@@ -80,8 +80,6 @@ def _to_ebsynth(
         flow = guides.flow_rev
         positional = guides.positional_rev
 
-    eb = Ebsynth()
-
     warp = Warp(a.frames[start_frame])
 
     for i in range(start_frame, end_frame, step):
