@@ -10,7 +10,7 @@ from .ebsynth import Ebsynth
 from .visynth_utils.blend.blender import Blend
 from .visynth_utils.config import Config
 from .visynth_utils.flow_utils.warp import Warp
-from .visynth_utils.guides import Guides, create_guides
+from .visynth_utils.guides import Guides, config_to_guides
 # noinspection PyUnresolvedReferences
 from .visynth_utils.image_sequence import image_sequence_from_directory
 from .visynth_utils.sequences import Sequence, config_to_sequences
@@ -28,7 +28,7 @@ class Visynth:
 
         sequences = config_to_sequences(a)
 
-        guides = create_guides(a)
+        guides = config_to_guides(a)
 
         return _process(a, sequences, guides)
 

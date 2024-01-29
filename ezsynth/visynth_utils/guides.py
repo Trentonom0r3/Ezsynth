@@ -19,7 +19,7 @@ class Guides:
     positional_fwd: List[np.ndarray]
 
 
-def create_guides(a: Config) -> Guides:
+def config_to_guides(a: Config) -> Guides:
     print("Analyzing edges.")
     edge_detector = EdgeDetector(method = a.edge_method, device = a.device)
     edge = [edge_detector(x) for x in a.frames]
