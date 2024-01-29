@@ -34,11 +34,6 @@ class Visynth:
 
 
 def _process(a: Config, sequences: List[Sequence], guides: Guides) -> List[np.ndarray]:
-    style_images_fwd = []
-    style_images_bwd = []
-    err_fwd = []
-    err_bwd = []
-
     with ThreadPoolExecutor(max_workers = 2) as executor:
         futures = []
         for seq in sequences:
@@ -64,6 +59,13 @@ def _process(a: Config, sequences: List[Sequence], guides: Guides) -> List[np.nd
 
             else:
                 raise ValueError("Cannot find style frame number " + str(seq.start_frame) + " or " + str(seq.end_frame) + ".")
+
+
+def do_blending(futures):
+    style_images_fwd = []
+    style_images_bwd = []
+    err_fwd = []
+    err_bwd = []
 
     for direction, future in futures:
         with threading.Lock():
