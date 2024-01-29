@@ -83,16 +83,12 @@ def _to_ebsynth_configs_helper_1pass(
         start_frame = sequence.start_frame
         end_frame = sequence.end_frame
         step = 1
-        flow = guides.flow_fwd
         positional = guides.positional_fwd
     else:
         start_frame = sequence.end_frame
         end_frame = sequence.start_frame
         step = -1
-        flow = guides.flow_rev
         positional = guides.positional_rev
-
-    warp = Warp(a.frames[start_frame])
 
     for i in range(start_frame, end_frame, step):
         ebsynth_guides = [
@@ -114,20 +110,6 @@ def _to_ebsynth_configs_helper_1pass(
                     positional[start_frame] if direction == 1 else positional[start_frame - 1],
                     positional[i],
                     2.0,
-                )
-            )
-
-            # Assuming frames[-1] is already in BGR format
-            frame = frames[-1] / 255.0
-
-            warped_img = warp.run_warping(frame, flow[i - 1] if direction == 1 else flow[i])
-            warped_img = cv2.resize(warped_img, a.frames[0].shape[1::-1])
-
-            ebsynth_guides.append(
-                (
-                    style_frame,
-                    warped_img,
-                    0.5,
                 )
             )
 
