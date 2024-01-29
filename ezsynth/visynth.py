@@ -28,7 +28,9 @@ class Visynth:
 
         guides = config_to_guides(a)
 
-        return config_and_guides_and_sequences_to_ebsynth_configs(a, guides, sequences)
+        configs = config_and_guides_and_sequences_to_ebsynth_configs(a, guides, sequences)
+
+        return []
 
 
 def config_and_guides_and_sequences_to_ebsynth_configs(
