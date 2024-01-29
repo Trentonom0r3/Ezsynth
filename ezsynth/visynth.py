@@ -33,20 +33,20 @@ class Visynth:
 
 def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.ndarray]:
     acc = []
-    for seq in sequences:
-        style_start = next((x[1] for x in a.style_frames if x[0] == seq.start_frame), None)
-        style_end = next((x[1] for x in a.style_frames if x[0] == seq.end_frame), None)
+    for b in sequences:
+        style_start = next((x[1] for x in a.style_frames if x[0] == b.start_frame), None)
+        style_end = next((x[1] for x in a.style_frames if x[0] == b.end_frame), None)
 
         if style_start is None and style_end is None:
-            raise ValueError("Cannot find style frame number " + str(seq.start_frame) + " or " + str(seq.end_frame) + ".")
+            raise ValueError("Cannot find style frame number " + str(b.start_frame) + " or " + str(b.end_frame) + ".")
 
         if style_start is not None:
-            print("Running forward " + str(seq.start_frame) + " -> " + str(seq.end_frame) + ".")
-            acc += _run_sequences(a, guides, seq, style_start, 1)
+            print("Running forward " + str(b.start_frame) + " -> " + str(b.end_frame) + ".")
+            acc += _run_sequences(a, guides, b, style_start, 1)
 
         if style_end is not None:
-            print("Running backward " + str(seq.start_frame) + " <- " + str(seq.end_frame) + ".")
-            acc += _run_sequences(a, guides, seq, style_end, -1)
+            print("Running backward " + str(b.start_frame) + " <- " + str(b.end_frame) + ".")
+            acc += _run_sequences(a, guides, b, style_end, -1)
 
     return [x for _, x in sorted(acc)]
 
