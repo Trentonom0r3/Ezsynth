@@ -104,10 +104,7 @@ def _run_sequences(
                     )
                 )
 
-                # Assuming frames[-1] is already in BGR format
-                frame = acc[-1][1] / 255.0
-
-                warped_img = warp.run_warping(frame, flow[i - 1] if direction == 1 else flow[i])
+                warped_img = warp.run_warping(acc[-1][1] / 255.0, flow[i - 1] if direction == 1 else flow[i])
                 warped_img = cv2.resize(warped_img, a.frames[0].shape[1::-1])
 
                 ebsynth_guides.append(
