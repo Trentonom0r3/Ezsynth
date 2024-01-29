@@ -74,15 +74,20 @@ from ezsynth.visynth import Visynth, Config, image_sequence_from_directory
 
 visynth = Visynth()
 
+frames, style_frames, frame_offset = image_sequence_from_directory(
+    frames_directory = "input",
+    style_frames_directory = "styles",
+)
+
 config = Config(
-    frames = image_sequence_from_directory("input"),
-    style_frames = image_sequence_from_directory("styles"),
+    frames = frames,
+    style_frames = style_frames,
 )
 
 frames = visynth(config)
 
-for f in frames:
-    cv2.imwrite("output/output" + str(f.index).zfill(3) + ".jpg", f.image)
+for i, f in enumerate(frames):
+    cv2.imwrite("output/output" + str(i + frame_offset).zfill(3) + ".jpg", f)
 ```
 
 ## FAQ
