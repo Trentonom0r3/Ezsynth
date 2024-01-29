@@ -19,5 +19,5 @@ config = Config(
 
 frames = visynth(config)
 
-for f in frames:
-    cv2.imwrite("output/output" + str(f.index).zfill(3) + ".jpg", f.image)
+for i, f in enumerate(frames):
+    cv2.imwrite("output/output" + str(i + frame_offset).zfill(3) + ".jpg", f)
