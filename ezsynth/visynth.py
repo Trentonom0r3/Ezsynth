@@ -65,8 +65,7 @@ def _to_ebsynth(
         style_frame: np.ndarray,
         direction: int,
 ) -> List[ebsynth.Config]:
-    frames = []
-    errors = []
+    acc: List[ebsynth.Config] = []
 
     if direction == 1:
         start_frame = seq.start_frame
@@ -132,7 +131,7 @@ def _to_ebsynth(
         frames.append(frame)
         errors.append(err)
 
-    return frames, errors
+    return acc
 
 
 def _run_sequences(
