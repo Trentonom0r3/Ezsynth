@@ -7,6 +7,58 @@ from .reconstruction import Reconstructor
 from ..flow_utils.warp import Warp
 
 
+def _do_blending(guides, futures):
+    style_images_fwd = []
+    style_images_bwd = []
+    err_fwd = []
+    err_bwd = []
+
+    for direction, future in futures:
+        # with threading.Lock():
+        try:
+            if direction == "fwd":
+                print("Forward")
+                img, err = future.result()
+                if img:
+                    style_images_fwd.append(img)
+                if err:
+                    err_fwd.append(err)
+
+            else:
+                print("Backward")
+                img, err = future.result()
+                if img:
+                    style_images_bwd.append(img)
+                if err:
+                    err_bwd.append(err)
+        except Exception as e:
+            print(f"Process error {e}")
+
+    style_images_b = [img for img in style_images_bwd if img is not None]
+    style_images_f = [img for img in style_images_fwd if img is not None]
+
+    sty_fwd = [x for sublist in style_images_f for x in sublist]
+    sty_bwd = [x for sublist in style_images_b for x in sublist]
+    err_fwd = [x for sublist in err_fwd for x in sublist]
+    err_bwd = [x for sublist in err_bwd for x in sublist]
+
+    sty_bwd = sty_bwd[::-1]
+    err_bwd = err_bwd[::-1]
+
+    blend_instance = Blend(
+        style_fwd = sty_fwd,
+        style_bwd = sty_bwd,
+        err_fwd = err_fwd,
+        err_bwd = err_bwd,
+        flow_fwd = guides.flow_fwd,
+    )
+
+    final_blends = blend_instance()
+    final_blends = [blends for blends in final_blends if blends is not None]
+
+    return final_blends
+
+
 class Blend:
     def __init__(self, style_fwd, style_bwd, err_fwd, err_bwd, flow_fwd):
         self.style_fwd = style_fwd
