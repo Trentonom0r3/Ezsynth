@@ -1,10 +1,11 @@
 import os
 import re
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
 from typing import Literal
 
 import cv2
+import numpy as np
 import torch
 
 from .frame import Frame
@@ -23,15 +24,15 @@ def auto_device() -> torch.device:
 class Config:
     """
     Visynth config.
-    :param frames: List of video frames.
-    :param style_frames: List of style video frames.
+    :param frames: List of video images.
+    :param style_frames: Dictionary of frame indexes and style video images.
     :param edge_method: Method for edge detection. PAGE, PST or Classic. Default is PAGE.
     :param flow_method: Method for optical flow computation. RAFT or DeepFlow. Default is RAFT.
     :param flow_model: Model name for optical flow. sintel, kitti or chairs. Default is sintel.
     :param device: What processing unit to use.
     """
-    frames: List[Frame]
-    style_frames: List[Frame]
+    frames: List[np.ndarray]
+    style_frames: Dict[int, np.ndarray]
     edge_method: Literal["PAGE", "PST", "classic"] = "PAGE"
     flow_method: Literal["RAFT", "DeepFlow"] = "RAFT"
     flow_model: Literal["sintel", "kitti", "chairs"] = "sintel"
