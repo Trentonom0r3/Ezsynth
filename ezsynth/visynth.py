@@ -40,12 +40,12 @@ def config_and_guides_and_sequences_to_ebsynth(a: Config, guides: Guides, sequen
         if style_start is None and style_end is None:
             raise ValueError("Cannot find style frame number " + str(seq.start_frame) + " or " + str(seq.end_frame) + ".")
 
-        if style_start:
+        if style_start is not None:
             print("Running forward " + str(seq.start_frame) + " -> " + str(seq.end_frame) + ".")
             images, _ = _run_sequences(a, guides, seq, (style_start, style_end), 1)
             acc += [x for x in images if x is not None]
 
-        if style_end:
+        if style_end is not None:
             print("Running backward " + str(seq.start_frame) + " <- " + str(seq.end_frame) + ".")
             images, _ = _run_sequences(a, guides, seq, (style_start, style_end), -1)
             acc += [x for x in images if x is not None]
