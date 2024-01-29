@@ -1,5 +1,5 @@
 import threading
-from typing import List, Tuple, Union
+from typing import List, Tuple
 
 import cv2
 import numpy as np
@@ -40,11 +40,11 @@ def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.nd
         if style_start is None and style_end is None:
             raise ValueError("Cannot find style frame number " + str(seq.start_frame) + " or " + str(seq.end_frame) + ".")
 
-        if style_start:
+        if style_start is not None:
             print("Running forward " + str(seq.start_frame) + " -> " + str(seq.end_frame) + ".")
             acc += _run_sequences(a, guides, seq, style_start, 1)
 
-        if style_end:
+        if style_end is not None:
             print("Running backward " + str(seq.start_frame) + " <- " + str(seq.end_frame) + ".")
             acc += _run_sequences(a, guides, seq, style_end, -1)
 
