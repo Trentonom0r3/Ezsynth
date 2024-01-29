@@ -10,7 +10,6 @@ from .ebsynth import Ebsynth
 from .visynth_utils.blend.blender import Blend
 from .visynth_utils.config import Config
 from .visynth_utils.flow_utils.warp import Warp
-from .visynth_utils.frame import Frame
 from .visynth_utils.guides import Guides, create_guides
 # noinspection PyUnresolvedReferences
 from .visynth_utils.image_sequence import image_sequence_from_directory
@@ -21,7 +20,7 @@ class Visynth:
     def __init__(self):
         pass
 
-    def __call__(self, a: Config) -> List[Frame]:
+    def __call__(self, a: Config) -> List[np.ndarray]:
         if len(a.frames) == 0:
             raise ValueError("At least one video frame must be specified.")
         if len(a.style_frames) == 0:
@@ -34,7 +33,7 @@ class Visynth:
         return _process(a, sequences, guides)
 
 
-def _process(a: Config, sequences: List[Sequence], guides: Guides) -> List[Frame]:
+def _process(a: Config, sequences: List[Sequence], guides: Guides) -> List[np.ndarray]:
     style_images_fwd = []
     style_images_bwd = []
     err_fwd = []
@@ -118,7 +117,7 @@ def _run_sequences(
         seq: Sequence,
         style_frame: Tuple[Union[None, np.ndarray], Union[None, np.ndarray]],
         direction: int,
-) -> Tuple[List[Frame], list[np.ndarray]]:
+) -> Tuple[List[np.ndarray], list[np.ndarray]]:
     with threading.Lock():
         frames = []
         errors = []
