@@ -11,8 +11,8 @@ def image_sequence_from_directory(
         style_frames_directory: str,
 ) -> Tuple[List[np.ndarray], List[Tuple[int, np.ndarray]], int]:
     frames = _read_images(_get_image_paths(frames_directory))
-    frame_offset = 0 if len(frames) == 0 else frames[0][0]
     style_frames = _read_images(_get_image_paths(style_frames_directory))
+    frame_offset = 0 if len(frames) == 0 else frames[0][0]
     return (
         [x for _, x in frames],
         [(i - frame_offset, x) for i, x in style_frames],
