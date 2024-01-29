@@ -48,7 +48,7 @@ def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.nd
             print("Running backward " + str(seq.start_frame) + " <- " + str(seq.end_frame) + ".")
             acc += _run_sequences(a, guides, seq, (style_start, style_end), -1)
 
-    return acc
+    return [x for _, x in sorted(acc)]
 
 
 def _run_sequences(
