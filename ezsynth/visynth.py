@@ -32,7 +32,7 @@ class Visynth:
 
 
 def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.ndarray]:
-    acc: List[Tuple[int, np.ndarray]] = []
+    acc: List[Tuple[int, np.ndarray, np.ndarray]] = []
 
     for b in sequences:
         style_start = next((x[1] for x in a.style_frames if x[0] == b.start_frame), None)
@@ -49,7 +49,7 @@ def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.nd
             print("Running backward " + str(b.start_frame) + " <- " + str(b.end_frame) + ".")
             acc += _run_sequences(a, guides, b, style_end, -1)
 
-    return [x for _, x in sorted(acc)]
+    return [x for _, x, _ in sorted(acc)]
 
 
 def _run_sequences(
