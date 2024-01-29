@@ -58,7 +58,8 @@ def _run_sequences(
         sequence: Sequence,
         style_frame: np.ndarray,
         direction: int,
-) -> Tuple[List[np.ndarray], List[np.ndarray]]:
+) -> List[Tuple[int, np.ndarray, np.ndarray]]:
+    acc: List[Tuple[int, np.ndarray, np.ndarray]] = []
     with threading.Lock():
         if direction == 1:
             start_frame = sequence.start_frame
