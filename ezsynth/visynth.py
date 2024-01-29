@@ -149,7 +149,7 @@ def config_and_guides_and_sequences_to_ebsynth_configs_2pass(
 
 
 def _to_ebsynth_configs_helper_2pass(
-        a: Config,
+        _: Config,
         guides: Guides,
         sequence: Sequence,
         style_frame: np.ndarray,
@@ -171,7 +171,7 @@ def _to_ebsynth_configs_helper_2pass(
         flow = guides.flow_rev
         positional = guides.positional_rev
 
-    warp = Warp(a.frames[start_frame])
+    warp = Warp(frames[start_frame])
 
     for i in range(start_frame, end_frame, step):
         ebsynth_guides = [
@@ -181,8 +181,8 @@ def _to_ebsynth_configs_helper_2pass(
                 1.0,
             ),
             (
-                a.frames[start_frame],
-                a.frames[i],
+                frames[start_frame],
+                frames[i],
                 6.0,
             ),
         ]
@@ -200,7 +200,7 @@ def _to_ebsynth_configs_helper_2pass(
             frame = frames[-1] / 255.0
 
             warped_img = warp.run_warping(frame, flow[i - 1] if direction == 1 else flow[i])
-            warped_img = cv2.resize(warped_img, a.frames[0].shape[1::-1])
+            warped_img = cv2.resize(warped_img, frames[0].shape[1::-1])
 
             ebsynth_guides.append(
                 (
