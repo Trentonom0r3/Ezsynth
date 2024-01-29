@@ -121,18 +121,17 @@ def _run_sequences(
     with threading.Lock():
         frames = []
         errors = []
-        frame_offset = a.frames[0].index
 
         if direction == 1:
-            start_frame = seq.start_frame - frame_offset
-            end_frame = seq.end_frame - frame_offset
+            start_frame = seq.start_frame
+            end_frame = seq.end_frame
             step = 1
             style = style_frame[0]
             flow = guides.flow_fwd
             positional = guides.positional_fwd
         else:
-            start_frame = seq.end_frame - frame_offset
-            end_frame = seq.start_frame - frame_offset
+            start_frame = seq.end_frame
+            end_frame = seq.start_frame
             step = -1
             style = style_frame[1]
             flow = guides.flow_rev
@@ -143,7 +142,7 @@ def _run_sequences(
         warp = Warp(a.frames[start_frame].image)
 
         for i in range(start_frame, end_frame, step):
-            print("Frame " + str(i + frame_offset) + ".")
+            print("Frame " + str(i) + ".")
 
             ebsynth_guides = [
                 (
@@ -186,7 +185,7 @@ def _run_sequences(
                 guides = ebsynth_guides,
             )
             frame, err = eb(config)
-            frames.append(Frame(index = i + frame_offset, image = frame))
+            frames.append(Frame(index = i, image = frame))
             errors.append(err)
 
         return frames, errors
