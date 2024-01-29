@@ -1,8 +1,10 @@
 import os
-from typing import List
+from typing import List, Tuple, Dict
+
+import numpy as np
 
 
-def image_sequence_from_directory(path: str) -> List[Frame]:
+def image_sequence_from_directory(path: str) -> Tuple[List[np.ndarray], Dict[int, np.ndarray], int]:
     return _read_images(_get_image_paths(path))
 
 
