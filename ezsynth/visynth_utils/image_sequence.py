@@ -30,8 +30,8 @@ def _extract_index(name: str):
         raise ValueError("Cannot extract index from: " + name)
 
 
-def _read_images(a: List[tuple[int, str]]) -> List[Frame]:
+def _read_images(a: List[tuple[int, str]]) -> List[Tuple[int, np.ndarray]]:
     try:
-        return [Frame(i, cv2.imread(b)) for i, b in a]
+        return [(i, cv2.imread(b)) for i, b in a]
     except Exception as e:
         raise ValueError(f"Error reading image: {e}")
