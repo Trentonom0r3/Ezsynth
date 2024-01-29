@@ -55,7 +55,7 @@ def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.nd
 def _run_sequences(
         a: Config,
         guides: Guides,
-        seq: Sequence,
+        sequence: Sequence,
         style_frame: np.ndarray,
         direction: int,
 ) -> Tuple[List[np.ndarray], List[np.ndarray]]:
@@ -64,14 +64,14 @@ def _run_sequences(
         errors = []
 
         if direction == 1:
-            start_frame = seq.start_frame
-            end_frame = seq.end_frame
+            start_frame = sequence.start_frame
+            end_frame = sequence.end_frame
             step = 1
             flow = guides.flow_fwd
             positional = guides.positional_fwd
         else:
-            start_frame = seq.end_frame
-            end_frame = seq.start_frame
+            start_frame = sequence.end_frame
+            end_frame = sequence.start_frame
             step = -1
             flow = guides.flow_rev
             positional = guides.positional_rev
