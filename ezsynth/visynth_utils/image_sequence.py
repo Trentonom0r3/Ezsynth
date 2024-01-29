@@ -1,5 +1,5 @@
 import os
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 
 import numpy as np
 
@@ -7,7 +7,7 @@ import numpy as np
 def image_sequence_from_directory(
         frames_directory: str,
         style_frames_directory: str,
-) -> Tuple[List[np.ndarray], Dict[int, np.ndarray], int]:
+) -> Tuple[List[np.ndarray], List[Tuple[int, np.ndarray]], int]:
     return _read_images(_get_image_paths(frames_directory))
 
 
