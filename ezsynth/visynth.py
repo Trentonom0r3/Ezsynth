@@ -33,7 +33,7 @@ class Visynth:
         configs2 = config_and_guides_and_sequences_to_ebsynth_configs_2pass(a, guides, sequences, frames)
         frames2 = _process(configs2)
 
-        return frames
+        return frames2
 
 
 def _process(configs: List[Tuple[int, ebsynth.Config]]) -> List[np.ndarray]:
