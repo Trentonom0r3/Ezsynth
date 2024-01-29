@@ -32,6 +32,7 @@ class Visynth:
 
 
 def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.ndarray]:
+    acc = []
     for seq in sequences:
         style_start = next((x[1] for x in a.style_frames if x[0] == seq.start_frame), None)
         style_end = next((x[1] for x in a.style_frames if x[0] == seq.end_frame), None)
@@ -48,6 +49,8 @@ def _process(a: Config, guides: Guides, sequences: List[Sequence]) -> List[np.nd
 
         else:
             raise ValueError("Cannot find style frame number " + str(seq.start_frame) + " or " + str(seq.end_frame) + ".")
+
+    return acc
 
 
 def _run_sequences(
