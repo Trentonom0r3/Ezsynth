@@ -63,7 +63,7 @@ def _to_ebsynth(
         seq: Sequence,
         style_frame: np.ndarray,
         direction: int,
-) -> ebsynth.Config:
+) -> List[ebsynth.Config]:
     with threading.Lock():
         frames = []
         errors = []
