@@ -134,3 +134,98 @@ def _to_ebsynth_configs_helper_1pass(
         acc.append((i, config))
 
     return acc
+
+
+def config_and_guides_and_sequences_to_ebsynth_configs_2pass(
+        a: Config,
+        guides: Guides,
+        sequences: List[Sequence],
+) -> List[Tuple[int, ebsynth.Config]]:
+    acc: List[Tuple[int, ebsynth.Config]] = []
+
+    for b in sequences:
+        style_start = next((x[1] for x in a.style_frames if x[0] == b.start_frame), None)
+        style_end = next((x[1] for x in a.style_frames if x[0] == b.end_frame), None)
+
+        if style_start is None and style_end is None:
+            raise ValueError("Cannot find style frame number " + str(b.start_frame) + " or " + str(b.end_frame) + ".")
+
+        if style_start is not None:
+            print("Running forward " + str(b.start_frame) + " -> " + str(b.end_frame) + ".")
+            acc += _to_ebsynth_configs_helper_2pass(a, guides, b, style_start, 1)
+
+        if style_end is not None:
+            print("Running backward " + str(b.start_frame) + " <- " + str(b.end_frame) + ".")
+            acc += _to_ebsynth_configs_helper_2pass(a, guides, b, style_end, -1)
+
+    return acc
+
+
+def _to_ebsynth_configs_helper_2pass(
+        a: Config,
+        guides: Guides,
+        sequence: Sequence,
+        style_frame: np.ndarray,
+        direction: int,
+) -> List[Tuple[int, ebsynth.Config]]:
+    acc: List[Tuple[int, ebsynth.Config]] = []
+
+    if direction == 1:
+        start_frame = sequence.start_frame
+        end_frame = sequence.end_frame
+        step = 1
+        flow = guides.flow_fwd
+        positional = guides.positional_fwd
+    else:
+        start_frame = sequence.end_frame
+        end_frame = sequence.start_frame
+        step = -1
+        flow = guides.flow_rev
+        positional = guides.positional_rev
+
+    warp = Warp(a.frames[start_frame])
+
+    for i in range(start_frame, end_frame, step):
+        ebsynth_guides = [
+            (
+                guides.edge[start_frame],
+                guides.edge[i],
+                1.0,
+            ),
+            (
+                a.frames[start_frame],
+                a.frames[i],
+                6.0,
+            ),
+        ]
+
+        if i != start_frame:
+            ebsynth_guides.append(
+                (
+                    positional[start_frame] if direction == 1 else positional[start_frame - 1],
+                    positional[i],
+                    2.0,
+                )
+            )
+
+            # Assuming frames[-1] is already in BGR format
+            frame = frames[-1] / 255.0
+
+            warped_img = warp.run_warping(frame, flow[i - 1] if direction == 1 else flow[i])
+            warped_img = cv2.resize(warped_img, a.frames[0].shape[1::-1])
+
+            ebsynth_guides.append(
+                (
+                    style_frame,
+                    warped_img,
+                    0.5,
+                )
+            )
+
+        config = ebsynth.Config(
+            style_image = style_frame,
+            guides = ebsynth_guides,
+        )
+        acc.append((i, config))
+
+    return acc
