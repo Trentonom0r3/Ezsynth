@@ -123,7 +123,6 @@ def _run_sequences(
                 guides = ebsynth_guides,
             )
             frame, err = eb(config)
-            frames.append(frame)
-            errors.append(err)
+            acc.append((i, frame, err))
 
-        return frames, errors
+    return acc
