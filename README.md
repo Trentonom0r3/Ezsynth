@@ -10,7 +10,6 @@ Ezsynth uses [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) - l
 # Table of Contents
 
 - [Installation](#installation)
-- [API](#api)
 - [Usage](#usage)
 - [FAQ](#faq)
 - [TODO](#todo)
@@ -42,147 +41,53 @@ git submodule update --init --recursive
 (cd ebsynth && ./build-linux-cpu+cuda.sh)
 # or
 (cd ebsynth && ./build-macos-cpu_only.sh)
-cp ebsynth/bin/ebsynth.so ezsynth/utils
-```
-
-## API
-
-```py
-class Imagesynth:
-    """
-    Imagesynth class for image synthesis with style transfer.
-
-    Parameters
-    ----------
-    style_img : str or numpy array
-        Path to the style image file or a numpy array representing the style image.
-    guides : list of lists, optional
-        Guides for style transfer in the format [[guide 1, guide 2, weight], ...].
-    uniformity : float, optional
-        Uniformity parameter for ebsynth.
-    patchsize : int, optional
-        Patch size parameter for ebsynth.
-    pyramidlevels : int, optional
-        Pyramid levels parameter for ebsynth.
-    searchvoteiters : int, optional
-        Search vote iterations parameter for ebsynth.
-    patchmatchiters : int, optional
-        Patch match iterations parameter for ebsynth.
-    extrapass3x3 : bool, optional
-        Extra pass 3x3 parameter for ebsynth.
-    backend : str, optional
-        Backend to use, default is 'cuda'.
-    """
-
-    def __init__(self, style_img, guides=[], uniformity=3500.0,
-                 patchsize=5, pyramidlevels=6, searchvoteiters=12,
-                 patchmatchiters=6, extrapass3x3=True, backend='cuda'):
-        pass
-
-    def add_guide(self, source, target, weight):
-        """
-        Add a guide to the ebsynth object.
-        """
-        pass
-
-    def clear_guides(self):
-        """
-        Clear all guides from the ebsynth object.
-        """
-        pass
-
-    def run(self, output_path=None):
-        """
-        Run the ebsynth process and optionally save the output.
-        """
-        pass
-```
-
-```py
-class Ezsynth:
-    """
-    `Ezsynth` is the main class for the ezsynth package.
-
-    Parameters
-    ----------
-    styles : list
-        The paths to the style images.
-    imgsequence : str
-        The path to the folder containing the input images.
-    edge_method : str, optional
-        The method for edge detection, default is "PAGE".
-        Options are "PAGE", "PST", and "Classic".
-    flow_method : str, optional
-        The method for optical flow computation, default is "RAFT".
-        Options are "RAFT" and "DeepFlow".
-    model : str, optional
-        The model name for optical flow, default is "sintel".
-        Options are "sintel" and "kitti".
-    output_folder : str, optional
-        The path to the folder where output images will be saved.
-    """
-
-    def __init__(self, styles, imgsequence, edge_method="PAGE",
-                 flow_method="RAFT", model="sintel", output_folder=None):
-        pass
-
-    def run(self):
-        """
-        Execute the stylization process.
-        """
-        pass
-
-    def save(self, base_name="output", extension=".png"):
-        """
-        Save the results to the specified directory.
-        """
-        pass
+cp ebsynth/bin/ebsynth.so ezsynth/lib
 ```
 
 ## Usage
 
-### Imagesynth
+### Ebsynth
 
 ```py
-from ezsynth import Imagesynth
+import cv2
+from ezsynth.ebsynth import Ebsynth, Config
 
-style = "input/000.jpg"
-synth = Imagesynth(style)
+ebsynth = Ebsynth()
 
-src = "input/000.jpg"
-target = "styles/style000.jpg"
-weight = 0.5
-synth.add_guide(src, target, weight)
-
-output = "output/000.jpg"
-synth.run(output)  # Run the synthesis and save.
-# result = synth.run()  # Run the synthesis and return the result as a numpy array
-```
-
-### Ezsynth
-
-```py
-from ezsynth import Ezsynth
-
-style_paths = [
-    "output000.jpg",
-    "output099.jpg",
-]
-
-image_folder = "input"
-output_folder = "output"
-
-ez = Ezsynth(
-    styles=style_paths,
-    imgsequence=image_folder,
-    edge_method="Classic",
-    flow_method="RAFT",
-    model="sintel",
-    output_folder=output_folder,
+config = Config(
+    style_image = "input/000.jpg",
+    guides = [
+        ("input/000.jpg", "styles/style000.jpg", 0.5),
+    ]
 )
 
-ez.run()  # Run the stylization process
-results = ez.results  # The results are stored in the results variable
+image, error = ebsynth(config)
+
+cv2.imwrite("output/000.jpg", image)
+```
+
+### Visynth
+
+```py
+import cv2
+from ezsynth.visynth import Visynth, Config, image_sequence_from_directory
+
+visynth = Visynth()
+
+frames, style_frames, frame_offset = image_sequence_from_directory(
+    frames_directory = "input",
+    style_frames_directory = "styles",
+)
+
+config = Config(
+    frames = frames,
+    style_frames = style_frames,
+)
+
+frames = visynth(config)
+
+for i, f in enumerate(frames):
+    cv2.imwrite("output/output" + str(i + frame_offset).zfill(3) + ".jpg", f)
 ```
 
 ## FAQ
