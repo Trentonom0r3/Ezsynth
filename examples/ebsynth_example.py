@@ -1,0 +1,16 @@
+import cv2
+
+from ezsynth.ebsynth import Ebsynth, Config
+
+ebsynth = Ebsynth()
+
+config = Config(
+    style_image = "input/000.jpg",
+    guides = [
+        ("input/000.jpg", "styles/style000.jpg", 0.5),
+    ]
+)
+
+image, error = ebsynth(config)
+
+cv2.imwrite("output/000.jpg", image)
