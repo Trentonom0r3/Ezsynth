@@ -1,115 +1,190 @@
-
 import cv2
+import numpy as np
+
 
 class Sequence:
-    def __init__(self, begFrame, endFrame, style_start=None, style_end=None):
-        self.begFrame = begFrame
-        self.endFrame = endFrame
+    def __init__(
+        self,
+        begin_fr_idx: int,
+        end_fr_idx: int,
+        style_start_fr: np.ndarray | None = None,
+        style_end_fr: np.ndarray | None = None,
+    ):
+        self.begin_fr_idx = begin_fr_idx
+        self.end_fr_idx = end_fr_idx
 
         # Check explicitly for None
-        self.style_start = style_start if style_start is not None else None
-        self.style_end = style_end if style_end is not None else None
+        self.style_start_fr = style_start_fr
+        self.style_end_fr = style_end_fr
 
-        self.init = begFrame
-        self.final = endFrame
+        self.init_idx = begin_fr_idx
+        self.final_idx = end_fr_idx
 
-        # Check if both style_start and style_end are None
-        if self.style_start is None and self.style_end is None:
-            raise ValueError("At least one style attribute should be provided.")
+        self.miss_start_style = self.style_start_fr is None
+        self.miss_end_style = self.style_end_fr is None
+
+        if self.miss_start_style is None and self.miss_end_style:
+            raise ValueError("At least one style frame needed")
 
     def __str__(self):
         # Use a more informative string representation
-        start_info = str(self.style_start) if self.style_start is not None else "None"
-        end_info = str(self.style_end) if self.style_end is not None else "None"
-        return f"Sequence: {self.begFrame} - {self.endFrame} | Style Start: {start_info} - Style End: {end_info}"
+        start_info = str(self.style_start_fr) if not self.miss_start_style else "None"
+        end_info = str(self.style_end_fr) if not self.miss_end_style else "None"
+        return f"Sequence: {self.begin_fr_idx} - {self.end_fr_idx} | Style Start: {start_info} - Style End: {end_info}"
+
 
 class Subsequence:
-    def __init__(self, init, final, begFrame, endFrame,
-                 style_start = None, style_end = None):
-        self.init = init
-        self.final = final
-        self.begFrame = begFrame
-        self.endFrame = endFrame
-        self.style_start = style_start if style_start else None
-        self.style_end = style_end if style_end else None
-        if self.style_start is None and self.style_end is None:
-                raise ValueError("At least one style attribute should be provided.")
-            
+    def __init__(
+        self,
+        init_fr_idx: int,
+        final_fr_idx: int,
+        begin_fr_idx: int,
+        end_fr_idx: int,
+        style_start_fr: np.ndarray | None = None,
+        style_end_fr: np.ndarray | None = None,
+    ):
+        self.init_fr_idx = init_fr_idx
+        self.final_fr_idx = final_fr_idx
+        self.begin_fr_idx = begin_fr_idx
+        self.end_fr_idx = end_fr_idx
+        self.style_start_fr = style_start_fr
+        self.style_end_fr = style_end_fr
+        self.miss_start_style = self.style_start_fr is None
+        self.miss_end_style = self.style_end_fr is None
+
+        if self.miss_start_style is None and self.miss_end_style:
+            raise ValueError("At least one style frame needed")
+
     def __str__(self):
-        return f"Subsequence: Init: {self.init} - {self.final} | Range: {self.begFrame} - {self.endFrame} | Styles: {self.style_start} - {self.style_end}"
+        return (f"Subsequence: Init: {self.init_fr_idx} - {self.final_fr_idx} | "
+                f"Range: {self.begin_fr_idx} - {self.end_fr_idx} | Styles: {self.style_start_fr} - {self.style_end_fr}")
+
 
 class SequenceManager:
-    def __init__(self, begFrame, endFrame, styles, style_indexes, imgindexes):
-        self.begFrame = begFrame
-        self.endFrame = endFrame
-        self.styles = styles
-        self.style_indexes = style_indexes
-        self.imgindexes = imgindexes
-        self.num_styles = len(styles)
+    def __init__(self, begin_fr_idx, end_fr_idx, style_paths, style_idxs, img_idxs):
+        self.begin_fr_idx = begin_fr_idx
+        self.end_fr_idx = end_fr_idx
+        self.style_paths = style_paths
+        self.style_idxs = style_idxs
+        self.img_idxs = img_idxs
+        self.num_style_frs = len(style_paths)
 
-    def _set_sequence(self):
+    def _set_sequence(self) -> list[Sequence]:
         """
         Setup Sequence Information.
         Compares the style indexes with the image indexes to determine the sequence information.
         """
-        sequences = []
-        if self.num_styles == 1 and self.begFrame == self.style_indexes[0]:
+        sequences: list[Sequence] = []
+        if self.num_style_frs == 1:
+            if self.begin_fr_idx == self.style_idxs[0]:
+                sequences.append(
+                    Sequence(
+                        begin_fr_idx=self.begin_fr_idx,
+                        end_fr_idx=self.end_fr_idx,
+                        style_start_fr=cv2.imread(self.style_paths[0]),
+                    )
+                )
 
-            sequences.append(
-                Sequence(begFrame= self.begFrame, endFrame= self.endFrame ,style_start = cv2.imread(self.styles[0])))
+                return sequences
+            if self.style_idxs[0] == self.end_fr_idx:
+                sequences.append(
+                    Sequence(
+                        begin_fr_idx=self.begin_fr_idx,
+                        end_fr_idx=self.end_fr_idx,
+                        style_end_fr=self.style_paths[0],
+                    )
+                )
+                return sequences
 
-            return sequences
-        
-        if self.style_indexes[0] == self.endFrame and self.num_styles == 1:
+        for i in range(self.num_style_frs - 1):
+            # Both style must not be None
+            if self.style_idxs[i] is None or self.style_idxs[i + 1] is None:
+                break
+            # If first_style_idx == begin and next_style_idx == end
+            if (
+                self.style_idxs[i] == self.begin_fr_idx
+                and self.style_idxs[i + 1] == self.end_fr_idx
+            ):
+                sequences.append(
+                    Sequence(
+                        self.begin_fr_idx,
+                        self.end_fr_idx,
+                        self.style_paths[i],
+                        self.style_paths[i + 1],
+                    )
+                )
 
-            sequences.append(
-                Sequence(begFrame= self.begFrame , endFrame= self.endFrame, style_end = self.styles[0]))
-        
-            return sequences
-        
-        for i in range(self.num_styles-1):
+            # If the first style index is the first frame in the sequence
+            elif (
+                self.style_idxs[i] == self.begin_fr_idx
+                and self.style_idxs[i + 1] != self.end_fr_idx
+            ):
+                sequences.append(
+                    Sequence(
+                        self.begin_fr_idx,
+                        self.style_idxs[i + 1],
+                        self.style_paths[i],
+                        self.style_paths[i + 1],
+                    )
+                )
 
-            # If both style indexes are not None
-            if self.style_indexes[i] is not None and self.style_indexes[i+1] is not None:
-                if self.style_indexes[i] == self.begFrame and self.style_indexes[i+1] == self.endFrame:
-                    sequences.append(
-                        Sequence(self.begFrame, self.endFrame, self.styles[i], self.styles[i+1]))
+            # If the second style index is the last frame in the sequence
+            elif (
+                self.style_idxs[i] != self.begin_fr_idx
+                and self.style_idxs[i + 1] == self.end_fr_idx
+            ):
+                sequences.append(
+                    Sequence(
+                        self.style_idxs[i],
+                        self.end_fr_idx,
+                        self.style_paths[i],
+                        self.style_paths[i + 1],
+                    )
+                )
 
-                # If the first style index is the first frame in the sequence
-                elif self.style_indexes[i] == self.begFrame and self.style_indexes[i+1] != self.endFrame:
-                    sequences.append(Sequence(
-                        self.begFrame, self.style_indexes[i+1], self.styles[i], self.styles[i+1]))
-
-                # If the second style index is the last frame in the sequence
-                elif self.style_indexes[i] != self.begFrame and self.style_indexes[i+1] == self.endFrame:
-                    sequences.append(Sequence(
-                        self.style_indexes[i], self.endFrame, self.styles[i], self.styles[i+1]))
-
-                elif self.style_indexes[i] != self.begFrame and self.style_indexes[i+1] != self.endFrame and self.style_indexes[i] in self.imgindexes and self.style_indexes[i+1] in self.imgindexes:
-                    sequences.append(Sequence(
-                        self.style_indexes[i], self.style_indexes[i+1], self.styles[i], self.styles[i+1]))
+            elif (
+                self.style_idxs[i] != self.begin_fr_idx
+                and self.style_idxs[i + 1] != self.end_fr_idx
+                and self.style_idxs[i] in self.img_idxs
+                and self.style_idxs[i + 1] in self.img_idxs
+            ):
+                sequences.append(
+                    Sequence(
+                        self.style_idxs[i],
+                        self.style_idxs[i + 1],
+                        self.style_paths[i],
+                        self.style_paths[i + 1],
+                    )
+                )
 
         return sequences
-    
+
     @staticmethod
-    def generate_subsequences(sequence, chunk_size = 10, overlap = 1):
+    def generate_subsequences(sequence: Sequence, chunk_size=10, overlap=1):
         subsequences = []
-        init = sequence.begFrame
-        final = sequence.endFrame
+        init = sequence.begin_fr_idx
+        final = sequence.end_fr_idx
         begFrame = init
         last_endFrame = None  # Keep track of the last endFrame
-        
+
         while begFrame < final:
             endFrame = min(begFrame + chunk_size + overlap, final)
-            
+
             # If remaining frames are less than chunk size and already covered by previous subsequence
-            if (final - begFrame < chunk_size) and (last_endFrame is not None and last_endFrame >= final):
+            if (final - begFrame < chunk_size) and (
+                last_endFrame is not None and last_endFrame >= final
+            ):
                 break
 
             # Create a subsequence
-            subseq = Subsequence(init, final, begFrame, endFrame,
-                                sequence.style_start if sequence.style_start else None,
-                                sequence.style_end if sequence.style_end else None)
+            subseq = Subsequence(
+                init,
+                final,
+                begFrame,
+                endFrame,
+                sequence.style_start_fr,
+                sequence.style_end_fr,
+            )
             subsequences.append(subseq)
             last_endFrame = endFrame  # Update last_endFrame
 
@@ -124,10 +199,9 @@ class SequenceManager:
 
         return subsequences
 
-    def __call__(self, chunk_size = 10, overlap = 1):
+    def __call__(self, chunk_size=10, overlap=1):
         sequences = self._set_sequence()
         subsequences = []
         for sequence in sequences:
             subsequences += self.generate_subsequences(sequence, chunk_size, overlap)
         return subsequences
-    

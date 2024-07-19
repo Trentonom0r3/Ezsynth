@@ -3,7 +3,7 @@ import numpy as np
 
 from .aux_utils import save_results, validate_image
 from .utils._ebsynth import ebsynth
-from .utils.ezutils import Runner, Setup
+from .utils.ezutils import Setup
 
 
 class Ezsynth:
@@ -27,12 +27,10 @@ class Ezsynth:
         self.results = None
 
     def run(self):
-        runner = Runner(self.setup)
-        self.results = runner.run()
+        self.results = self.setup.process_sequence()
         if self.output_folder is not None:
             self.save()
         return self.results
-
 
     def save(self, base_name="output", extension=".png"):
         """

@@ -13,7 +13,7 @@ from ._ebsynth import ebsynth
 from .blend.blender import Blend
 from .flow_utils.warp import Warp
 from .guides.guides import GuideFactory
-from .sequences import SequenceManager
+from .sequences import Sequence, SequenceManager
 
 """
 HELPER CLASSES CONTAINED WITHIN THIS FILE:
@@ -76,11 +76,13 @@ class Setup:
             self.style_idxes,
             self.img_idxes,
         )
-        self.img_file_paths = self.img_frs_seq
         self.subsequences = manager._set_sequence()
 
-    def __str__(self):
-        return f"Setup: Init: {self.begin_fr_idx} - {self.end_fr_idx} | Styles: {self.style_idxes} | Subsequences: {[str(sub) for sub in self.subsequences]}"
+    def __str__(self) -> str:
+        return (
+            f"Setup: Init: {self.begin_fr_idx} - {self.end_fr_idx} | "
+            f"Styles: {self.style_idxes} | Subsequences: {[str(sub) for sub in self.subsequences]}"
+        )
 
     def _get_styles(self, style_paths: str | list[str]) -> list[str]:
         """Get the styles either as a list or single string."""
@@ -94,7 +96,7 @@ class Setup:
     def process_sequence(self):
         return process(
             subseqs=self.subsequences,
-            img_file_paths=self.img_file_paths,
+            img_frs_seq=self.img_frs_seq,
             edge_maps=self.guides["edge"],
             flow_fwd=self.guides["flow_fwd"],
             flow_bwd=self.guides["flow_rev"],
@@ -103,7 +105,15 @@ class Setup:
         )
 
 
-def process(subseqs, img_file_paths, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
+def process(
+    subseqs: list[Sequence],
+    img_frs_seq,
+    edge_maps,
+    flow_fwd,
+    flow_bwd,
+    pos_fwd,
+    pos_bwd,
+):
     """
     Process sub-sequences using multiprocessing.
 
@@ -128,15 +138,15 @@ def process(subseqs, img_file_paths, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos
     with ThreadPoolExecutor(max_workers=2) as executor:
         futures = []  # Keep your existing list to store the futures
         for seq in subseqs:
-            print(f"Submitting sequence:")
+            print("Submitting sequence:")
             # Your existing logic to submit tasks remains the same
-            if seq.style_start is not None and seq.style_end is not None:
+            if seq.style_start_fr is not None and seq.style_end_fr is not None:
                 futures.append(
                     (
                         "fwd",
                         executor.submit(
                             run_sequences,
-                            img_file_paths,
+                            img_frs_seq,
                             edge_maps,
                             flow_fwd,
                             pos_fwd,
@@ -150,7 +160,7 @@ def process(subseqs, img_file_paths, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos
                         "bwd",
                         executor.submit(
                             run_sequences,
-                            img_file_paths,
+                            img_frs_seq,
                             edge_maps,
                             flow_bwd,
                             pos_bwd,
@@ -160,16 +170,16 @@ def process(subseqs, img_file_paths, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos
                     )
                 )
 
-            elif seq.style_start is not None and seq.style_end is None:
+            elif seq.style_start_fr is not None and seq.style_end_fr is None:
                 fwd_img, fwd_err = run_sequences(
-                    img_file_paths, edge_maps, flow_fwd, pos_fwd, seq
+                    img_frs_seq, edge_maps, flow_fwd, pos_fwd, seq
                 )
                 fwd_imgs = [img for img in fwd_img if img is not None]
 
                 return fwd_imgs
-            elif seq.style_start is None and seq.style_end is not None:
+            elif seq.style_start_fr is None and seq.style_end_fr is not None:
                 bwd_img, bwd_err = run_sequences(
-                    img_file_paths, edge_maps, flow_bwd, pos_bwd, seq, True
+                    img_frs_seq, edge_maps, flow_bwd, pos_bwd, seq, True
                 )
                 bwd_imgs = [img for img in bwd_img if img is not None]
 
@@ -229,7 +239,7 @@ def process(subseqs, img_file_paths, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos
     return final_blends
 
 
-def run_sequences(imgseq, edge, flow, positional, seq, reverse=False):
+def run_sequences(imgseq, edge, flow, positional, seq: Sequence, reverse=False):
     """
     Run the sequence for ebsynth based on the provided parameters.
     Parameters:
@@ -244,19 +254,19 @@ def run_sequences(imgseq, edge, flow, positional, seq, reverse=False):
         # Initialize variables based on the 'reverse' flag.
         if reverse:
             start, step, style, init, final = (
-                seq.final,
+                seq.final_idx,
                 -1,
-                seq.style_end,
-                seq.endFrame,
-                seq.begFrame,
+                seq.style_end_fr,
+                seq.end_fr_idx,
+                seq.begin_fr_idx,
             )
         else:
             start, step, style, init, final = (
-                seq.init,
+                seq.init_idx,
                 1,
-                seq.style_start,
-                seq.begFrame,
-                seq.endFrame,
+                seq.style_start_fr,
+                seq.begin_fr_idx,
+                seq.end_fr_idx,
             )
 
         eb = ebsynth(style, guides=[])
