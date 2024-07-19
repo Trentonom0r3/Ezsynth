@@ -1,13 +1,7 @@
-# import os
-# import re
 import threading
-
-# import time
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
-# from typing import List, Union
+from concurrent.futures import ThreadPoolExecutor
 
 import cv2
-import numpy as np
 
 from ezsynth.aux_utils import (
     extract_indices,
@@ -23,13 +17,6 @@ from .sequences import SequenceManager
 
 """
 HELPER CLASSES CONTAINED WITHIN THIS FILE:
-
-    - Preprocessor
-        - _get_image_sequence
-        - _get_styles
-        - _extract_indexes
-        - _read_frames
-        -Used to preprocess the image sequence.
 
     - ebsynth
         - __init__
@@ -51,49 +38,6 @@ TODO REFACTOR:
         - Optimize, if possible. 
         - Will use the Runner Class, as will the Ezsynth class.
 """
-
-
-class Preprocessor:
-    def __init__(self, style_paths: str | list[str], seq_folder_path: str):
-        """
-        Initialize the Preprocessor class.
-
-        Parameters
-        ----------
-        styles : Union[str, List[str]]
-            Style(s) used for the sequence. Can be a string or a list of strings.
-        img_sequence : str
-            Directory path containing the image sequence.
-
-        Examples
-        --------
-        >>> preprocessor = Preprocessor("Style1", "/path/to/image_sequence")
-        >>> preprocessor.styles
-        ['Style1']
-
-        >>> preprocessor = Preprocessor(["Style1", "Style2"], "/path/to/image_sequence")
-        >>> preprocessor.styles
-        ['Style1', 'Style2']
-        """
-        self.imgsequence = []
-        imgsequence = get_sequence_indices(seq_folder_path)
-        self.imgseq = imgsequence
-        self.imgindexes = extract_indices(imgsequence)
-        self.imgsequence = read_frames_from_paths(imgsequence)
-        self.begFrame = self.imgindexes[0]
-        self.endFrame = self.imgindexes[-1]
-        self.styles = self._get_styles(style_paths)
-        self.style_indexes = extract_indices(self.styles)
-        self.num_styles = len(self.styles)
-
-    def _get_styles(self, style_paths: str | list[str]) -> list[str]:
-        """Get the styles either as a list or single string."""
-        if isinstance(style_paths, str):
-            return [style_paths]
-        elif isinstance(style_paths, list):
-            return style_paths
-        else:
-            raise ValueError("Styles must be either a string or a list of strings.")
 
 
 class Setup:
@@ -147,30 +91,19 @@ class Setup:
         else:
             raise ValueError("Styles must be either a string or a list of strings.")
 
-
-class Runner:
-    def __init__(self, setup: Setup, masks=None):
-        self.guides, self.subsequences = setup.guides, setup.subsequences
-        self.imgsequence = setup.img_file_paths
-        self.flow_fwd = self.guides["flow_fwd"]
-        self.flow_bwd = self.guides["flow_rev"]
-        self.edge_maps = self.guides["edge"]
-        self.positional_fwd = self.guides["positional_fwd"]
-        self.positional_bwd = self.guides["positional_rev"]
-
-    def run(self):
+    def process_sequence(self):
         return process(
-            self.subsequences,
-            self.imgsequence,
-            self.edge_maps,
-            self.flow_fwd,
-            self.flow_bwd,
-            self.positional_fwd,
-            self.positional_bwd,
+            subseqs=self.subsequences,
+            img_file_paths=self.img_file_paths,
+            edge_maps=self.guides["edge"],
+            flow_fwd=self.guides["flow_fwd"],
+            flow_bwd=self.guides["flow_rev"],
+            pos_fwd=self.guides["positional_fwd"],
+            pos_bwd=self.guides["positional_rev"],
         )
 
 
-def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
+def process(subseqs, img_file_paths, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
     """
     Process sub-sequences using multiprocessing.
 
@@ -194,7 +127,7 @@ def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
 
     with ThreadPoolExecutor(max_workers=2) as executor:
         futures = []  # Keep your existing list to store the futures
-        for seq in subseq:
+        for seq in subseqs:
             print(f"Submitting sequence:")
             # Your existing logic to submit tasks remains the same
             if seq.style_start is not None and seq.style_end is not None:
@@ -202,7 +135,12 @@ def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
                     (
                         "fwd",
                         executor.submit(
-                            run_sequences, imgseq, edge_maps, flow_fwd, pos_fwd, seq
+                            run_sequences,
+                            img_file_paths,
+                            edge_maps,
+                            flow_fwd,
+                            pos_fwd,
+                            seq,
                         ),
                     )
                 )
@@ -212,7 +150,7 @@ def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
                         "bwd",
                         executor.submit(
                             run_sequences,
-                            imgseq,
+                            img_file_paths,
                             edge_maps,
                             flow_bwd,
                             pos_bwd,
@@ -224,14 +162,14 @@ def process(subseq, imgseq, edge_maps, flow_fwd, flow_bwd, pos_fwd, pos_bwd):
 
             elif seq.style_start is not None and seq.style_end is None:
                 fwd_img, fwd_err = run_sequences(
-                    imgseq, edge_maps, flow_fwd, pos_fwd, seq
+                    img_file_paths, edge_maps, flow_fwd, pos_fwd, seq
                 )
                 fwd_imgs = [img for img in fwd_img if img is not None]
 
                 return fwd_imgs
             elif seq.style_start is None and seq.style_end is not None:
                 bwd_img, bwd_err = run_sequences(
-                    imgseq, edge_maps, flow_bwd, pos_bwd, seq, True
+                    img_file_paths, edge_maps, flow_bwd, pos_bwd, seq, True
                 )
                 bwd_imgs = [img for img in bwd_img if img is not None]
 
