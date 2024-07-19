@@ -1,9 +1,9 @@
-import os
 import cv2
 import numpy as np
 
-from .utils.ezutils import Setup, Runner
+from .aux_utils import save_results, validate_image
 from .utils._ebsynth import ebsynth
+from .utils.ezutils import Runner, Setup
 
 
 class Ezsynth:
@@ -47,7 +47,7 @@ class Ezsynth:
             print("Error: No results to save.")
             return
         for i in range(len(self.results)):
-            Saver.save_results(
+            save_results(
                 self.output_folder,
                 f"{base_name}{i:03}{extension}",
                 self.results[i],
@@ -101,7 +101,7 @@ class Imagesynth:
             or to do something else result = eb.run()
 
         """
-        self.style_img = Validator.validate_image(style_img)
+        self.style_img = validate_image(style_img)
         self.device = "cuda"
         self.eb = ebsynth(
             style=style_img,
@@ -131,29 +131,3 @@ class Imagesynth:
             cv2.imwrite(output_path, result)
 
         return result
-
-
-class Validator:
-    @staticmethod
-    def validate_image(img: str | np.ndarray) -> np.ndarray:
-        if isinstance(img, str):
-            img = cv2.imread(img)
-            if img:
-                return img
-            raise ValueError("Path does not exist")
-
-        if isinstance(img, np.ndarray):
-            if img.shape[-1] == 3:
-                return img
-            raise ValueError(f"Expected 3 channels image. Style shape is {img.shape}")
-
-
-class Saver:
-    @staticmethod
-    def save_results(
-        output_folder: str, base_file_name: str, result_array: np.ndarray
-    ) -> str:
-        os.makedirs(output_folder, exist_ok=True)
-        output_file_path = os.path.join(output_folder, base_file_name)
-        cv2.imwrite(output_file_path, result_array)
-        return output_file_path
