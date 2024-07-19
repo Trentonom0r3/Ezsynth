@@ -76,7 +76,17 @@ class Setup:
             self.style_idxes,
             self.img_idxes,
         )
-        self.subsequences = manager._set_sequence()
+        # self.subsequences = manager._set_sequence()
+        self.sequences = manager._set_sequence()
+        self.subsequences = ["HAHA"]
+        # self.chunk_size = 10
+        # self.overlap_frs = 1
+        # self.subsequences = [
+        #     SequenceManager.generate_subsequences(
+        #         sequence, self.chunk_size, self.overlap_frs
+        #     )
+        #     for sequence in self.sequences
+        # ]
 
     def __str__(self) -> str:
         return (
@@ -95,7 +105,8 @@ class Setup:
 
     def process_sequence(self):
         return process(
-            subseqs=self.subsequences,
+            # subseqs=self.subsequences,
+            subseqs=self.sequences,
             img_frs_seq=self.img_frs_seq,
             edge_maps=self.guides["edge"],
             flow_fwd=self.guides["flow_fwd"],
@@ -135,12 +146,28 @@ def process(
     style_imgs_bwd = []
     err_bwd = []
 
-    with ThreadPoolExecutor(max_workers=2) as executor:
-        futures = []  # Keep your existing list to store the futures
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        futures = []
         for seq in subseqs:
-            print("Submitting sequence:")
-            # Your existing logic to submit tasks remains the same
+            print(seq)
+            if seq.style_start_fr is not None and seq.style_end_fr is None:
+                fwd_img, fwd_err = run_sequences(
+                    img_frs_seq, edge_maps, flow_fwd, pos_fwd, seq
+                )
+                return fwd_img
+            # Doesnt work
+            if seq.style_start_fr is None and seq.style_end_fr is not None:
+                print(f"Run from frame {seq.style_end_fr}")
+                bwd_img, bwd_err = run_sequences(
+                    img_frs_seq, edge_maps, flow_bwd, pos_bwd, seq, True
+                )
+                bwd_imgs = [img for img in bwd_img if img is not None]
+
+                return bwd_imgs
+            # This case does not work
             if seq.style_start_fr is not None and seq.style_end_fr is not None:
+                print(f"{seq.style_start_fr=}")
+                print(f"{seq.style_end_fr=}")
                 futures.append(
                     (
                         "fwd",
@@ -169,21 +196,6 @@ def process(
                         ),
                     )
                 )
-
-            elif seq.style_start_fr is not None and seq.style_end_fr is None:
-                fwd_img, fwd_err = run_sequences(
-                    img_frs_seq, edge_maps, flow_fwd, pos_fwd, seq
-                )
-                fwd_imgs = [img for img in fwd_img if img is not None]
-
-                return fwd_imgs
-            elif seq.style_start_fr is None and seq.style_end_fr is not None:
-                bwd_img, bwd_err = run_sequences(
-                    img_frs_seq, edge_maps, flow_bwd, pos_bwd, seq, True
-                )
-                bwd_imgs = [img for img in bwd_img if img is not None]
-
-                return bwd_imgs
             else:
                 raise ValueError("Invalid sequence.")
 
@@ -207,6 +219,7 @@ def process(
                 print("TimeoutError")
             except Exception as e:
                 print(f"List Creation Exception: {e}")
+                continue
     # C:\Users\tjerf\Desktop\Testing\src\Testvids\Output
     style_imgs_b = [img for img in style_imgs_bwd if img is not None]
     style_imgs_f = [img for img in style_imgs_fwd if img is not None]

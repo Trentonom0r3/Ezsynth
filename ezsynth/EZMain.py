@@ -30,7 +30,7 @@ class Ezsynth:
         self.results = self.setup.process_sequence()
         if self.output_folder is not None:
             self.save()
-        return self.results
+        # return self.results
 
     def save(self, base_name="output", extension=".png"):
         """

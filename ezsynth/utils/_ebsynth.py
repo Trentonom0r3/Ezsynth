@@ -31,6 +31,7 @@ class ebsynth:
         """
         #self.lock = threading.Lock()
         # Handling the style image
+        
         if isinstance(style, (np.ndarray)):
             self.style = style
         elif isinstance(style, (str)):
@@ -46,7 +47,7 @@ class ebsynth:
         #self.eb = LoadDLL()
         self.runner = EbsynthRunner()
         # Store the arguments
-        self.style = style
+        # self.style = style
         self.guides = guides
         self.uniformity = uniformity
         self.patchsize = patchsize

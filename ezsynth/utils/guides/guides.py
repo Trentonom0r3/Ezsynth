@@ -1,12 +1,12 @@
 import cv2
 import numpy as np
-import torch
+# import torch
 from .edge_detection import EdgeDetector
 from ..flow_utils.OpticalFlow import OpticalFlowProcessor
 from ..flow_utils.warp import Warp
 #from utils import ebsynth, Preprocessor
 
-class GuideFactory():
+class GuideFactory:
     """
     Factory class for creating and managing different types of guides.
 
