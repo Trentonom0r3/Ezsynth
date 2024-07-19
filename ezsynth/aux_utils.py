@@ -17,7 +17,7 @@ def save_results(
 def validate_image(img: str | np.ndarray) -> np.ndarray:
     if isinstance(img, str):
         img = cv2.imread(img)
-        if img:
+        if img is not None:
             return img
         raise ValueError(f"Path does not exist: {img}")
 
@@ -44,7 +44,8 @@ def read_frames_from_paths(lst: list[str]) -> list[np.ndarray]:
 img_extensions = (".png", ".jpg", ".jpeg")
 img_path_pattern = re.compile(r"(\d+)(?=\.(jpg|jpeg|png)$)")
 
-def get_sequence_indices(self, seq_folder_path: str) -> list[str]:
+
+def get_sequence_indices(seq_folder_path: str) -> list[str]:
     if not os.path.isdir(seq_folder_path):
         raise ValueError(f"Path does not exist: {seq_folder_path}")
     file_names = os.listdir(seq_folder_path)
@@ -61,7 +62,6 @@ def get_sequence_indices(self, seq_folder_path: str) -> list[str]:
         raise ValueError("No image files found in the directory.")
     return img_file_paths
 
+
 def extract_indices(lst: list[str]):
-    return sorted(
-        int(img_path_pattern.findall(img_name)[-1][0]) for img_name in lst
-    )
+    return sorted(int(img_path_pattern.findall(img_name)[-1][0]) for img_name in lst)

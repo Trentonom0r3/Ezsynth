@@ -1,14 +1,19 @@
-import os
-import re
+# import os
+# import re
 import threading
-import time
+
+# import time
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
-from typing import List, Union
+# from typing import List, Union
 
 import cv2
 import numpy as np
 
-from ezsynth.aux_utils import extract_indices, get_sequence_indices, read_frames_from_paths
+from ezsynth.aux_utils import (
+    extract_indices,
+    get_sequence_indices,
+    read_frames_from_paths,
+)
 
 from ._ebsynth import ebsynth
 from .blend.blender import Blend
@@ -46,6 +51,7 @@ TODO REFACTOR:
         - Optimize, if possible. 
         - Will use the Runner Class, as will the Ezsynth class.
 """
+
 
 class Preprocessor:
     def __init__(self, style_paths: str | list[str], seq_folder_path: str):
@@ -89,49 +95,63 @@ class Preprocessor:
         else:
             raise ValueError("Styles must be either a string or a list of strings.")
 
-class Setup(Preprocessor, GuideFactory):
+
+class Setup:
     def __init__(
         self,
-        style_keys,
-        imgseq,
+        style_paths: str | list[str],
+        seq_folder_path: str,
         edge_method="PAGE",
         flow_method="RAFT",
         model_name="sintel",
     ):
-        prepro = Preprocessor(style_keys, imgseq)
-        GuideFactory.__init__(
-            self,
-            prepro.imgsequence,
-            prepro.imgseq,
-            edge_method,
-            flow_method,
-            model_name,
-        )
-        manager = SequenceManager(
-            prepro.begFrame,
-            prepro.endFrame,
-            prepro.styles,
-            prepro.style_indexes,
-            prepro.imgindexes,
-        )
-        self.imgseq = prepro.imgsequence
-        self.subsequences = manager._set_sequence()
-        self.guides = (
-            self.create_all_guides()
-        )  # works well, just commented out since it takes a bit to run.
+        img_file_paths = get_sequence_indices(seq_folder_path)
+        self.img_file_paths = img_file_paths
+        self.img_idxes = extract_indices(img_file_paths)
+        self.img_frs_seq = read_frames_from_paths(img_file_paths)
+        self.begin_fr_idx = self.img_idxes[0]
+        self.end_fr_idx = self.img_idxes[-1]
+        self.style_paths = self._get_styles(style_paths)
+        self.style_idxes = extract_indices(self.style_paths)
+        self.num_style_frs = len(self.style_paths)
 
-    def __call__(self):
-        return self.guides, self.subsequences
+        self.guide_factory = GuideFactory(
+            imgsequence=self.img_frs_seq,
+            imgseq=self.img_file_paths,
+            edge_method=edge_method,
+            flow_method=flow_method,
+            model_name=model_name,
+        )
+
+        self.guides = self.guide_factory.create_all_guides()
+
+        manager = SequenceManager(
+            self.begin_fr_idx,
+            self.end_fr_idx,
+            self.style_paths,
+            self.style_idxes,
+            self.img_idxes,
+        )
+        self.img_file_paths = self.img_frs_seq
+        self.subsequences = manager._set_sequence()
 
     def __str__(self):
-        return f"Setup: Init: {self.begFrame} - {self.endFrame} | Styles: {self.style_indexes} | Subsequences: {[str(sub) for sub in self.subsequences]}"
+        return f"Setup: Init: {self.begin_fr_idx} - {self.end_fr_idx} | Styles: {self.style_idxes} | Subsequences: {[str(sub) for sub in self.subsequences]}"
+
+    def _get_styles(self, style_paths: str | list[str]) -> list[str]:
+        """Get the styles either as a list or single string."""
+        if isinstance(style_paths, str):
+            return [style_paths]
+        elif isinstance(style_paths, list):
+            return style_paths
+        else:
+            raise ValueError("Styles must be either a string or a list of strings.")
 
 
 class Runner:
-    def __init__(self, setup, masks=None):
-        self.setup = setup
-        self.guides, self.subsequences = self.setup()
-        self.imgsequence = self.setup.imgseq
+    def __init__(self, setup: Setup, masks=None):
+        self.guides, self.subsequences = setup.guides, setup.subsequences
+        self.imgsequence = setup.img_file_paths
         self.flow_fwd = self.guides["flow_fwd"]
         self.flow_bwd = self.guides["flow_rev"]
         self.edge_maps = self.guides["edge"]
