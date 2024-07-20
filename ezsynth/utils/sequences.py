@@ -79,8 +79,10 @@ class SequenceManager:
         Compares the style indexes with the image indexes to determine the sequence information.
         """
         sequences: list[Sequence] = []
+        print(f"{self.style_idxs=}")
         if self.num_style_frs == 1:
-            if self.begin_fr_idx == self.style_idxs[0]:
+            # If first style is first frame
+            if self.style_idxs[0] == self.begin_fr_idx:
                 sequences.append(
                     Sequence(
                         begin_fr_idx=self.begin_fr_idx,
@@ -90,6 +92,7 @@ class SequenceManager:
                 )
 
                 return sequences
+            # If first style is last frame
             if self.style_idxs[0] == self.end_fr_idx:
                 sequences.append(
                     Sequence(

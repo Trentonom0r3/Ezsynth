@@ -72,7 +72,7 @@ def extract_indices(lst: list[str]):
 def is_valid_file_path(input_path: str | list[str]) -> bool:
     return isinstance(input_path, str) and os.path.isfile(input_path)
 
-def validate_file_or_folder_to_lst(input_paths: str | list[str], type_name=""):
+def validate_file_or_folder_to_lst(input_paths: str | list[str], type_name="") -> list[str]:
     if is_valid_file_path(input_paths):
         return [input_paths]
     if isinstance(input_paths, list):

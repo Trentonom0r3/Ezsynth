@@ -1,11 +1,11 @@
-import os
+# import os
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor
 
 import cv2
 import numpy as np
-
-import time
+import tqdm
 
 from ezsynth.aux_utils import (
     extract_indices,
@@ -71,10 +71,10 @@ class Setup:
 
         self.begin_fr_idx = self.img_idxes[0]
         self.end_fr_idx = self.img_idxes[-1]
-        
+
         self.style_idxes = extract_indices(self.style_paths)
         self.num_style_frs = len(self.style_paths)
-        
+
         if process:
             st = time.time()
             self.guide_factory = GuideFactory(
@@ -305,16 +305,17 @@ def run_sequences(
         warp = Warp(imgseq[start])
         ORIGINAL_SIZE = imgseq[0].shape[1::-1]
         # Loop through frames.
-        for i in range(init, final, step):
-            eb.clear_guide()
-            eb.add_guide(edge[start], edge[i], 1.0)
-            eb.add_guide(imgseq[start], imgseq[i], 6.0)
+        stylized_frames.append(cv2.imread(seq.style_start_fr))
+
+        for i in tqdm.tqdm(range(init, final, step), desc="Generating: "):
+            eb.add_guide(edge[start], edge[i + 1], 1.0)
+            eb.add_guide(imgseq[start], imgseq[i + 1], 6.0)
 
             # Commented out section: additional guide and warping
             if i != start:
                 eb.add_guide(
                     pos[start - 1] if reverse else pos[start],
-                    pos[i],
+                    pos[i - 1],
                     2.0,
                 )
 
@@ -333,6 +334,7 @@ def run_sequences(
             stylized_img, err = eb.run()
             stylized_frames.append(stylized_img)
             err_list.append(err)
+            eb.clear_guide()
 
         print(
             f"Final Length, Reverse = {reverse}: {len(stylized_frames)}. Error Length: {len(err_list)}"

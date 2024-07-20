@@ -5,6 +5,8 @@ import numpy as np
 import torch
 # import torch.nn.functional as F
 
+import tqdm
+
 from .core.raft import RAFT
 from .core.utils.utils import InputPadder
 from .warp import Warp
@@ -18,31 +20,20 @@ class OpticalFlowProcessor:
     valid_model_names = ["sintel", "kitti", "small"]
 
     def __init__(self, model_name="Sintel", flow_method="RAFT"):
-        if flow_method not in self.valid_flow_methods:
-            raise ValueError(
-                f"Invalid flow method {flow_method}. Valid methods are {self.valid_flow_methods}"
-            )
-        else:
-            self.flow_method = flow_method
-
-        if model_name not in self.valid_model_names:
-            raise ValueError(
-                f"Invalid model name {model_name}. Valid names are {self.valid_model_names}"
-            )
-        else:
-            self.model_name = model_name
-
+        self.flow_method = flow_method
+        self.model_name = model_name
         self.optical_flow = []
 
     def compute_flow(self, imgsequence):
         if self.flow_method == "RAFT":
             return self._compute_raft_flow(imgsequence)
-        elif self.flow_method == "DeepFlow":
-            return self._compute_deepflow(imgsequence)
+        # elif self.flow_method == "DeepFlow":
+        #     return self._compute_deepflow(imgsequence)
+        raise ValueError("Only RAFT is implemented")
 
     def _compute_raft_flow(self, imgsequence):
         self.flow = RAFT_flow(imgsequence[0], self.model_name)
-        self.optical_flow = self.flow.compute_optical_flow(imgsequence)
+        self.optical_flow = self.flow.compute_flow(imgsequence)
         return self.optical_flow
 
 
@@ -102,7 +93,7 @@ class RAFT_flow(Warp):
             print(f"[ERROR] Exception in load_tensor_from_numpy: {e}")
             raise e
 
-    def _compute_flow(self, img1: torch.Tensor, img2: torch.Tensor):
+    def _compute_flow(self, img1: np.ndarray, img2: np.ndarray):
         original_size = img1.shape[1::-1]
         with torch.no_grad():
             img1_tensor = self._load_tensor_from_numpy(img1)
@@ -114,10 +105,12 @@ class RAFT_flow(Warp):
             cv2.resize(flow_np, original_size)
             return flow_np
 
-    def __iter__(self, imgsequence):
-        for img1, img2 in zip(imgsequence[:-1], imgsequence[1:]):
-            yield self._compute_flow(img1, img2)
-
-    def compute_optical_flow(self, imgsequence):
-        self.optical_flow = self.__iter__(imgsequence)
+    def compute_flow(self, img_frs_seq: list[np.ndarray]):
+        optical_flow = []
+        zip_img_frs = list(zip(img_frs_seq[:-1], img_frs_seq[1:]))
+        for img1, img2 in tqdm.tqdm(
+            zip_img_frs, total=len(zip_img_frs), desc="Calculating Flow: "
+        ):
+            optical_flow.append(self._compute_flow(img1, img2))
+        self.optical_flow = optical_flow
         return self.optical_flow
