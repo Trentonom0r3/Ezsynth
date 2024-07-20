@@ -1,23 +1,22 @@
 import cv2
 import numpy as np
-import torch
-import kornia as K
-import kornia.color as KC
 
 try:
     import cupy as cp
-except:   # noqa: E722
+except:  # noqa: E722
     print("Cupy is not installed. Will use normal Numpy for Histogram blending")
     USE_GPU = False
 
+
 class HistogramBlender:
     def __init__(self, use_gpu=True):
-        
-        self.xp = cp if use_gpu and USE_GPU else np
         self.use_gpu = use_gpu and USE_GPU
+        self.xp = cp if self.use_gpu else np
 
     def histogram_transform(self, img, means, stds, target_means, target_stds):
-        return ((img - means) * target_stds / stds + target_means).astype(self.xp.float32)
+        return ((img - means) * target_stds / stds + target_means).astype(
+            self.xp.float32
+        )
 
     def assemble_min_error_img(self, a, b, error_mask):
         return self.xp.where(error_mask == 0, a, b)
@@ -36,9 +35,13 @@ class HistogramBlender:
             error_mask = self.xp.repeat(error_mask[:, :, self.xp.newaxis], 3, axis=2)
 
         # Convert to Lab color space
-        a_lab = cv2.cvtColor(self.xp.asnumpy(a) if self.use_gpu else a, cv2.COLOR_BGR2Lab)
-        b_lab = cv2.cvtColor(self.xp.asnumpy(b) if self.use_gpu else b, cv2.COLOR_BGR2Lab)
-        
+        a_lab = cv2.cvtColor(
+            self.xp.asnumpy(a) if self.use_gpu else a, cv2.COLOR_BGR2Lab
+        )
+        b_lab = cv2.cvtColor(
+            self.xp.asnumpy(b) if self.use_gpu else b, cv2.COLOR_BGR2Lab
+        )
+
         if self.use_gpu:
             a_lab = cp.asarray(a_lab)
             b_lab = cp.asarray(b_lab)
@@ -64,8 +67,10 @@ class HistogramBlender:
         ab_mean, ab_std = self.mean_std(ab_lab)
 
         # Final histogram transform
-        ab_lab = self.histogram_transform(ab_lab, ab_mean, ab_std, min_error_mean, min_error_std)
-        
+        ab_lab = self.histogram_transform(
+            ab_lab, ab_mean, ab_std, min_error_mean, min_error_std
+        )
+
         ab_lab = self.xp.clip(self.xp.round(ab_lab), 0, 255).astype(self.xp.uint8)
 
         # Convert back to BGR
@@ -74,7 +79,8 @@ class HistogramBlender:
         ab = cv2.cvtColor(ab_lab, cv2.COLOR_Lab2BGR)
 
         return ab
-    
+
+
 # class HistogramBlender:
 #     def __init__(self):
 #         pass
@@ -154,7 +160,7 @@ class HistogramBlender:
 #         ab_lab = self.histogram_transform(
 #             ab_lab, ab_mean, ab_std, min_error_mean, min_error_std
 #         )
-        
+
 #         ab_lab = np.clip(np.round(ab_lab), 0, 255).astype(np.uint8)
 
 #         # Convert back to BGR

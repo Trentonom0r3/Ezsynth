@@ -1,20 +1,12 @@
 import time
-from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
-import torch
 import tqdm
 
 from ..flow_utils.warp import Warp
 from .histogram_blend import HistogramBlender
 from .reconstruction import reconstructor
 
-import kornia as K
-from multiprocessing import Pool
-
-def process_image(args):
-    blender, style_fwd, style_bwd, err_mask = args
-    return blender.blend(style_fwd, style_bwd, err_mask)
 
 class Blend:
     def __init__(
@@ -62,9 +54,9 @@ class Blend:
         st = time.time()
         err_masks = self._create_selection_mask(self.err_fwd, self.err_bwd)
 
-        print(f"{len(err_masks)=}")
-        print(f"{err_masks[0].shape=}")
-        print(f"{type(err_masks[0])=}")
+        # print(f"{len(err_masks)=}")
+        # print(f"{err_masks[0].shape=}")
+        # print(f"{type(err_masks[0])=}")
 
         if not err_masks:
             print("Error: err_masks is empty.")
@@ -112,7 +104,7 @@ class Blend:
         print(f"Hist Blend took {time.time() - st:.4f} s")
         print(len(hist_blends))
         return hist_blends
-    
+
     def _reconstruct(self, hist_blends):
         blends = reconstructor(
             hist_blends, self.style_fwd, self.style_bwd, self.err_masks
