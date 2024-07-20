@@ -158,119 +158,63 @@ def process(
     - imgs: List of processed images.
     """
     # Initialize empty lists to store results
-    style_imgs_fwd = []
-    err_fwd = []
-    style_imgs_bwd = []
-    err_bwd = []
+    fwd_styles = []
+    bwd_styles = []
+    err_fwds = []
+    err_bwds = []
 
-    with ThreadPoolExecutor(max_workers=1) as executor:
-        futures = []
-        for seq in subseqs:
-            print(seq)
-            if seq.style_start_fr is not None and seq.style_end_fr is None:
-                fwd_img, fwd_err = run_sequences(
-                    img_frs_seq, edge_maps, flow_fwd, pos_fwd, seq
-                )
-                return fwd_img
-            # Doesnt work
-            if seq.style_start_fr is None and seq.style_end_fr is not None:
-                print(f"Run from frame {seq.style_end_fr}")
-                bwd_img, bwd_err = run_sequences(
-                    img_frs_seq, edge_maps, flow_bwd, pos_bwd, seq, True
-                )
-                bwd_imgs = [img for img in bwd_img if img is not None]
+    params = {"img_frs_seq": img_frs_seq, "edge": edge_maps}
 
-                return bwd_imgs
-            # This case does not work
-            if seq.style_start_fr is not None and seq.style_end_fr is not None:
-                print(f"{seq.style_start_fr=}")
-                print(f"{seq.style_end_fr=}")
-                futures.append(
-                    (
-                        "fwd",
-                        executor.submit(
-                            run_sequences,
-                            img_frs_seq,
-                            edge_maps,
-                            flow_fwd,
-                            pos_fwd,
-                            seq,
-                        ),
-                    )
-                )
+    for seq in subseqs:
+        params["seq"] = seq
+        if seq.style_start_fr is not None and seq.style_end_fr is None:
+            params["flow"] = flow_fwd
+            params["pos"] = pos_fwd
+            params["reverse"] = False
 
-                futures.append(
-                    (
-                        "bwd",
-                        executor.submit(
-                            run_sequences,
-                            img_frs_seq,
-                            edge_maps,
-                            flow_bwd,
-                            pos_bwd,
-                            seq,
-                            True,
-                        ),
-                    )
-                )
-            else:
-                raise ValueError("Invalid sequence.")
+            fwd_imgs, _ = run_sequences(**params)
+            return fwd_imgs
+        if seq.style_start_fr is None and seq.style_end_fr is not None:
+            params["flow"] = flow_bwd
+            params["pos"] = pos_bwd
+            params["reverse"] = True
+            bwd_imgs, _ = run_sequences(**params)
 
-    for direction, future in futures:
-        with threading.Lock():
-            try:
-                img, err = future.result()
-                if direction == "fwd":
-                    print("Forward")
-                    if img:
-                        style_imgs_fwd.append(img)
-                    if err:
-                        err_fwd.append(err)
-                else:  # direction is "bwd"
-                    print("Backward")
-                    if img:
-                        style_imgs_bwd.append(img)
-                    if err:
-                        err_bwd.append(err)
-            except TimeoutError:
-                print("TimeoutError")
-            except Exception as e:
-                print(f"List Creation Exception: {e}")
-                continue
-    # C:\Users\tjerf\Desktop\Testing\src\Testvids\Output
-    style_imgs_b = [img for img in style_imgs_bwd if img is not None]
-    style_imgs_f = [img for img in style_imgs_fwd if img is not None]
+            return bwd_imgs
+        if seq.style_start_fr is not None and seq.style_end_fr is not None:
+            params["flow"] = flow_fwd
+            params["pos"] = pos_fwd
+            params["reverse"] = False
+            print("Running forward pass")
+            fwd_pass_imgs, err_fwd = run_sequences(**params)
+            fwd_styles.extend(fwd_pass_imgs)
+            err_fwds.extend(err_fwd)
+            
+            params["flow"] = flow_bwd
+            params["pos"] = pos_bwd
+            params["reverse"] = True
+            print("Running backward pass")
+            bwd_pass_imgs, err_bwd = run_sequences(**params)
+            bwd_styles.extend(bwd_pass_imgs)
+            err_bwds.extend(err_bwd)
+    
+    print("Blend mode awaits. Please don't save yet")
+    return fwd_styles, bwd_styles, err_fwds, err_bwds, flow_fwd
+            
 
-    sty_fwd = [img for sublist in style_imgs_f for img in sublist]
-    sty_bwd = [img for sublist in style_imgs_b for img in sublist]
-    err_fwd = [img for sublist in err_fwd for img in sublist]
-    err_bwd = [img for sublist in err_bwd for img in sublist]
-
-    sty_bwd = sty_bwd[::-1]
-    err_bwd = err_bwd[::-1]
-    # check length of sty_fwd and sty_bwd
-    # if length of one is zero, skip blending and return the other
-    # Initialize the Blend class
+def run_blending(fwd_styles, bwd_styles, err_fwds, err_bwds, flow_fwd):
     blend_instance = Blend(
-        style_fwd=sty_fwd,
-        style_bwd=sty_bwd,
-        err_fwd=err_fwd,
-        err_bwd=err_bwd,
+        style_fwd=fwd_styles,
+        style_bwd=bwd_styles[::-1],
+        err_fwd=err_fwds,
+        err_bwd=err_bwds[::-1],
         flow_fwd=flow_fwd,
     )
-
-    # Invoke the __call__ method to perform blending
     final_blends = blend_instance()
-    final_blends = [blends for blends in final_blends if blends is not None]
-
-    # t2 = time.time()
-    # print(f"Time taken to blend: {t2 - t1}")
-
     return final_blends
 
-
 def run_sequences(
-    imgseq: list[np.ndarray], edge, flow, pos, seq: Sequence, reverse=False
+    img_frs_seq: list[np.ndarray], edge, flow, pos, seq: Sequence, reverse=False
 ):
     """
     Run the sequence for ebsynth based on the provided parameters.
@@ -302,15 +246,17 @@ def run_sequences(
             )
 
         eb = ebsynth(style, guides=[])
-        warp = Warp(imgseq[start])
-        ORIGINAL_SIZE = imgseq[0].shape[1::-1]
+        warp = Warp(img_frs_seq[start])
+        ORIGINAL_SIZE = img_frs_seq[0].shape[1::-1]
         # Loop through frames.
         stylized_frames.append(eb.style)
         print(start, step, init, final)
         for i in tqdm.tqdm(range(init, final, step), desc="Generating: "):
             eb.add_guide(edge[start], edge[i - 1] if reverse else edge[i + 1], 1.0)
             eb.add_guide(
-                imgseq[start], imgseq[i - 1] if reverse else imgseq[i + 1], 6.0
+                img_frs_seq[start],
+                img_frs_seq[i - 1] if reverse else img_frs_seq[i + 1],
+                6.0,
             )
 
             # Commented out section: additional guide and warping
