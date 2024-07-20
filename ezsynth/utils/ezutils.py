@@ -305,17 +305,19 @@ def run_sequences(
         warp = Warp(imgseq[start])
         ORIGINAL_SIZE = imgseq[0].shape[1::-1]
         # Loop through frames.
-        stylized_frames.append(cv2.imread(seq.style_start_fr))
-
+        stylized_frames.append(eb.style)
+        print(start, step, init, final)
         for i in tqdm.tqdm(range(init, final, step), desc="Generating: "):
-            eb.add_guide(edge[start], edge[i + 1], 1.0)
-            eb.add_guide(imgseq[start], imgseq[i + 1], 6.0)
+            eb.add_guide(edge[start], edge[i - 1] if reverse else edge[i + 1], 1.0)
+            eb.add_guide(
+                imgseq[start], imgseq[i - 1] if reverse else imgseq[i + 1], 6.0
+            )
 
             # Commented out section: additional guide and warping
             if i != start:
                 eb.add_guide(
                     pos[start - 1] if reverse else pos[start],
-                    pos[i - 1],
+                    pos[i] if reverse else pos[i - 1],
                     2.0,
                 )
 
