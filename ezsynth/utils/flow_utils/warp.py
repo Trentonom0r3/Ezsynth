@@ -14,11 +14,11 @@ class Warp:
         self.W = W
         self.grid = self._create_grid(H, W)
 
-    def _create_grid(self, H, W):
+    def _create_grid(self, H: int, W: int):
         x, y = np.meshgrid(np.arange(W), np.arange(H))
         return np.stack((x, y), axis=-1).astype(np.float32)
 
-    def _warp(self, img, flo):
+    def _warp(self, img: np.ndarray, flo: np.ndarray):
         # with self.lock:
         flo_resized = cv2.resize(flo, (self.W, self.H), interpolation=cv2.INTER_LINEAR)
         map_x = self.grid[..., 0] + flo_resized[..., 0]
@@ -32,7 +32,7 @@ class Warp:
         )
         return warped_img
 
-    def run_warping(self, img, flow):
+    def run_warping(self, img: np.ndarray, flow: np.ndarray):
         img = img.astype(np.float32)
         flow = flow.astype(np.float32)
 
