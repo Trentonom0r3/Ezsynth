@@ -8,21 +8,21 @@ from .utils.ezutils import Setup
 
 class Ezsynth:
     """
-    edge_method: ["PAGE", "PST", "Classic"] # edge detection
-    flow_method: ["RAFT", "DeepFlow"]       # optical flow computation. DeepFlow doesn't work yet
-    model: ["sintel", "kitti", "chairs"]    # optical flow
+    edge_method: `["PAGE", "PST", "Classic"]` # edge detection
+    flow_method: `["RAFT", "DeepFlow"]`       # optical flow computation. DeepFlow doesn't work yet
+    model: `["sintel", "kitti", "chairs"]`    # optical flow
     """
 
     def __init__(
         self,
-        styles,
-        imgsequence,
+        style_paths: str | list[str],
+        seq_folder_path: str,
         edge_method="PAGE",
         flow_method="RAFT",
         model="sintel",
         output_folder=None,
     ):
-        self.setup = Setup(styles, imgsequence, edge_method, flow_method, model)
+        self.setup = Setup(style_paths, seq_folder_path, edge_method, flow_method, model)
         self.output_folder = output_folder
         self.results = None
 
@@ -30,14 +30,14 @@ class Ezsynth:
         self.results = self.setup.process_sequence()
         if self.output_folder is not None:
             self.save()
-        # return self.results
 
     def save(self, base_name="output", extension=".png"):
         """
         Save the results to the specified directory.
 
         If the results are a single image, save it as base_name + extension.
-        If the results are a list of images, save them as base_name + 000 + extension, base_name + 001 + extension, etc.
+        If the results are a list of images, save them as 
+        base_name + 000 + extension, base_name + 001 + extension, etc.
 
         If the results are None, print an error message.
         """

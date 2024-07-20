@@ -3,6 +3,8 @@ import cv2
 
 class Segmenter:
     def __init__(self, style, guides=None, masks=None):
+        print(f"{type(style)=}")
+        print(f"{type(guides)=}")
         self.original_style = style.copy()  # Store the original style
         self.current_style = style  # Working copy of the style
         self.guides = guides

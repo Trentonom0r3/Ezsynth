@@ -1,9 +1,11 @@
 import os
+import threading
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+
 import cv2
 import numpy as np
 import scipy.sparse
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-import threading
+
 
 class reconstructor:
     """Wraps the Poisson Reconstruction functionality into a simple class.
@@ -11,6 +13,7 @@ class reconstructor:
     Example:
         blends = Reconstructor(hist_blends, style_fwd, style_bwd, err_masks)
     """
+
     def __init__(self, hist_blends, style_fwd, style_bwd, err_masks):
         self.hist_blends = hist_blends
         self.style_fwd = style_fwd
@@ -28,17 +31,31 @@ class reconstructor:
 
         # Define batch size and create batches
         batch_size = 10  # Example batch size, adjust based on your needs
-        batches = [range(i, min(i + batch_size, num_blends)) for i in range(0, num_blends, batch_size)]
+        batches = [
+            range(i, min(i + batch_size, num_blends))
+            for i in range(0, num_blends, batch_size)
+        ]
 
         a = construct_A(h, w, [2.5, 0.5, 0.5])
         # Process each batch
         with ProcessPoolExecutor() as executor:
             for batch in batches:
-                futures = [executor.submit(poisson_fusion, self.hist_blends[i], self.style_fwd[i], self.style_bwd[i], self.err_masks[i], a) for i in batch]
+                futures = [
+                    executor.submit(
+                        poisson_fusion,
+                        self.hist_blends[i],
+                        self.style_fwd[i],
+                        self.style_bwd[i],
+                        self.err_masks[i],
+                        a,
+                    )
+                    for i in batch
+                ]
                 for i, future in zip(batch, futures):
                     self.blends[i] = future.result()
-        
+
         return self.blends
+
 
 def construct_A(h, w, grad_weight):
     indgx_x = np.zeros(2 * (h - 1) * w, dtype=int)
@@ -62,12 +79,17 @@ def construct_A(h, w, grad_weight):
     vdx[1::2] = -1
     vdy[1::2] = -1
 
-    Ix = scipy.sparse.eye(h * w, format='csc')
-    Gx = scipy.sparse.coo_matrix((vdx, (indgx_x, indgx_y)), shape=(h * w, h * w)).tocsc()
-    Gy = scipy.sparse.coo_matrix((vdy, (indgy_x, indgy_y)), shape=(h * w, h * w)).tocsc()
+    Ix = scipy.sparse.eye(h * w, format="csc")
+    Gx = scipy.sparse.coo_matrix(
+        (vdx, (indgx_x, indgx_y)), shape=(h * w, h * w)
+    ).tocsc()
+    Gy = scipy.sparse.coo_matrix(
+        (vdy, (indgy_x, indgy_y)), shape=(h * w, h * w)
+    ).tocsc()
 
     As = [scipy.sparse.vstack([Gx * weight, Gy * weight, Ix]) for weight in grad_weight]
     return As
+
 
 def poisson_fusion(blendI, I1, I2, mask, a):
     grad_weight = [2.5, 0.5, 0.5]
@@ -76,21 +98,25 @@ def poisson_fusion(blendI, I1, I2, mask, a):
     Ib = cv2.cvtColor(I2, cv2.COLOR_BGR2LAB).astype(float)
     m = (mask > 0).astype(float)[:, :, np.newaxis]
     h, w, c = Iab.shape
-    
+
     As = a
-    
+
     gx = np.zeros_like(Ia)
     gy = np.zeros_like(Ia)
 
-    gx[:-1, :, :] = (Ia[:-1, :, :] - Ia[1:, :, :]) * (1 - m[:-1, :, :]) + (Ib[:-1, :, :] - Ib[1:, :, :]) * m[:-1, :, :]
-    gy[:, :-1, :] = (Ia[:, :-1, :] - Ia[:, 1:, :]) * (1 - m[:, :-1, :]) + (Ib[:, :-1, :] - Ib[:, 1:, :]) * m[:, :-1, :]
-    
+    gx[:-1, :, :] = (Ia[:-1, :, :] - Ia[1:, :, :]) * (1 - m[:-1, :, :]) + (
+        Ib[:-1, :, :] - Ib[1:, :, :]
+    ) * m[:-1, :, :]
+    gy[:, :-1, :] = (Ia[:, :-1, :] - Ia[:, 1:, :]) * (1 - m[:, :-1, :]) + (
+        Ib[:, :-1, :] - Ib[:, 1:, :]
+    ) * m[:, :-1, :]
+
     final_channels = []
-    
+
     for i in range(3):
         result = poisson_fusion_channel(Iab, gx, gy, h, w, As, i, grad_weight)
         final_channels.append(result)
-        
+
     final = np.clip(np.concatenate(final_channels, axis=2), 0, 255)
     return cv2.cvtColor(final.astype(np.uint8), cv2.COLOR_LAB2BGR)
 
@@ -104,14 +130,11 @@ def poisson_fusion_channel(Iab, gx, gy, h, w, As, channel, grad_weight):
         im = Iab[:, :, channel].reshape(h * w, 1)
         im_mean = im.mean()
         im = im - im_mean
-        
+
         A = As[channel]
         b = np.vstack([im_dx * weight, im_dy * weight, im])
-        
+
         out = scipy.sparse.linalg.lsqr(A, b)
         out_im = (out[0] + im_mean).reshape(h, w, 1)
-        
+
         return out_im
-    
-    
-    

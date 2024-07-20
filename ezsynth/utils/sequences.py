@@ -9,7 +9,6 @@ class Sequence:
         self.begin_fr_idx = begin_fr_idx
         self.end_fr_idx = end_fr_idx
 
-        # Check explicitly for None
         self.style_start_fr = style_start_fr
         self.style_end_fr = style_end_fr
 
@@ -32,8 +31,9 @@ class Sequence:
             begin_fr_idx=self.end_fr_idx,
             end_fr_idx=self.begin_fr_idx,
             style_start_fr=self.style_end_fr,
-            style_end_fr=self.style_start_fr
+            style_end_fr=self.style_start_fr,
         )
+
 
 class Subsequence:
     def __init__(

@@ -2,6 +2,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor
 
 import cv2
+import numpy as np
 
 from ezsynth.aux_utils import (
     extract_indices,
@@ -252,7 +253,7 @@ def process(
     return final_blends
 
 
-def run_sequences(imgseq, edge, flow, positional, seq: Sequence, reverse=False):
+def run_sequences(imgseq: list[np.ndarray], edge, flow, pos, seq: Sequence, reverse=False):
     """
     Run the sequence for ebsynth based on the provided parameters.
     Parameters:
@@ -294,8 +295,8 @@ def run_sequences(imgseq, edge, flow, positional, seq: Sequence, reverse=False):
             # Commented out section: additional guide and warping
             if i != start:
                 eb.add_guide(
-                    positional[start - 1] if reverse else positional[start],
-                    positional[i],
+                    pos[start - 1] if reverse else pos[start],
+                    pos[i],
                     2.0,
                 )
 
