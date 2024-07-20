@@ -8,7 +8,14 @@ from .reconstruction import reconstructor
 
 
 class Blend:
-    def __init__(self, style_fwd, style_bwd, err_fwd, err_bwd, flow_fwd):
+    def __init__(
+        self,
+        style_fwd: list[np.ndarray],
+        style_bwd: list[np.ndarray],
+        err_fwd: list[np.ndarray],
+        err_bwd: list[np.ndarray],
+        flow_fwd: list[np.ndarray],
+    ):
         self.style_fwd = style_fwd
         self.style_bwd = style_bwd
         self.err_fwd = err_fwd
@@ -19,9 +26,9 @@ class Blend:
 
     def _create_final_err_masks(self):
         err_masks = self._create_selection_mask(self.err_fwd, self.err_bwd)
-        print(f"Length of err_masks: {len(err_masks)}")
-        print(f"Shape of err_masks[0]: {err_masks[0].shape}")
-        print(f"Type of err_masks[0]: {type(err_masks[0])}")
+        print(f"{len(err_masks)=}")
+        print(f"{err_masks[0].shape=}")
+        print(f"{type(err_masks[0])=}")
         # Check if err_masks is empty
         if not err_masks:
             print("Error: err_masks is empty.")
@@ -62,23 +69,27 @@ class Blend:
 
         return warped_masks
 
-    def _create_selection_mask(self, err_forward, err_backward):
-        selection_masks = []
+    def _create_selection_mask(
+        self, err_forward_lst: list[np.ndarray], err_backward_lst: list[np.ndarray]
+    ) -> list[np.ndarray]:
+        # Convert lists to numpy arrays
+        err_forward = np.array(err_forward_lst)
+        err_backward = np.array(err_backward_lst)
 
-        for i in range(len(err_forward)):
-            # Check that shapes match
-            if err_forward[i].shape != err_backward[i].shape:
-                print(f"Shape mismatch: {err_forward.shape} vs {err_backward.shape}")
-                continue  # Skip this iteration
+        # Check that shapes match
+        if err_forward.shape != err_backward.shape:
+            print(f"Shape mismatch: {err_forward.shape=} vs {err_backward.shape=}")
+            return []  # Return an empty list if shapes don't match
 
-            # Create a binary mask where the forward error metric is less than the backward error metric
-            selection_mask = np.where(err_forward[i] < err_backward[i], 0, 1)
-            selection_mask = selection_mask.astype(np.uint8)
+        # Create a binary mask where the forward error metric is less than the backward error metric
+        selection_masks = np.where(err_forward < err_backward, 0, 1).astype(np.uint8)
 
-            # Add to the list of masks
-            selection_masks.append(selection_mask)
+        # Convert numpy array back to list
+        selection_masks_lst = [
+            selection_masks[i] for i in range(selection_masks.shape[0])
+        ]
 
-        return selection_masks
+        return selection_masks_lst
 
     def _hist_blend(self):
         hist_blends = []
