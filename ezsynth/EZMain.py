@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from .aux_utils import save_results, validate_image
+from .aux_utils import save_results, validate_and_read_img
 from .utils._ebsynth import ebsynth
 from .utils.ezutils import Setup
 
@@ -21,8 +21,11 @@ class Ezsynth:
         flow_method="RAFT",
         model="sintel",
         output_folder=None,
+        process=False,
     ):
-        self.setup = Setup(style_paths, seq_folder_path, edge_method, flow_method, model)
+        self.setup = Setup(
+            style_paths, seq_folder_path, edge_method, flow_method, model, process
+        )
         self.output_folder = output_folder
         self.results = None
 
@@ -36,7 +39,7 @@ class Ezsynth:
         Save the results to the specified directory.
 
         If the results are a single image, save it as base_name + extension.
-        If the results are a list of images, save them as 
+        If the results are a list of images, save them as
         base_name + 000 + extension, base_name + 001 + extension, etc.
 
         If the results are None, print an error message.
@@ -99,7 +102,7 @@ class Imagesynth:
             or to do something else result = eb.run()
 
         """
-        self.style_img = validate_image(style_img)
+        self.style_img = validate_and_read_img(style_img)
         self.device = "cuda"
         self.eb = ebsynth(
             style=style_img,

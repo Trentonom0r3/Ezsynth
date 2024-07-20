@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+import time
 from ..flow_utils.OpticalFlow import OpticalFlowProcessor
 from ..flow_utils.warp import Warp
 
@@ -58,51 +58,85 @@ class GuideFactory:
     """
 
     VALID_EDGE_METHODS = ["PAGE", "PST", "Classic"]
-    VALID_FLOW_METHODS = ["RAFT", "DeepFlow"]
+    VALID_FLOW_METHODS = [
+        "RAFT",
+        #   "DeepFlow" # There is no support for deepflow in the original repo
+    ]
     VALID_MODEL_NAMES = ["sintel", "kitti", "chairs"]
+
+    DEFAULT_EDGE_METHOD = "PAGE"
+    DEFAULT_FLOW_METHOD = "RAFT"
+    DEFAULT_MODEL_NAME = "sintel"
+
+    @classmethod
+    def validate_edge_flow_model(
+        cls, edge_method: str, flow_method: str, model_name: str
+    ):
+        edge_method = (
+            edge_method
+            if edge_method in cls.VALID_EDGE_METHODS
+            else cls.DEFAULT_EDGE_METHOD
+        )
+        flow_method = (
+            flow_method
+            if flow_method in cls.VALID_FLOW_METHODS
+            else cls.DEFAULT_FLOW_METHOD
+        )
+        model_name = (
+            model_name
+            if model_name in cls.VALID_MODEL_NAMES
+            else cls.DEFAULT_MODEL_NAME
+        )
+        return edge_method, flow_method, model_name
 
     def __init__(
         self,
-        imgsequence,
-        imgseq,
+        img_frs_seq: list[np.ndarray],
+        img_file_paths: list[str],
         edge_method="PAGE",
         flow_method="RAFT",
         model_name="sintel",
     ):
-        if not imgsequence:
+        if not img_frs_seq:
             raise ValueError("Image sequence cannot be empty.")
 
-        self.imgsequence = imgsequence
-        self.edge_method = (
-            edge_method if edge_method in self.VALID_EDGE_METHODS else "PAGE"
+        self.img_frs_seq = img_frs_seq
+        self.edge_method, self.flow_method, self.model_name = (
+            self.validate_edge_flow_model(edge_method, flow_method, model_name)
         )
-        self.flow_method = (
-            flow_method if flow_method in self.VALID_FLOW_METHODS else "RAFT"
-        )
-        self.model_name = (
-            model_name if model_name in self.VALID_MODEL_NAMES else "sintel"
-        )
+
         self.guides = {}
-        self.imgs = imgseq
+        self.img_file_paths = img_file_paths
+    
+    @staticmethod
+    def create_edge_guide(img_file_paths: list[str], edge_method: str):
+        pass
 
     def create_all_guides(self):
-        edge_guide = EdgeGuide(self.imgs, method=self.edge_method)
-        edge_guide = edge_guide()
-        # edge_guide = [edge for edge in edge_guide]
+        st = time.time()
+        edge_guide = EdgeGuide(self.img_file_paths, method=self.edge_method)
+        # edge_guide = edge_guide()
+        edge_guide = edge_guide.run(self.img_frs_seq, self.edge_method)
+        print(f"Edge guide took {time.time() - st:.4f} s")
+        edge_guide = [edge for edge in edge_guide]
+        st = time.time()
         flow_guide = FlowGuide(
-            self.imgsequence, method=self.flow_method, model_name=self.model_name
+            self.img_frs_seq, method=self.flow_method, model_name=self.model_name
         )
         flow_guide = flow_guide()
         flow_guide = [flow for flow in flow_guide]
-        # fwd_flow = FlowGuide(self.imgsequence[::-1], method=self.flow_method, model_name=self.model_name) # Reverse the image sequence
-        # fwd_flow = fwd_flow()   # Compute the flow, for some reason computing flow using imgseq backwards results in fwd_flow
-        # fwd_flow = [flow for flow in fwd_flow]
-        positional_guide = PositionalGuide(self.imgsequence, flow=flow_guide)
+        print(f"Flow guide took {time.time() - st:.4f} s")
+        fwd_flow = FlowGuide(self.img_frs_seq[::-1], method=self.flow_method, model_name=self.model_name) # Reverse the image sequence
+        fwd_flow = fwd_flow()   # Compute the flow, for some reason computing flow using imgseq backwards results in fwd_flow
+        fwd_flow = [flow for flow in fwd_flow]
+        st = time.time()
+        positional_guide = PositionalGuide(self.img_frs_seq, flow=flow_guide)
         positional_guide = positional_guide()
-        positional_fwd = PositionalGuide(self.imgsequence, flow=flow_guide[::-1])
+        positional_fwd = PositionalGuide(self.img_frs_seq, flow=flow_guide[::-1])
         positional_fwd = positional_fwd()
         positional_fwd = positional_fwd[::-1]
         fwd_flow = [flow * -1 for flow in flow_guide]
+        print(f"Pos guide took {time.time() - st:.4f} s")
 
         self.guides = {
             "edge": edge_guide,
@@ -115,15 +149,15 @@ class GuideFactory:
         return self.guides
 
     def add_custom_guide(self, name, custom_guides):
-        if len(custom_guides) != len(self.imgsequence):
+        if len(custom_guides) != len(self.img_frs_seq):
             raise ValueError(
                 "The length of the custom guide must match the length of the image sequence."
             )
 
         self.guides[name] = custom_guides
 
-    def __call__(self):
-        return self.create_all_guides()
+    # def __call__(self):
+    #     return self.create_all_guides()
 
 
 class Guide:
@@ -131,18 +165,10 @@ class Guide:
         pass
 
 
-class EdgeGuide(Guide):
-    valid_methods = ["PAGE", "PST", "Classic"]
-
-    def __init__(self, imgseq, method="PAGE"):
-        super().__init__()
-        if method not in self.valid_methods:
-            raise ValueError(
-                f"Invalid method {method}. Valid methods are {self.valid_methods}"
-            )
-
+class EdgeGuide:
+    def __init__(self, img_file_paths, method="PAGE"):
         self.edge_detector = EdgeDetector(method)
-        self.imgseq = imgseq
+        self.img_file_paths = img_file_paths
 
         self._edge_maps = None  # Store edge_maps here when computed
 
@@ -161,21 +187,24 @@ class EdgeGuide(Guide):
         # Uncomment the following line to potentially parallelize this computation
         # with concurrent.futures.ThreadPoolExecutor() as executor:
 
-        self._edge_maps = [self._create(img) for img in self.imgseq]
+        self._edge_maps = [self._create(img) for img in self.img_file_paths]
 
     def _create(self, img):
         return self.edge_detector.compute_edge(img)
+    
+    def run(self, img_frs_seq: np.ndarray, method: str):
+        if method == "PST" or method == "PAGE":
+            edge_maps = [
+                self.edge_detector.compute_edge(img_fr) for img_fr in img_frs_seq
+            ]
+            self._edge_maps = edge_maps
+            return edge_maps
+        else:
+            return self.__call__()
 
 
-class FlowGuide(Guide):
-    valid_methods = ["RAFT", "DeepFlow"]
-
+class FlowGuide:
     def __init__(self, imgseq, method="RAFT", model_name="sintel"):
-        super().__init__()
-        if method not in self.valid_methods:
-            raise ValueError(
-                f"Invalid method {method}. Valid methods are {self.valid_methods}"
-            )
         self.optical_flow_processor = OpticalFlowProcessor(
             model_name=model_name, flow_method=method
         )
@@ -190,9 +219,9 @@ class FlowGuide(Guide):
         return self.optical_flow
 
 
-class PositionalGuide(Guide):
+class PositionalGuide:
     def __init__(self, imgseq, flow):
-        super().__init__()
+        # super().__init__()
         self.coord_map = None
         self.coord_map_warped = None
         self.warp = Warp(

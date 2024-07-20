@@ -3,6 +3,8 @@ import re
 
 import cv2
 import numpy as np
+import torch
+import tqdm
 
 
 def save_results(
@@ -14,10 +16,10 @@ def save_results(
     return output_file_path
 
 
-def validate_image(img: str | np.ndarray) -> np.ndarray:
+def validate_and_read_img(img: str | np.ndarray) -> np.ndarray:
     if isinstance(img, str):
-        img = cv2.imread(img)
-        if img is not None:
+        if os.path.isfile(img):
+            img = cv2.imread(img)
             return img
         raise ValueError(f"Path does not exist: {img}")
 
@@ -31,8 +33,9 @@ def read_frames_from_paths(lst: list[str]) -> list[np.ndarray]:
     img_arr_seq: list[np.ndarray] = []
     err_frame = -1
     try:
-        for err_frame, img_path in enumerate(lst):
-            img_arr = validate_image(img_path)
+        total = len(lst)
+        for err_frame, img_path in tqdm.tqdm(enumerate(lst), desc="Reading images: ", total=total):
+            img_arr = validate_and_read_img(img_path)
             img_arr_seq.append(img_arr)
         else:
             print(f"Read {len(img_arr_seq)} frames successfully")
@@ -65,3 +68,16 @@ def get_sequence_indices(seq_folder_path: str) -> list[str]:
 
 def extract_indices(lst: list[str]):
     return sorted(int(img_path_pattern.findall(img_name)[-1][0]) for img_name in lst)
+
+def is_valid_file_path(input_path: str | list[str]) -> bool:
+    return isinstance(input_path, str) and os.path.isfile(input_path)
+
+def validate_file_or_folder_to_lst(input_paths: str | list[str], type_name=""):
+    if is_valid_file_path(input_paths):
+        return [input_paths]
+    if isinstance(input_paths, list):
+        valid_paths = [path for path in input_paths if is_valid_file_path(path)]
+        if valid_paths:
+            print(f"Received {len(valid_paths)} {type_name} files")
+            return valid_paths
+    raise FileNotFoundError(f"No valid {type_name} file(s) were found. {input_paths}")

@@ -1,13 +1,17 @@
+import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
 import cv2
 import numpy as np
 
+import time
+
 from ezsynth.aux_utils import (
     extract_indices,
     get_sequence_indices,
     read_frames_from_paths,
+    validate_file_or_folder_to_lst,
 )
 
 from ._ebsynth import ebsynth
@@ -41,6 +45,15 @@ TODO REFACTOR:
 """
 
 
+def setup_src_from_folder(
+    seq_folder_path: str,
+) -> tuple[list[str], list[int], list[np.ndarray]]:
+    img_file_paths = get_sequence_indices(seq_folder_path)
+    img_idxes = extract_indices(img_file_paths)
+    img_frs_seq = read_frames_from_paths(img_file_paths)
+    return img_file_paths, img_idxes, img_frs_seq
+
+
 class Setup:
     def __init__(
         self,
@@ -49,45 +62,48 @@ class Setup:
         edge_method="PAGE",
         flow_method="RAFT",
         model_name="sintel",
+        process=False,
     ):
-        img_file_paths = get_sequence_indices(seq_folder_path)
-        self.img_file_paths = img_file_paths
-        self.img_idxes = extract_indices(img_file_paths)
-        self.img_frs_seq = read_frames_from_paths(img_file_paths)
+        self.img_file_paths, self.img_idxes, self.img_frs_seq = setup_src_from_folder(
+            seq_folder_path
+        )
+        self.style_paths = validate_file_or_folder_to_lst(style_paths, "style")
+
         self.begin_fr_idx = self.img_idxes[0]
         self.end_fr_idx = self.img_idxes[-1]
-        self.style_paths = self._get_styles(style_paths)
+        
         self.style_idxes = extract_indices(self.style_paths)
         self.num_style_frs = len(self.style_paths)
-
-        self.guide_factory = GuideFactory(
-            imgsequence=self.img_frs_seq,
-            imgseq=self.img_file_paths,
-            edge_method=edge_method,
-            flow_method=flow_method,
-            model_name=model_name,
-        )
-
-        self.guides = self.guide_factory.create_all_guides()
-
-        manager = SequenceManager(
-            self.begin_fr_idx,
-            self.end_fr_idx,
-            self.style_paths,
-            self.style_idxes,
-            self.img_idxes,
-        )
-        # self.subsequences = manager._set_sequence()
-        self.sequences = manager._set_sequence()
-        self.subsequences = ["HAHA"]
-        # self.chunk_size = 10
-        # self.overlap_frs = 1
-        # self.subsequences = [
-        #     SequenceManager.generate_subsequences(
-        #         sequence, self.chunk_size, self.overlap_frs
-        #     )
-        #     for sequence in self.sequences
-        # ]
+        
+        if process:
+            st = time.time()
+            self.guide_factory = GuideFactory(
+                img_frs_seq=self.img_frs_seq,
+                img_file_paths=self.img_file_paths,
+                edge_method=edge_method,
+                flow_method=flow_method,
+                model_name=model_name,
+            )
+            self.guides = self.guide_factory.create_all_guides()
+            print(f"Guiding took {time.time() - st:.4f} s")
+            manager = SequenceManager(
+                self.begin_fr_idx,
+                self.end_fr_idx,
+                self.style_paths,
+                self.style_idxes,
+                self.img_idxes,
+            )
+            # self.subsequences = manager._set_sequence()
+            self.sequences = manager._set_sequence()
+            self.subsequences = ["HAHA"]
+            # self.chunk_size = 10
+            # self.overlap_frs = 1
+            # self.subsequences = [
+            #     SequenceManager.generate_subsequences(
+            #         sequence, self.chunk_size, self.overlap_frs
+            #     )
+            #     for sequence in self.sequences
+            # ]
 
     def __str__(self) -> str:
         return (
@@ -253,7 +269,9 @@ def process(
     return final_blends
 
 
-def run_sequences(imgseq: list[np.ndarray], edge, flow, pos, seq: Sequence, reverse=False):
+def run_sequences(
+    imgseq: list[np.ndarray], edge, flow, pos, seq: Sequence, reverse=False
+):
     """
     Run the sequence for ebsynth based on the provided parameters.
     Parameters:
