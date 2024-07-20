@@ -4,7 +4,6 @@ import numpy as np
 import os
 from phycv import PST_GPU, PAGE_GPU
 import cv2
-import tempfile
 
 import torch
 
@@ -29,24 +28,6 @@ class EdgeDetector:
         elif method == "Classic":
             size, sigma = 5, 6.0
             self.kernel = self.create_gaussian_kernel(size, sigma)
-
-    @staticmethod
-    def load_image(input_data):
-        """Load image from either a file path or directly from a numpy array."""
-        if isinstance(input_data, str):  # If it's a file path
-            return input_data
-        # If it's a numpy array, save it as a temporary file
-        elif isinstance(input_data, np.ndarray):
-            with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as temp_file:
-                temp_file_path = temp_file.name
-                img = Image.fromarray(input_data)
-                img.save(temp_file_path)
-
-            return temp_file_path
-        else:
-            raise ValueError(
-                "Invalid input. Provide either a file path or a numpy array."
-            )
 
     @staticmethod
     def save_result(output_dir, base_file_name, result_array):
@@ -136,7 +117,7 @@ class EdgeDetector:
         edge_map = self.page_gpu.page_edge.cpu().numpy()
         return edge_map
 
-    def compute_edge(self, input_data):
+    def compute_edge(self, input_data: np.ndarray):
         """
         Compute the edge map.
 
@@ -144,50 +125,37 @@ class EdgeDetector:
 
         :return: Edge map as a numpy array.
         """
-        method = self.method
-        if method == "PST":
-            # pst_gpu = PST_GPU(device=self.device)
-            S, W, sigma_LPF, thresh_min, thresh_max, morph_flag = (
-                0.3,
-                15,
-                0.15,
-                0.05,
-                0.9,
-                1,
-            )
-
+        if self.method == "PST":
             edge_map = self.pst_run(
-                input_data, S, W, sigma_LPF, thresh_min, thresh_max, morph_flag
+                input_data,
+                S=0.3,
+                W=15,
+                sigma_LPF=0.15,
+                thresh_min=0.05,
+                thresh_max=0.9,
+                morph_flag=1,
             )
             edge_map = self.pst_page_postprocess(edge_map)
             return edge_map
+
         if self.method == "Classic":
             edge_map = self.classic_preprocess(input_data)
             return edge_map
 
-        if method == "PAGE":
-            (
-                mu_1,
-                mu_2,
-                sigma_1,
-                sigma_2,
-                S1,
-                S2,
-                sigma_LPF,
-                thresh_min,
-                thresh_max,
-                morph_flag,
-            ) = 0, 0.35, 0.05, 0.8, 0.8, 0.8, 0.1, 0.0, 0.9, 1
-            edge_map = self.page_run(input_data, mu_1,
-                mu_2,
-                sigma_1,
-                sigma_2,
-                S1,
-                S2,
-                sigma_LPF,
-                thresh_min,
-                thresh_max,
-                morph_flag,)
+        if self.method == "PAGE":
+            edge_map = self.page_run(
+                input_data,
+                mu_1=0,
+                mu_2=0.35,
+                sigma_1=0.05,
+                sigma_2=0.8,
+                S1=0.8,
+                S2=0.8,
+                sigma_LPF=0.1,
+                thresh_min=0.0,
+                thresh_max=0.9,
+                morph_flag=1,
+            )
             edge_map = self.pst_page_postprocess(edge_map)
             return edge_map
 

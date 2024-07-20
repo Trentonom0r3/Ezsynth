@@ -1,6 +1,10 @@
+import sys
+import time
+
 import cv2
 import numpy as np
-import time
+import tqdm
+
 from ..flow_utils.OpticalFlow import OpticalFlowProcessor
 from ..flow_utils.warp import Warp
 
@@ -107,7 +111,7 @@ class GuideFactory:
 
         self.guides = {}
         self.img_file_paths = img_file_paths
-    
+
     @staticmethod
     def create_edge_guide(img_file_paths: list[str], edge_method: str):
         pass
@@ -115,20 +119,18 @@ class GuideFactory:
     def create_all_guides(self):
         st = time.time()
         edge_guide = EdgeGuide(self.img_file_paths, method=self.edge_method)
-        # edge_guide = edge_guide()
-        edge_guide = edge_guide.run(self.img_frs_seq, self.edge_method)
+        edge_guide = edge_guide.run(self.img_frs_seq)
         print(f"Edge guide took {time.time() - st:.4f} s")
-        edge_guide = [edge for edge in edge_guide]
         st = time.time()
         flow_guide = FlowGuide(
             self.img_frs_seq, method=self.flow_method, model_name=self.model_name
         )
-        flow_guide = flow_guide()
-        flow_guide = [flow for flow in flow_guide]
+        flow_guide = [flow for flow in flow_guide._create()]
         print(f"Flow guide took {time.time() - st:.4f} s")
-        fwd_flow = FlowGuide(self.img_frs_seq[::-1], method=self.flow_method, model_name=self.model_name) # Reverse the image sequence
-        fwd_flow = fwd_flow()   # Compute the flow, for some reason computing flow using imgseq backwards results in fwd_flow
-        fwd_flow = [flow for flow in fwd_flow]
+        fwd_flow = FlowGuide(
+            list(reversed(self.img_frs_seq)), method=self.flow_method, model_name=self.model_name
+        )  # Reverse the image sequence
+        fwd_flow = fwd_flow._create()  # Compute the flow, for some reason computing flow using imgseq backwards results in fwd_flow
         st = time.time()
         positional_guide = PositionalGuide(self.img_frs_seq, flow=flow_guide)
         positional_guide = positional_guide()
@@ -156,14 +158,6 @@ class GuideFactory:
 
         self.guides[name] = custom_guides
 
-    # def __call__(self):
-    #     return self.create_all_guides()
-
-
-class Guide:
-    def __init__(self):
-        pass
-
 
 class EdgeGuide:
     def __init__(self, img_file_paths, method="PAGE"):
@@ -172,56 +166,29 @@ class EdgeGuide:
 
         self._edge_maps = None  # Store edge_maps here when computed
 
-    def __call__(self):
-        if self._edge_maps is None:
-            self._compute_edge()
+    def run(self, img_frs_seq: np.ndarray):
+        edge_maps = []
+        for img_fr in tqdm.tqdm(img_frs_seq, desc="Calculating edge maps"):
+            edge_maps.append(self.edge_detector.compute_edge(img_fr))
+        self._edge_maps = edge_maps
         return self._edge_maps
-
-    def __iter__(self):
-        if self._edge_maps is None:
-            self._compute_edge()
-        for edge_map in self._edge_maps:
-            yield edge_map
-
-    def _compute_edge(self):
-        # Uncomment the following line to potentially parallelize this computation
-        # with concurrent.futures.ThreadPoolExecutor() as executor:
-
-        self._edge_maps = [self._create(img) for img in self.img_file_paths]
-
-    def _create(self, img):
-        return self.edge_detector.compute_edge(img)
-    
-    def run(self, img_frs_seq: np.ndarray, method: str):
-        if method == "PST" or method == "PAGE":
-            edge_maps = [
-                self.edge_detector.compute_edge(img_fr) for img_fr in img_frs_seq
-            ]
-            self._edge_maps = edge_maps
-            return edge_maps
-        else:
-            return self.__call__()
 
 
 class FlowGuide:
-    def __init__(self, imgseq, method="RAFT", model_name="sintel"):
+    def __init__(self, img_frs_seq, method="RAFT", model_name="sintel"):
         self.optical_flow_processor = OpticalFlowProcessor(
             model_name=model_name, flow_method=method
         )
-        self.imgsequence = imgseq
+        self.img_frs_seq = img_frs_seq
         self.optical_flow = None
 
-    def __call__(self):
-        return self._create()
-
     def _create(self):
-        self.optical_flow = self.optical_flow_processor.compute_flow(self.imgsequence)
+        self.optical_flow = self.optical_flow_processor.compute_flow(self.img_frs_seq)
         return self.optical_flow
 
 
 class PositionalGuide:
     def __init__(self, imgseq, flow):
-        # super().__init__()
         self.coord_map = None
         self.coord_map_warped = None
         self.warp = Warp(
