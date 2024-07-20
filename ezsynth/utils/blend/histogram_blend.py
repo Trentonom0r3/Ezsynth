@@ -3,6 +3,7 @@ import numpy as np
 
 try:
     import cupy as cp
+    USE_GPU = True
 except:  # noqa: E722
     print("Cupy is not installed. Will use normal Numpy for Histogram blending")
     USE_GPU = False
@@ -24,7 +25,7 @@ class HistogramBlender:
     def mean_std(self, img):
         return self.xp.mean(img, axis=(0, 1)), self.xp.std(img, axis=(0, 1))
 
-    def blend(self, a, b, error_mask, weight1=0.5, weight2=0.5):
+    def blend(self, a, b, error_mask, weight1=0.5, weight2=0.5) -> list[np.ndarray]:
         if self.use_gpu:
             a = cp.asarray(a)
             b = cp.asarray(b)
