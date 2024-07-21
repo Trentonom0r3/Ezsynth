@@ -9,8 +9,8 @@ from .utils.ezutils import Setup
 class Ezsynth:
     """
     edge_method: `["PAGE", "PST", "Classic"]` # edge detection
-    flow_method: `["RAFT", "DeepFlow"]`       # optical flow computation. DeepFlow doesn't work yet
-    model: `["sintel", "kitti", "chairs"]`    # optical flow
+    flow_method: `["RAFT"]`       # optical flow computation. DeepFlow doesn't work yet
+    model: `["sintel", "kitti"]`    # optical flow
     """
 
     def __init__(
@@ -22,9 +22,10 @@ class Ezsynth:
         model="sintel",
         output_folder=None,
         process=False,
+        cal_flow_bwd=False
     ):
         self.setup = Setup(
-            style_paths, seq_folder_path, edge_method, flow_method, model, process
+            style_paths, seq_folder_path, edge_method, flow_method, model, process, cal_flow_bwd
         )
         self.output_folder = output_folder
         self.results = None

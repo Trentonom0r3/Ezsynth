@@ -65,6 +65,7 @@ class Setup:
         flow_method="RAFT",
         model_name="sintel",
         process=False,
+        cal_flow_bwd=False,
     ):
         self.img_file_paths, self.img_idxes, self.img_frs_seq = setup_src_from_folder(
             seq_folder_path
@@ -85,7 +86,7 @@ class Setup:
             self.style_idxes,
             self.img_idxes,
         )
-        
+
         self.sequences = manager.create_sequences()
         if process:
             st = time.time()
@@ -96,11 +97,10 @@ class Setup:
                 flow_method=flow_method,
                 model_name=model_name,
             )
-            self.guides = self.guide_factory.create_all_guides()
+            self.guides = self.guide_factory.create_all_guides(cal_flow_bwd)
             print(f"Guiding took {time.time() - st:.4f} s")
 
-
-    def process_sequence(self, forward_only=False):
+    def process_sequence(self):
         # return process(
         #     subseqs=self.sequences,
         #     img_frs_seq=self.img_frs_seq,
@@ -153,7 +153,7 @@ def process(
     bwd_styles = []
     err_fwds = []
     err_bwds = []
-    
+
     no_blend = []
 
     params = {"img_frs_seq": img_frs_seq, "edge": edge_maps}

@@ -114,39 +114,37 @@ class GuideFactory:
         print(f"Edge guide took {time.time() - st:.4f} s")
         return edge_guide
 
-    def create_flow_guides(self):
+    def create_flow_guides(self, reverse=False):
         st = time.time()
         flow_guide = FlowGuide(
-            self.img_frs_seq, method=self.flow_method, model_name=self.model_name
+            self.img_frs_seq if not reverse else self.img_frs_seq[::-1],
+            method=self.flow_method,
+            model_name=self.model_name,
         )
         flow_guide = flow_guide._create()
         print(f"Flow guide took {time.time() - st:.4f} s")
         return flow_guide
 
-    def create_fwd_flow_guides(self):
-        st = time.time()
-        fwd_flow = FlowGuide(
-            # self.img_frs_seq[::-1],
-            self.img_frs_seq,
-            method=self.flow_method,
-            model_name=self.model_name,
-        )  # Reverse the image sequence
-        fwd_flow = fwd_flow._create()
-        print(f"FWD guide took {time.time() - st:.4f} s")
-        return fwd_flow
-
-    def create_all_guides(self):
+    def create_all_guides(self, cal_flow_bwd=False):
         edge_guide = self.create_edge_guides()
         flow_guide = self.create_flow_guides()
         st = time.time()
 
-        positional_fwd = PositionalGuide(self.img_frs_seq, flow=flow_guide)._create()
+        positional_fwd = PositionalGuide(self.img_frs_seq[0], flow=flow_guide)._create()
         positional_fwd = positional_fwd[::-1]
-        positional_bwd = PositionalGuide(
-            self.img_frs_seq, flow=flow_guide[::-1]
-        )._create()
-
         fwd_flow = [flow * -1 for flow in flow_guide]
+
+        if cal_flow_bwd:
+            flow_guide = self.create_flow_guides(True)
+
+            positional_bwd = PositionalGuide(
+                self.img_frs_seq[0], flow=flow_guide
+            )._create()
+            flow_guide = [flow * -1 for flow in flow_guide]
+        else:
+            positional_bwd = PositionalGuide(
+                self.img_frs_seq[0], flow=flow_guide[::-1]
+            )._create()
 
         print(f"Pos guide took {time.time() - st:.4f} s")
 
@@ -176,7 +174,7 @@ class EdgeGuide:
 
         self._edge_maps = None  # Store edge_maps here when computed
 
-    def run(self, img_frs_seq: np.ndarray):
+    def run(self, img_frs_seq: list[np.ndarray]):
         edge_maps = []
         for img_fr in tqdm.tqdm(img_frs_seq, desc="Calculating edge maps"):
             edge_maps.append(self.edge_detector.compute_edge(img_fr))
@@ -185,7 +183,9 @@ class EdgeGuide:
 
 
 class FlowGuide:
-    def __init__(self, img_frs_seq, method="RAFT", model_name="sintel"):
+    def __init__(
+        self, img_frs_seq: list[np.ndarray], method="RAFT", model_name="sintel"
+    ):
         self.optical_flow_processor = OpticalFlowProcessor(
             model_name=model_name, flow_method=method
         )
@@ -198,14 +198,14 @@ class FlowGuide:
 
 
 class PositionalGuide:
-    def __init__(self, imgseq, flow):
+    def __init__(self, sample_fr: np.ndarray, flow):
         self.coord_map = None
         self.coord_map_warped = None
         self.warp = Warp(
-            imgseq[0]
+            sample_fr
         )  # Assuming Warp class has been modified to work with NumPy
         self.flow = flow
-        self.imgseq = imgseq
+        self.sample_fr = sample_fr
 
     def _create_and_warp_coord_map(self, flow_up, original_size):
         if self.coord_map is None:
@@ -241,6 +241,6 @@ class PositionalGuide:
 
     def _create(self):
         self.g_pos = self._create_g_pos_from_flow(
-            self.flow, self.imgseq[0].shape[1::-1]
+            self.flow, self.sample_fr.shape[1::-1]
         )
         return self.g_pos
