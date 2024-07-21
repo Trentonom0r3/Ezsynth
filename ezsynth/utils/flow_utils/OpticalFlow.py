@@ -9,7 +9,7 @@ import tqdm
 
 from .core.raft import RAFT
 from .core.utils.utils import InputPadder
-from .warp import Warp
+# from .warp import Warp
 
 
 class OpticalFlowProcessor:
@@ -19,28 +19,28 @@ class OpticalFlowProcessor:
     ]
     valid_model_names = ["sintel", "kitti", "small"]
 
-    def __init__(self, model_name="Sintel", flow_method="RAFT"):
+    def __init__(self, model_name="sintel", flow_method="RAFT"):
         self.flow_method = flow_method
         self.model_name = model_name
         self.optical_flow = []
 
-    def compute_flow(self, imgsequence):
+    def compute_flow(self, imgsequence: list[np.ndarray]):
         if self.flow_method == "RAFT":
             return self._compute_raft_flow(imgsequence)
         # elif self.flow_method == "DeepFlow":
         #     return self._compute_deepflow(imgsequence)
         raise ValueError("Only RAFT is implemented")
 
-    def _compute_raft_flow(self, imgsequence):
-        self.flow = RAFT_flow(imgsequence[0], self.model_name)
+    def _compute_raft_flow(self, imgsequence: list[np.ndarray]):
+        self.flow = RAFT_flow(self.model_name)
         self.optical_flow = self.flow.compute_flow(imgsequence)
         return self.optical_flow
 
 
-class RAFT_flow(Warp):
+class RAFT_flow:
     device = "cuda"
 
-    def __init__(self, img, model_name="Sintel"):
+    def __init__(self, model_name="sintel"):
         """
 
         Parameters
@@ -57,8 +57,8 @@ class RAFT_flow(Warp):
             flow = RAFT_flow()
             flow.compute_optical_flow(imgsequence)
         """
-        super().__init__(img)
-        model_name = "raft-" + model_name + ".pth"
+        # super().__init__(img)
+        model_name = f"raft-{model_name}.pth"
         self.model = torch.nn.DataParallel(
             RAFT(args=self._instantiate_raft_model(model_name))
         )
@@ -80,7 +80,7 @@ class RAFT_flow(Warp):
         args.mixed_precision = False
         return args
 
-    def _load_tensor_from_numpy(self, np_array):
+    def _load_tensor_from_numpy(self, np_array: np.ndarray):
         try:
             tensor = (
                 torch.tensor(np_array, dtype=torch.float32)
@@ -107,10 +107,8 @@ class RAFT_flow(Warp):
 
     def compute_flow(self, img_frs_seq: list[np.ndarray]):
         optical_flow = []
-        zip_img_frs = list(zip(img_frs_seq[:-1], img_frs_seq[1:]))
-        for img1, img2 in tqdm.tqdm(
-            zip_img_frs, total=len(zip_img_frs), desc="Calculating Flow: "
-        ):
-            optical_flow.append(self._compute_flow(img1, img2))
+        total_flows = len(img_frs_seq) - 1
+        for i in tqdm.tqdm(range(total_flows), desc="Calculating Flow: "):
+            optical_flow.append(self._compute_flow(img_frs_seq[i], img_frs_seq[i + 1]))
         self.optical_flow = optical_flow
         return self.optical_flow

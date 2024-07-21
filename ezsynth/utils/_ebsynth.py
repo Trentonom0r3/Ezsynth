@@ -38,7 +38,6 @@ class ebsynth:
         :param extrapass3x3: whether to perform an extra pass with 3x3 patches. Defaults to False.
         :param backend: backend to use ('cpu', 'cuda', or 'auto'). Defaults to 'auto'.
         """
-        # self.lock = threading.Lock()
         # Handling the style image
 
         if isinstance(style, (np.ndarray)):

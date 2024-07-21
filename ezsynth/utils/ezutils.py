@@ -20,6 +20,8 @@ from .flow_utils.warp import Warp
 from .guides.guides import GuideFactory
 from .sequences import Sequence, SequenceManager
 
+from .run import run_sequence
+
 """
 HELPER CLASSES CONTAINED WITHIN THIS FILE:
 
@@ -74,7 +76,17 @@ class Setup:
 
         self.style_idxes = extract_indices(self.style_paths)
         self.num_style_frs = len(self.style_paths)
+        self.style_frs = read_frames_from_paths(self.style_paths)
 
+        manager = SequenceManager(
+            self.begin_fr_idx,
+            self.end_fr_idx,
+            self.style_paths,
+            self.style_idxes,
+            self.img_idxes,
+        )
+        
+        self.sequences = manager.create_sequences()
         if process:
             st = time.time()
             self.guide_factory = GuideFactory(
@@ -86,51 +98,28 @@ class Setup:
             )
             self.guides = self.guide_factory.create_all_guides()
             print(f"Guiding took {time.time() - st:.4f} s")
-            manager = SequenceManager(
-                self.begin_fr_idx,
-                self.end_fr_idx,
-                self.style_paths,
-                self.style_idxes,
-                self.img_idxes,
-            )
-            # self.subsequences = manager._set_sequence()
-            self.sequences = manager._set_sequence()
-            self.subsequences = ["HAHA"]
-            # self.chunk_size = 10
-            # self.overlap_frs = 1
-            # self.subsequences = [
-            #     SequenceManager.generate_subsequences(
-            #         sequence, self.chunk_size, self.overlap_frs
-            #     )
-            #     for sequence in self.sequences
-            # ]
 
-    def __str__(self) -> str:
-        return (
-            f"Setup: Init: {self.begin_fr_idx} - {self.end_fr_idx} | "
-            f"Styles: {self.style_idxes} | Subsequences: {[str(sub) for sub in self.subsequences]}"
-        )
-
-    def _get_styles(self, style_paths: str | list[str]) -> list[str]:
-        """Get the styles either as a list or single string."""
-        if isinstance(style_paths, str):
-            return [style_paths]
-        elif isinstance(style_paths, list):
-            return style_paths
-        else:
-            raise ValueError("Styles must be either a string or a list of strings.")
 
     def process_sequence(self, forward_only=False):
-        return process(
-            # subseqs=self.subsequences,
-            subseqs=self.sequences,
-            img_frs_seq=self.img_frs_seq,
-            edge_maps=self.guides["edge"],
+        # return process(
+        #     subseqs=self.sequences,
+        #     img_frs_seq=self.img_frs_seq,
+        #     edge_maps=self.guides["edge"],
+        #     flow_fwd=self.guides["flow_fwd"],
+        #     flow_bwd=self.guides["flow_rev"],
+        #     pos_fwd=self.guides["positional_fwd"],
+        #     pos_bwd=self.guides["positional_rev"],
+        #     forward_only=forward_only
+        # )
+        return run_sequence(
+            self.sequences[0],
+            self.img_frs_seq,
+            self.style_frs,
+            edge=self.guides["edge"],
             flow_fwd=self.guides["flow_fwd"],
             flow_bwd=self.guides["flow_rev"],
             pos_fwd=self.guides["positional_fwd"],
             pos_bwd=self.guides["positional_rev"],
-            forward_only=forward_only
         )
 
 

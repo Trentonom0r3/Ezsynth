@@ -61,7 +61,7 @@ class GuideFactory:
         "RAFT",
         #   "DeepFlow" # There is no support for deepflow in the original repo
     ]
-    VALID_MODEL_NAMES = ["sintel", "kitti", "chairs"]
+    VALID_MODEL_NAMES = ["sintel", "kitti"]
 
     DEFAULT_EDGE_METHOD = "PAGE"
     DEFAULT_FLOW_METHOD = "RAFT"
@@ -126,7 +126,8 @@ class GuideFactory:
     def create_fwd_flow_guides(self):
         st = time.time()
         fwd_flow = FlowGuide(
-            list(reversed(self.img_frs_seq)),
+            # self.img_frs_seq[::-1],
+            self.img_frs_seq,
             method=self.flow_method,
             model_name=self.model_name,
         )  # Reverse the image sequence
@@ -137,30 +138,23 @@ class GuideFactory:
     def create_all_guides(self):
         edge_guide = self.create_edge_guides()
         flow_guide = self.create_flow_guides()
-        # fwd_flow = self.create_fwd_flow_guides()
-        # fwd_flow = FlowGuide(
-        #     list(reversed(self.img_frs_seq)), method=self.flow_method, model_name=self.model_name
-        # )  # Reverse the image sequence
-        # fwd_flow = fwd_flow._create()  # Compute the flow, for some reason computing flow using imgseq backwards results in fwd_flow
         st = time.time()
-        positional_guide = PositionalGuide(self.img_frs_seq, flow=flow_guide)
-        positional_guide = positional_guide()
-        positional_fwd = PositionalGuide(self.img_frs_seq, flow=flow_guide[::-1])
-        # positional_fwd = PositionalGuide(self.img_frs_seq, flow=fwd_flow)
-        positional_fwd = positional_fwd()
+
+        positional_fwd = PositionalGuide(self.img_frs_seq, flow=flow_guide)._create()
         positional_fwd = positional_fwd[::-1]
+        positional_bwd = PositionalGuide(
+            self.img_frs_seq, flow=flow_guide[::-1]
+        )._create()
+
         fwd_flow = [flow * -1 for flow in flow_guide]
-        print(f"{len(flow_guide)=}")
-        print(f"{len(fwd_flow)=}")
-        print(f"{len(positional_guide)=}")
-        print(f"{len(positional_fwd)=}")
+
         print(f"Pos guide took {time.time() - st:.4f} s")
 
         self.guides = {
             "edge": edge_guide,
             "flow_rev": flow_guide,
             "flow_fwd": fwd_flow,
-            "positional_rev": positional_guide,
+            "positional_rev": positional_bwd,
             "positional_fwd": positional_fwd,
         }
 
@@ -212,9 +206,6 @@ class PositionalGuide:
         )  # Assuming Warp class has been modified to work with NumPy
         self.flow = flow
         self.imgseq = imgseq
-
-    def __call__(self):
-        return self._create()
 
     def _create_and_warp_coord_map(self, flow_up, original_size):
         if self.coord_map is None:

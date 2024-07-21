@@ -8,7 +8,6 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 class Warp:
     def __init__(self, img):
-        # self.lock = threading.Lock()
         H, W, _ = img.shape
         self.H = H
         self.W = W
@@ -19,7 +18,6 @@ class Warp:
         return np.stack((x, y), axis=-1).astype(np.float32)
 
     def _warp(self, img: np.ndarray, flo: np.ndarray):
-        # with self.lock:
         flo_resized = cv2.resize(flo, (self.W, self.H), interpolation=cv2.INTER_LINEAR)
         map_x = self.grid[..., 0] + flo_resized[..., 0]
         map_y = self.grid[..., 1] + flo_resized[..., 1]
