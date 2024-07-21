@@ -1,4 +1,3 @@
-import sys
 import time
 
 import cv2
@@ -7,11 +6,7 @@ import tqdm
 
 from ..flow_utils.OpticalFlow import OpticalFlowProcessor
 from ..flow_utils.warp import Warp
-
-# import torch
 from .edge_detection import EdgeDetector
-
-# from utils import ebsynth, Preprocessor
 
 
 class GuideFactory:
@@ -118,7 +113,7 @@ class GuideFactory:
         edge_guide = edge_guide.run(self.img_frs_seq)
         print(f"Edge guide took {time.time() - st:.4f} s")
         return edge_guide
-    
+
     def create_flow_guides(self):
         st = time.time()
         flow_guide = FlowGuide(
@@ -127,11 +122,13 @@ class GuideFactory:
         flow_guide = flow_guide._create()
         print(f"Flow guide took {time.time() - st:.4f} s")
         return flow_guide
-    
+
     def create_fwd_flow_guides(self):
         st = time.time()
         fwd_flow = FlowGuide(
-            list(reversed(self.img_frs_seq)), method=self.flow_method, model_name=self.model_name
+            list(reversed(self.img_frs_seq)),
+            method=self.flow_method,
+            model_name=self.model_name,
         )  # Reverse the image sequence
         fwd_flow = fwd_flow._create()
         print(f"FWD guide took {time.time() - st:.4f} s")

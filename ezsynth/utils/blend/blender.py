@@ -7,6 +7,14 @@ from ..flow_utils.warp import Warp
 from .histogram_blend import HistogramBlender
 from .reconstruction import reconstructor
 
+try:
+    from .cupy_accelerated import hist_blend_cupy
+
+    USE_GPU = True
+except ImportError:
+    print("Cupy is not installed. Revert to CPU")
+    USE_GPU = False
+
 
 class Blend:
     def __init__(
@@ -16,6 +24,10 @@ class Blend:
         err_fwd: list[np.ndarray],
         err_bwd: list[np.ndarray],
         flow_fwd: list[np.ndarray],
+        use_gpu=False,
+        use_lsqr=True,
+        use_poisson_cupy=False,
+        poisson_maxiter=None,
     ):
         self.style_fwd = style_fwd
         self.style_bwd = style_bwd
@@ -24,6 +36,10 @@ class Blend:
         self.flow = flow_fwd
         self.err_masks = None
         self.blends = None
+        self.use_gpu = use_gpu and USE_GPU
+        self.use_lsqr = use_lsqr
+        self.use_poisson_cupy = use_poisson_cupy
+        self.poisson_maxiter = poisson_maxiter
 
     def _warping_masks(self, err_masks: list[np.ndarray]):
         # use err_masks with flow to create final err_masks
@@ -90,30 +106,45 @@ class Blend:
 
         return selection_masks_lst
 
-    def _hist_blend(self):
+    def _hist_blend(self) -> list[np.ndarray]:
         st = time.time()
-        hist_blends = []
-        hist_blender = HistogramBlender()
+        hist_blends: list[np.ndarray] = []
+        assert self.err_masks is not None
         for i in tqdm.tqdm(range(len(self.err_masks)), desc="Hist blending: "):
-            hist_blend = hist_blender.blend(
-                self.style_fwd[i],
-                self.style_bwd[i],
-                self.err_masks[i],
-            )
+            if self.use_gpu:
+                hist_blend = hist_blend_cupy(
+                    self.style_fwd[i],
+                    self.style_bwd[i],
+                    self.err_masks[i],
+                )
+            else:
+                hist_blend = HistogramBlender().blend(
+                    self.style_fwd[i],
+                    self.style_bwd[i],
+                    self.err_masks[i],
+                )
             hist_blends.append(hist_blend)
         print(f"Hist Blend took {time.time() - st:.4f} s")
         print(len(hist_blends))
         return hist_blends
 
-    def _reconstruct(self, hist_blends):
+    def _reconstruct(self, hist_blends: list[np.ndarray]):
+        assert self.err_masks is not None
         blends = reconstructor(
-            hist_blends, self.style_fwd, self.style_bwd, self.err_masks
+            hist_blends,
+            self.style_fwd,
+            self.style_bwd,
+            self.err_masks,
+            use_gpu=self.use_gpu,
+            use_lsqr=self.use_lsqr,
+            use_poisson_cupy=self.use_poisson_cupy,
+            poisson_maxiter=self.poisson_maxiter,
         )
-        final_blends = blends()
+        final_blends = blends._create()
         final_blends = [blend for blend in final_blends if blend is not None]
         return final_blends
 
-    def __call__(self):
+    def run_final_blending(self):
         self.err_masks = self._create_final_err_masks()
         hist_blends = self._hist_blend()
         self.blends = self._reconstruct(hist_blends)

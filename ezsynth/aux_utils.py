@@ -3,7 +3,7 @@ import re
 
 import cv2
 import numpy as np
-import torch
+# import torch
 import tqdm
 
 
@@ -74,7 +74,7 @@ def is_valid_file_path(input_path: str | list[str]) -> bool:
 
 def validate_file_or_folder_to_lst(input_paths: str | list[str], type_name="") -> list[str]:
     if is_valid_file_path(input_paths):
-        return [input_paths]
+        return [input_paths] # type: ignore
     if isinstance(input_paths, list):
         valid_paths = [path for path in input_paths if is_valid_file_path(path)]
         if valid_paths:

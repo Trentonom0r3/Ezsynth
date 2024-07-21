@@ -120,7 +120,7 @@ class Setup:
         else:
             raise ValueError("Styles must be either a string or a list of strings.")
 
-    def process_sequence(self):
+    def process_sequence(self, forward_only=False):
         return process(
             # subseqs=self.subsequences,
             subseqs=self.sequences,
@@ -130,6 +130,7 @@ class Setup:
             flow_bwd=self.guides["flow_rev"],
             pos_fwd=self.guides["positional_fwd"],
             pos_bwd=self.guides["positional_rev"],
+            forward_only=forward_only
         )
 
 
@@ -141,6 +142,7 @@ def process(
     flow_bwd,
     pos_fwd,
     pos_bwd,
+    forward_only: bool,
 ):
     """
     Process sub-sequences using multiprocessing.
@@ -162,6 +164,8 @@ def process(
     bwd_styles = []
     err_fwds = []
     err_bwds = []
+    
+    no_blend = []
 
     params = {"img_frs_seq": img_frs_seq, "edge": edge_maps}
 
@@ -172,15 +176,25 @@ def process(
             params["pos"] = pos_fwd
             params["reverse"] = False
 
-            fwd_imgs, _ = run_sequences(**params)
-            return fwd_imgs
+            fwd_pass_imgs, err_fwd = run_sequences(**params)
+            if seq.is_all:
+                return fwd_pass_imgs
+            if seq.is_blend and not forward_only:
+                fwd_styles.extend(fwd_pass_imgs)
+                err_fwds.extend(err_fwd)
+            else:
+                no_blend.extend(fwd_pass_imgs)
+            continue
         if seq.style_start_fr is None and seq.style_end_fr is not None:
             params["flow"] = flow_bwd
             params["pos"] = pos_bwd
             params["reverse"] = True
-            bwd_imgs, _ = run_sequences(**params)
-
-            return bwd_imgs
+            bwd_pass_imgs, err_bwd = run_sequences(**params)
+            if seq.is_all:
+                return bwd_pass_imgs
+            bwd_styles.extend(bwd_pass_imgs)
+            err_bwds.extend(err_bwd)
+            continue
         if seq.style_start_fr is not None and seq.style_end_fr is not None:
             params["flow"] = flow_fwd
             params["pos"] = pos_fwd
@@ -189,7 +203,10 @@ def process(
             fwd_pass_imgs, err_fwd = run_sequences(**params)
             fwd_styles.extend(fwd_pass_imgs)
             err_fwds.extend(err_fwd)
-            
+            if forward_only:
+                no_blend.extend(fwd_pass_imgs)
+                continue
+
             params["flow"] = flow_bwd
             params["pos"] = pos_bwd
             params["reverse"] = True
@@ -197,21 +214,38 @@ def process(
             bwd_pass_imgs, err_bwd = run_sequences(**params)
             bwd_styles.extend(bwd_pass_imgs)
             err_bwds.extend(err_bwd)
-    
+            continue
+    if forward_only:
+        return no_blend
     print("Blend mode awaits. Please don't save yet")
-    return fwd_styles, bwd_styles, err_fwds, err_bwds, flow_fwd
-            
+    return fwd_styles, bwd_styles, err_fwds, err_bwds, flow_fwd, no_blend
 
-def run_blending(fwd_styles, bwd_styles, err_fwds, err_bwds, flow_fwd):
+
+def run_blending(
+    fwd_styles,
+    bwd_styles,
+    err_fwds,
+    err_bwds,
+    flow_fwd,
+    use_gpu=False,
+    use_lsqr=True,
+    use_poisson_cupy=False,
+    poisson_maxiter=None,
+):
     blend_instance = Blend(
         style_fwd=fwd_styles,
         style_bwd=bwd_styles[::-1],
         err_fwd=err_fwds,
         err_bwd=err_bwds[::-1],
         flow_fwd=flow_fwd,
+        use_gpu=use_gpu,
+        use_lsqr=use_lsqr,
+        use_poisson_cupy=use_poisson_cupy,
+        poisson_maxiter=poisson_maxiter,
     )
-    final_blends = blend_instance()
+    final_blends = blend_instance.run_final_blending()
     return final_blends
+
 
 def run_sequences(
     img_frs_seq: list[np.ndarray], edge, flow, pos, seq: Sequence, reverse=False
@@ -224,67 +258,66 @@ def run_sequences(
         stylized_frames: List of stylized images.
         err_list: List of errors.
     """
-    with threading.Lock():
-        stylized_frames = []
-        err_list = []
-        # Initialize variables based on the 'reverse' flag.
-        if reverse:
-            start, step, style, init, final = (
-                seq.final_idx,
-                -1,
-                seq.style_end_fr,
-                seq.end_fr_idx,
-                seq.begin_fr_idx,
-            )
-        else:
-            start, step, style, init, final = (
-                seq.init_idx,
-                1,
-                seq.style_start_fr,
-                seq.begin_fr_idx,
-                seq.end_fr_idx,
-            )
-
-        eb = ebsynth(style, guides=[])
-        warp = Warp(img_frs_seq[start])
-        ORIGINAL_SIZE = img_frs_seq[0].shape[1::-1]
-        # Loop through frames.
-        stylized_frames.append(eb.style)
-        print(start, step, init, final)
-        for i in tqdm.tqdm(range(init, final, step), desc="Generating: "):
-            eb.add_guide(edge[start], edge[i - 1] if reverse else edge[i + 1], 1.0)
-            eb.add_guide(
-                img_frs_seq[start],
-                img_frs_seq[i - 1] if reverse else img_frs_seq[i + 1],
-                6.0,
-            )
-
-            # Commented out section: additional guide and warping
-            if i != start:
-                eb.add_guide(
-                    pos[start - 1] if reverse else pos[start],
-                    pos[i] if reverse else pos[i - 1],
-                    2.0,
-                )
-
-                stylized_img = (
-                    stylized_frames[-1] / 255.0
-                )  # Assuming stylized_frames[-1] is already in BGR format
-
-                warped_img = warp.run_warping(
-                    stylized_img, flow[i] if reverse else flow[i - 1]
-                )  # Changed from run_warping_from_np to run_warping
-
-                warped_img = cv2.resize(warped_img, ORIGINAL_SIZE)
-
-                eb.add_guide(style, warped_img, 0.5)
-
-            stylized_img, err = eb.run()
-            stylized_frames.append(stylized_img)
-            err_list.append(err)
-            eb.clear_guide()
-
-        print(
-            f"Final Length, Reverse = {reverse}: {len(stylized_frames)}. Error Length: {len(err_list)}"
+    stylized_frames = []
+    err_list = []
+    # Initialize variables based on the 'reverse' flag.
+    if reverse:
+        start, step, style, init, final = (
+            seq.final_idx,
+            -1,
+            seq.style_end_fr,
+            seq.end_fr_idx,
+            seq.begin_fr_idx,
         )
-        return stylized_frames, err_list
+    else:
+        start, step, style, init, final = (
+            seq.init_idx,
+            1,
+            seq.style_start_fr,
+            seq.begin_fr_idx,
+            seq.end_fr_idx,
+        )
+
+    eb = ebsynth(style, guides=[])
+    warp = Warp(img_frs_seq[start])
+    ORIGINAL_SIZE = img_frs_seq[0].shape[1::-1]
+    # Loop through frames.
+    stylized_frames.append(eb.style)
+    print(start, step, init, final)
+    for i in tqdm.tqdm(range(init, final, step), desc="Generating: "):
+        eb.add_guide(edge[start], edge[i - 1] if reverse else edge[i + 1], 1.0)
+        eb.add_guide(
+            img_frs_seq[start],
+            img_frs_seq[i - 1] if reverse else img_frs_seq[i + 1],
+            6.0,
+        )
+
+        # Commented out section: additional guide and warping
+        if i != start:
+            eb.add_guide(
+                pos[start - 1] if reverse else pos[start],
+                pos[i] if reverse else pos[i - 1],
+                2.0,
+            )
+
+            stylized_img = (
+                stylized_frames[-1] / 255.0
+            )  # Assuming stylized_frames[-1] is already in BGR format
+
+            warped_img = warp.run_warping(
+                stylized_img, flow[i] if reverse else flow[i - 1]
+            )  # Changed from run_warping_from_np to run_warping
+
+            warped_img = cv2.resize(warped_img, ORIGINAL_SIZE)
+
+            eb.add_guide(style, warped_img, 0.5)
+
+        stylized_img, err = eb.run()
+        stylized_frames.append(stylized_img)
+        err_list.append(err)
+        eb.clear_guide()
+
+    print(
+        f"Final Length, Reverse = {reverse}: {len(stylized_frames)}. Error Length: {len(err_list)}"
+    )
+    return stylized_frames, err_list

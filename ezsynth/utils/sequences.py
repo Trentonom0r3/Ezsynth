@@ -5,6 +5,8 @@ class Sequence:
         end_fr_idx: int,
         style_start_fr: str | None = None,
         style_end_fr: str | None = None,
+        is_all=True,
+        is_blend=False
     ):
         self.begin_fr_idx = begin_fr_idx
         self.end_fr_idx = end_fr_idx
@@ -17,6 +19,8 @@ class Sequence:
 
         self.miss_start_style = self.style_start_fr is None
         self.miss_end_style = self.style_end_fr is None
+        self.is_all = is_all
+        self.is_blend = is_blend
 
         if self.miss_start_style is None and self.miss_end_style:
             raise ValueError("At least one style frame needed")
@@ -26,13 +30,13 @@ class Sequence:
         end_info = self.style_end_fr if not self.miss_end_style else "None"
         return f"Sequence: {self.begin_fr_idx} - {self.end_fr_idx} | Style Start: {start_info} - Style End: {end_info}"
 
-    def reversed(self):
-        return Sequence(
-            begin_fr_idx=self.end_fr_idx,
-            end_fr_idx=self.begin_fr_idx,
-            style_start_fr=self.style_end_fr,
-            style_end_fr=self.style_start_fr,
-        )
+    # def reversed(self):
+    #     return Sequence(
+    #         begin_fr_idx=self.end_fr_idx,
+    #         end_fr_idx=self.begin_fr_idx,
+    #         style_start_fr=self.style_end_fr,
+    #         style_end_fr=self.style_start_fr,
+    #     )
 
 
 class Subsequence:
@@ -88,6 +92,8 @@ class SequenceManager:
                         begin_fr_idx=self.begin_fr_idx,
                         end_fr_idx=self.end_fr_idx,
                         style_start_fr=self.style_paths[0],
+                        is_all=True,
+                        is_blend=False
                     )
                 )
 
@@ -99,6 +105,8 @@ class SequenceManager:
                         begin_fr_idx=self.begin_fr_idx,
                         end_fr_idx=self.end_fr_idx,
                         style_end_fr=self.style_paths[0],
+                        is_all=True,
+                        is_blend=False
                     )
                 )
                 return sequences
@@ -112,6 +120,7 @@ class SequenceManager:
                 self.style_idxs[i] == self.begin_fr_idx
                 and self.style_idxs[i + 1] == self.end_fr_idx
             ):
+                print("First last hit")
                 sequences.append(
                     Sequence(
                         self.begin_fr_idx,
@@ -126,14 +135,38 @@ class SequenceManager:
                 self.style_idxs[i] == self.begin_fr_idx
                 and self.style_idxs[i + 1] != self.end_fr_idx
             ):
+                print("First off last hit")
                 sequences.append(
                     Sequence(
                         self.begin_fr_idx,
                         self.style_idxs[i + 1],
                         self.style_paths[i],
                         self.style_paths[i + 1],
+                        is_all=False,
+                        is_blend=True
                     )
                 )
+                if i + 2 < self.num_style_frs:
+                    sequences.append(
+                        Sequence(
+                            begin_fr_idx=self.style_idxs[i + 1],
+                            end_fr_idx=self.style_idxs[i + 2],
+                            style_start_fr=self.style_paths[i + 1],
+                            style_end_fr=self.style_paths[i + 2],
+                            is_all=False,
+                            is_blend=True
+                        )
+                    )
+                else:
+                    sequences.append(
+                        Sequence(
+                            begin_fr_idx=self.style_idxs[i + 1],
+                            end_fr_idx=self.end_fr_idx,
+                            style_start_fr=self.style_paths[i + 1],
+                            is_all=False,
+                            is_blend=False
+                        )
+                    )
 
             # If the second style index is the last frame in the sequence
             elif (
