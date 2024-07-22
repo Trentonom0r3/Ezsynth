@@ -1,7 +1,7 @@
 # import os
-import threading
+# import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
+# from concurrent.futures import ThreadPoolExecutor
 
 import cv2
 import numpy as np
@@ -20,7 +20,7 @@ from .flow_utils.warp import Warp
 from .guides.guides import GuideFactory
 from .sequences import Sequence, SequenceManager
 
-from .run import run_sequence
+from .run import run_scratch, run_sequence
 
 """
 HELPER CLASSES CONTAINED WITHIN THIS FILE:
@@ -101,6 +101,13 @@ class Setup:
             print(f"Guiding took {time.time() - st:.4f} s")
 
     def process_sequence(self):
+        return run_scratch(
+            self.sequences[0],
+            self.img_frs_seq,
+            self.style_frs,
+            edge=self.guides["edge"],
+            
+        )
         # return process(
         #     subseqs=self.sequences,
         #     img_frs_seq=self.img_frs_seq,
@@ -111,16 +118,21 @@ class Setup:
         #     pos_bwd=self.guides["positional_rev"],
         #     forward_only=forward_only
         # )
-        return run_sequence(
-            self.sequences[0],
-            self.img_frs_seq,
-            self.style_frs,
-            edge=self.guides["edge"],
-            flow_fwd=self.guides["flow_fwd"],
-            flow_bwd=self.guides["flow_rev"],
-            pos_fwd=self.guides["positional_fwd"],
-            pos_bwd=self.guides["positional_rev"],
-        )
+        # stylized_frames, err_list = [], []
+        # for seq in self.sequences:
+        #     tmp_style, tmp_err = run_sequence(
+        #         seq,
+        #         self.img_frs_seq,
+        #         self.style_frs,
+        #         edge=self.guides["edge"],
+        #         flow_fwd=self.guides["flow_fwd"],
+        #         flow_bwd=self.guides["flow_rev"],
+        #         pos_fwd=self.guides["positional_fwd"],
+        #         pos_bwd=self.guides["positional_rev"],
+        #     )
+        #     stylized_frames.extend(tmp_style)
+        #     err_list.extend(tmp_err)
+        # return stylized_frames, err_list
 
 
 def process(

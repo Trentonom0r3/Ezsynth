@@ -127,33 +127,33 @@ class GuideFactory:
 
     def create_all_guides(self, cal_flow_bwd=False):
         edge_guide = self.create_edge_guides()
-        flow_guide = self.create_flow_guides()
-        st = time.time()
+        # flow_guide = self.create_flow_guides()
+        # st = time.time()
 
-        positional_fwd = PositionalGuide(self.img_frs_seq[0], flow=flow_guide)._create()
-        positional_fwd = positional_fwd[::-1]
-        fwd_flow = [flow * -1 for flow in flow_guide]
+        # positional_fwd = PositionalGuide(self.img_frs_seq[0], flow=flow_guide)._create()
+        # positional_fwd = positional_fwd[::-1]
+        # fwd_flow = [flow * -1 for flow in flow_guide]
 
-        if cal_flow_bwd:
-            flow_guide = self.create_flow_guides(True)
+        # if cal_flow_bwd:
+        #     flow_guide = self.create_flow_guides(True)
 
-            positional_bwd = PositionalGuide(
-                self.img_frs_seq[0], flow=flow_guide
-            )._create()
-            flow_guide = [flow * -1 for flow in flow_guide]
-        else:
-            positional_bwd = PositionalGuide(
-                self.img_frs_seq[0], flow=flow_guide[::-1]
-            )._create()
+        #     positional_bwd = PositionalGuide(
+        #         self.img_frs_seq[0], flow=flow_guide
+        #     )._create()
+        #     flow_guide = [flow * -1 for flow in flow_guide]
+        # else:
+        #     positional_bwd = PositionalGuide(
+        #         self.img_frs_seq[0], flow=flow_guide[::-1]
+        #     )._create()
 
-        print(f"Pos guide took {time.time() - st:.4f} s")
+        # print(f"Pos guide took {time.time() - st:.4f} s")
 
         self.guides = {
             "edge": edge_guide,
-            "flow_rev": flow_guide,
-            "flow_fwd": fwd_flow,
-            "positional_rev": positional_bwd,
-            "positional_fwd": positional_fwd,
+            # "flow_rev": flow_guide,
+            # "flow_fwd": fwd_flow,
+            # "positional_rev": positional_bwd,
+            # "positional_fwd": positional_fwd,
         }
 
         return self.guides
