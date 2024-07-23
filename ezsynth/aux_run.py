@@ -6,47 +6,11 @@ import numpy as np
 # import torch
 import tqdm
 
-from ezsynth.aux_classes import PositionalGuide
+from ezsynth.aux_classes import PositionalGuide, RunConfig
 from ezsynth.utils._ebsynth import ebsynth
 from ezsynth.utils.flow_utils.OpticalFlow import RAFT_flow
 from ezsynth.utils.flow_utils.warp import Warp
 from ezsynth.utils.sequences import EasySequence
-
-
-class RunConfig:
-    def __init__(
-        self,
-        edg_wgt=1.0,
-        img_wgt=6.0,
-        pos_wgt=2.0,
-        wrp_wgt=0.5,
-        uniformity=3500.0,
-        patchsize=7,
-        pyramidlevels=6,
-        searchvoteiters=12,
-        patchmatchiters=6,
-        extrapass3x3=True,
-    ) -> None:
-        self.edg_wgt = edg_wgt
-        self.img_wgt = img_wgt
-        self.pos_wgt = pos_wgt
-        self.wrp_wgt = wrp_wgt
-        self.uniformity = uniformity
-        self.patchsize = patchsize
-        self.pyramidlevels = pyramidlevels
-        self.searchvoteiters = searchvoteiters
-        self.patchmatchiters = patchmatchiters
-        self.extrapass3x3 = extrapass3x3
-
-    def get_ebsynth_cfg(self):
-        return {
-            "uniformity": self.uniformity,
-            "patchsize": self.patchsize,
-            "pyramidlevels": self.pyramidlevels,
-            "searchvoteiters": self.searchvoteiters,
-            "patchmatchiters": self.patchmatchiters,
-            "extrapass3x3": self.extrapass3x3,
-        }
 
 
 def run_scratch(
@@ -55,6 +19,8 @@ def run_scratch(
     style_frs: list[np.ndarray],
     edge,
     cfg: RunConfig,
+    rafter: RAFT_flow,
+    eb: ebsynth
 ):
     stylized_frames: list[np.ndarray] = []
     err_list: list[np.ndarray] = []
@@ -72,11 +38,7 @@ def run_scratch(
     flows = []
     poses = []
 
-    rafter = RAFT_flow(model_name="sintel")
     pos_guider = PositionalGuide()
-
-    eb = ebsynth(**cfg.get_ebsynth_cfg())
-    eb.runner.initialize_libebsynth()
 
     for i in tqdm.tqdm(range(start, end, step), "Generating"):
         if is_forward:

@@ -57,7 +57,6 @@ class RAFT_flow:
             flow = RAFT_flow()
             flow.compute_optical_flow(imgsequence)
         """
-        # super().__init__(img)
         model_name = f"raft-{model_name}.pth"
         self.model = torch.nn.DataParallel(
             RAFT(args=self._instantiate_raft_model(model_name))
