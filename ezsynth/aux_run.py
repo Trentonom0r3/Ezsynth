@@ -8,36 +8,33 @@ import tqdm
 
 from ezsynth.aux_classes import PositionalGuide, RunConfig
 from ezsynth.utils._ebsynth import ebsynth
+from ezsynth.utils.blend.blender import Blend
 from ezsynth.utils.flow_utils.OpticalFlow import RAFT_flow
 from ezsynth.utils.flow_utils.warp import Warp
 from ezsynth.utils.sequences import EasySequence
 
 
-def run_scratch(
+def run_a_pass(
     seq: EasySequence,
+    seq_mode: str,
     img_frs_seq: list[np.ndarray],
-    style_frs: list[np.ndarray],
-    edge,
+    style: np.ndarray,
+    edge: list[np.ndarray],
     cfg: RunConfig,
     rafter: RAFT_flow,
-    eb: ebsynth
+    eb: ebsynth,
 ):
-    stylized_frames: list[np.ndarray] = []
+    stylized_frames: list[np.ndarray] = [style]
     err_list: list[np.ndarray] = []
     ORIGINAL_SIZE = img_frs_seq[0].shape[1::-1]
 
-    style = style_frs[seq.style_idxs[0]]
-    stylized_frames.append(style)
-
     start, end, step, is_forward = (
-        get_forward(seq) if seq.mode == EasySequence.MODE_FWD else get_backward(seq)
+        get_forward(seq) if seq_mode == EasySequence.MODE_FWD else get_backward(seq)
     )
-
     warp = Warp(img_frs_seq[start])
     print(start, end, step)
     flows = []
     poses = []
-
     pos_guider = PositionalGuide()
 
     for i in tqdm.tqdm(range(start, end, step), "Generating"):
@@ -69,9 +66,95 @@ def run_scratch(
         stylized_frames = stylized_frames[::-1]
         err_list = err_list[::-1]
         flows = flows[::-1]
-        poses = poses[::-1]
 
-    return stylized_frames, err_list, flows, poses
+    return stylized_frames, err_list, flows
+
+
+def run_scratch(
+    seq: EasySequence,
+    img_frs_seq: list[np.ndarray],
+    style_frs: list[np.ndarray],
+    edge: list[np.ndarray],
+    cfg: RunConfig,
+    rafter: RAFT_flow,
+    eb: ebsynth,
+):
+    # stylized_frames: list[np.ndarray] = []
+    # err_list: list[np.ndarray] = []
+    # ORIGINAL_SIZE = img_frs_seq[0].shape[1::-1]
+
+    style = style_frs[seq.style_idxs[0]]
+
+    if seq.mode != EasySequence.MODE_BLN:
+        stylized_frames, err_list, _ = run_a_pass(
+            seq, seq.mode, img_frs_seq, style, edge, cfg, rafter, eb
+        )
+        return stylized_frames, err_list
+
+    style_fwd, err_fwd, flow_fwd = run_a_pass(
+        seq, EasySequence.MODE_FWD, img_frs_seq, style_frs[seq.style_idxs[0]], edge, cfg, rafter, eb
+    )
+    
+    style_bwd, err_bwd, _ = run_a_pass(
+        seq, EasySequence.MODE_REV, img_frs_seq, style_frs[seq.style_idxs[1]], edge, cfg, rafter, eb
+    )
+    
+    blender = Blend(**cfg.get_blender_cfg())
+    
+    err_masks = blender._create_selection_mask(err_fwd, err_bwd)
+    
+    warped_masks = blender._warping_masks(img_frs_seq[0], flow_fwd, err_masks)
+
+    hist_blends = blender._hist_blend(style_fwd, style_bwd, warped_masks)
+    
+    blends = blender._reconstruct(style_fwd, style_bwd, warped_masks, hist_blends)
+    
+    return blends, warped_masks
+    
+    # stylized_frames.append(style)
+
+    # start, end, step, is_forward = (
+    #     get_forward(seq) if seq.mode == EasySequence.MODE_FWD else get_backward(seq)
+    # )
+
+    # warp = Warp(img_frs_seq[start])
+    # print(start, end, step)
+    # flows = []
+    # poses = []
+
+    # pos_guider = PositionalGuide()
+
+    # for i in tqdm.tqdm(range(start, end, step), "Generating"):
+    #     if is_forward:
+    #         flow = rafter._compute_flow(img_frs_seq[i], img_frs_seq[i + step])
+    #     else:
+    #         flow = rafter._compute_flow(img_frs_seq[i + step], img_frs_seq[i])
+    #     flows.append(flow)
+
+    #     poster = pos_guider.create_from_flow(flow, ORIGINAL_SIZE, warp)
+    #     poses.append(poster)
+
+    #     stylized_img = stylized_frames[-1] / 255.0
+    #     warped_img = warp.run_warping(stylized_img, flow * (-step))
+    #     warped_img = cv2.resize(warped_img, ORIGINAL_SIZE)
+
+    #     stylized_img, err = eb.run(
+    #         style,
+    #         guides=[
+    #             (edge[start], edge[i + step], cfg.edg_wgt),
+    #             (img_frs_seq[start], img_frs_seq[i + step], cfg.img_wgt),
+    #             (poses[0], poster, cfg.pos_wgt),
+    #             (style, warped_img, cfg.wrp_wgt),
+    #         ],
+    #     )
+    #     stylized_frames.append(stylized_img)
+    #     err_list.append(err)
+    # if not is_forward:
+    #     stylized_frames = stylized_frames[::-1]
+    #     err_list = err_list[::-1]
+    #     flows = flows[::-1]
+
+    return stylized_frames, err_list
 
 
 def get_forward(seq: EasySequence):

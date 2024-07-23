@@ -19,38 +19,33 @@ except ImportError:
 class Blend:
     def __init__(
         self,
-        style_fwd: list[np.ndarray],
-        style_bwd: list[np.ndarray],
-        err_fwd: list[np.ndarray],
-        err_bwd: list[np.ndarray],
-        flow_fwd: list[np.ndarray],
         use_gpu=False,
         use_lsqr=True,
         use_poisson_cupy=False,
         poisson_maxiter=None,
     ):
-        self.style_fwd = style_fwd
-        self.style_bwd = style_bwd
-        self.err_fwd = err_fwd
-        self.err_bwd = err_bwd
-        self.flow = flow_fwd
-        self.err_masks = None
-        self.blends = None
+        self.prev_mask = None
+
         self.use_gpu = use_gpu and USE_GPU
         self.use_lsqr = use_lsqr
         self.use_poisson_cupy = use_poisson_cupy
         self.poisson_maxiter = poisson_maxiter
 
-    def _warping_masks(self, err_masks: list[np.ndarray]):
+    def _warping_masks(
+        self,
+        sample_fr: np.ndarray,
+        flow_fwd: list[np.ndarray],
+        err_masks: list[np.ndarray],
+    ):
         # use err_masks with flow to create final err_masks
-        self.prev_mask = None
+
         warped_masks = []
-        warp = Warp(self.style_fwd[0])
-        for i in tqdm.tqdm(range(len(err_masks)), desc="Warping masks: "):
+        warp = Warp(sample_fr)
+        for i in tqdm.tqdm(range(len(err_masks)), desc="Warping masks"):
             if self.prev_mask is None:
                 self.prev_mask = np.zeros_like(err_masks[0])
             warped_mask = warp.run_warping(
-                err_masks[i], self.flow[i] if i == 0 else self.flow[i - 1]
+                err_masks[i], flow_fwd[i] if i == 0 else flow_fwd[i - 1]
             )
 
             z_hat = warped_mask.copy()
@@ -64,26 +59,6 @@ class Blend:
 
             self.prev_mask = z_hat.copy()
             warped_masks.append(z_hat.copy())
-        return warped_masks
-
-    def _create_final_err_masks(self):
-        st = time.time()
-        err_masks = self._create_selection_mask(self.err_fwd, self.err_bwd)
-
-        # print(f"{len(err_masks)=}")
-        # print(f"{err_masks[0].shape=}")
-        # print(f"{type(err_masks[0])=}")
-
-        if not err_masks:
-            print("Error: err_masks is empty.")
-            return []
-
-        warped_masks = self._warping_masks(err_masks)
-
-        print(f"create final err masks took {time.time() - st:.4f} s")
-        print(f"{len(warped_masks)=}")
-        print(f"{len(self.style_fwd)=}")
-
         return warped_masks
 
     def _create_selection_mask(
@@ -106,35 +81,44 @@ class Blend:
 
         return selection_masks_lst
 
-    def _hist_blend(self) -> list[np.ndarray]:
+    def _hist_blend(
+        self,
+        style_fwd: list[np.ndarray],
+        style_bwd: list[np.ndarray],
+        err_masks: list[np.ndarray],
+    ) -> list[np.ndarray]:
         st = time.time()
         hist_blends: list[np.ndarray] = []
-        assert self.err_masks is not None
-        for i in tqdm.tqdm(range(len(self.err_masks)), desc="Hist blending: "):
+        for i in tqdm.tqdm(range(len(err_masks)), desc="Hist blending: "):
             if self.use_gpu:
                 hist_blend = hist_blend_cupy(
-                    self.style_fwd[i],
-                    self.style_bwd[i],
-                    self.err_masks[i],
+                    style_fwd[i],
+                    style_bwd[i],
+                    err_masks[i],
                 )
             else:
                 hist_blend = HistogramBlender().blend(
-                    self.style_fwd[i],
-                    self.style_bwd[i],
-                    self.err_masks[i],
+                    style_fwd[i],
+                    style_bwd[i],
+                    err_masks[i],
                 )
             hist_blends.append(hist_blend)
         print(f"Hist Blend took {time.time() - st:.4f} s")
         print(len(hist_blends))
         return hist_blends
 
-    def _reconstruct(self, hist_blends: list[np.ndarray]):
-        assert self.err_masks is not None
+    def _reconstruct(
+        self,
+        style_fwd: list[np.ndarray],
+        style_bwd: list[np.ndarray],
+        err_masks: list[np.ndarray],
+        hist_blends: list[np.ndarray],
+    ):
         blends = reconstructor(
             hist_blends,
-            self.style_fwd,
-            self.style_bwd,
-            self.err_masks,
+            style_fwd,
+            style_bwd,
+            err_masks,
             use_gpu=self.use_gpu,
             use_lsqr=self.use_lsqr,
             use_poisson_cupy=self.use_poisson_cupy,
@@ -143,9 +127,3 @@ class Blend:
         final_blends = blends._create()
         final_blends = [blend for blend in final_blends if blend is not None]
         return final_blends
-
-    def run_final_blending(self):
-        self.err_masks = self._create_final_err_masks()
-        hist_blends = self._hist_blend()
-        self.blends = self._reconstruct(hist_blends)
-        return self.blends

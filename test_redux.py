@@ -26,12 +26,12 @@ from ezsynth.utils.sequences import SequenceManager
 from ezsynth.utils._ebsynth import ebsynth
 
 style_paths = [
-    # "J:/AI/Ezsynth/examples/styles/style000.png",
-    "J:/AI/Ezsynth/examples/styles/style002.png",
+    "J:/AI/Ezsynth/examples/styles/style000.png",
+    # "J:/AI/Ezsynth/examples/styles/style002.png",
     # "J:/AI/Ezsynth/examples/styles/style003.png",
     # "J:/AI/Ezsynth/examples/styles/style006.png",
     # "J:/AI/Ezsynth/examples/styles/style014.png",
-    # "J:/AI/Ezsynth/examples/styles/style019.png",
+    "J:/AI/Ezsynth/examples/styles/style019.png",
     # "J:/AI/Ezsynth/examples/styles/style099.jpg",
 ]
 
@@ -74,19 +74,21 @@ cfg = RunConfig()
 eb = ebsynth(**cfg.get_ebsynth_cfg())
 eb.runner.initialize_libebsynth()
 
-tmp_stylized_frames, err_list, flows, poses = run_scratch(
+tmp_stylized_frames, err_list = run_scratch(
     sequences[0], img_frs_seq, style_frs, edge_guides, RunConfig(), rafter, eb
 )
 
-save_seq(tmp_stylized_frames, "J:/AI/Ezsynth/output_0")
+# save_seq(tmp_stylized_frames, "J:/AI/Ezsynth/output_0")
+
+stylized_frames.extend(tmp_stylized_frames)
+
+# tmp_stylized_frames, err_list= run_scratch(
+#     sequences[1], img_frs_seq, style_frs, edge_guides, RunConfig(), rafter, eb
+# )
+
+# save_seq(tmp_stylized_frames, "J:/AI/Ezsynth/output_1")
 
 # stylized_frames.extend(tmp_stylized_frames)
-
-tmp_stylized_frames, err_list, flows, poses = run_scratch(
-    sequences[1], img_frs_seq, style_frs, edge_guides, RunConfig(), rafter, eb
-)
-
-save_seq(tmp_stylized_frames, "J:/AI/Ezsynth/output_1")
 
 # tmp_stylized_frames, err_list, flows, poses = run_scratch(
 #     sequences[1], img_frs_seq, style_frs, edge_guides, RunConfig()
@@ -107,4 +109,4 @@ torch.cuda.empty_cache()
 
 # print(len(stylized_frames))
 
-# save_seq(stylized_frames, output_folder)
+save_seq(stylized_frames,  "J:/AI/Ezsynth/output_5")

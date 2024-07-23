@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from ezsynth.utils.flow_utils.warp import Warp
 
+
 class RunConfig:
     def __init__(
         self,
@@ -15,17 +16,30 @@ class RunConfig:
         searchvoteiters=12,
         patchmatchiters=6,
         extrapass3x3=True,
+        use_gpu=False,
+        use_lsqr=True,
+        use_poisson_cupy=False,
+        poisson_maxiter=None,
     ) -> None:
+        # Weights
         self.edg_wgt = edg_wgt
         self.img_wgt = img_wgt
         self.pos_wgt = pos_wgt
         self.wrp_wgt = wrp_wgt
+
+        # Ebsynth gen params
         self.uniformity = uniformity
         self.patchsize = patchsize
         self.pyramidlevels = pyramidlevels
         self.searchvoteiters = searchvoteiters
         self.patchmatchiters = patchmatchiters
         self.extrapass3x3 = extrapass3x3
+
+        # Blend params
+        self.use_gpu = use_gpu
+        self.use_lsqr = use_lsqr
+        self.use_poisson_cupy = use_poisson_cupy
+        self.poisson_maxiter = poisson_maxiter
 
     def get_ebsynth_cfg(self):
         return {
@@ -36,6 +50,15 @@ class RunConfig:
             "patchmatchiters": self.patchmatchiters,
             "extrapass3x3": self.extrapass3x3,
         }
+
+    def get_blender_cfg(self):
+        return {
+            "use_gpu": self.use_gpu,
+            "use_lsqr": self.use_lsqr,
+            "use_poisson_cupy": self.use_poisson_cupy,
+            "poisson_maxiter": self.poisson_maxiter,
+        }
+
 
 class PositionalGuide:
     def __init__(self) -> None:
