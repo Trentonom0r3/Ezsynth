@@ -29,11 +29,11 @@ from ezsynth.utils._ebsynth import ebsynth
 st = time.time()
 
 style_paths = [
-    # "J:/AI/Ezsynth/examples/styles/style000.png",
-    "J:/AI/Ezsynth/examples/styles/style002.png",
+    "J:/AI/Ezsynth/examples/styles/style000.png",
+    # "J:/AI/Ezsynth/examples/styles/style002.png",
     # "J:/AI/Ezsynth/examples/styles/style003.png",
-    "J:/AI/Ezsynth/examples/styles/style006.png",
-    "J:/AI/Ezsynth/examples/styles/style014.png",
+    # "J:/AI/Ezsynth/examples/styles/style006.png",
+    # "J:/AI/Ezsynth/examples/styles/style014.png",
     # "J:/AI/Ezsynth/examples/styles/style019.png",
     # "J:/AI/Ezsynth/examples/styles/style099.jpg",
 ]
@@ -73,33 +73,51 @@ rafter = RAFT_flow(model_name="sintel")
 cfg = RunConfig()
 
 # cfg.only_mode = EasySequence.MODE_FWD
-# cfg.only_mode = EasySequence.MODE_REV
+cfg.only_mode = EasySequence.MODE_REV
 
 eb = ebsynth(**cfg.get_ebsynth_cfg())
 eb.runner.initialize_libebsynth()
 
 num_seqs = len(sequences)
+no_skip_rev = False
 
 for i, seq in enumerate(sequences):
-    if i > 0 and i < num_seqs - 1 and atlas[i + 1] != EasySequence.MODE_FWD:
+    if (
+        cfg.only_mode == EasySequence.MODE_NON
+        and i < num_seqs - 1
+        and (atlas[i] == EasySequence.MODE_BLN or atlas[i + 1] != EasySequence.MODE_FWD)
+    ):
         cfg.skip_blend_style_last = True
     else:
         cfg.skip_blend_style_last = False
+
+    if (
+        i > 0
+        and cfg.only_mode == EasySequence.MODE_REV
+        and atlas[i] == EasySequence.MODE_BLN
+    ):
+        seq.fr_start_idx += 1
+        no_skip_rev = True
 
     tmp_stylized_frames, err_list = run_scratch(
         seq, img_frs_seq, style_frs, edge_guides, cfg, rafter, eb
     )
 
-    if i > 0:
+    if i > 0 and not no_skip_rev:
         if (atlas[i - 1] == EasySequence.MODE_REV) or (
-            atlas[i - 1] == EasySequence.MODE_BLN and atlas[i] == EasySequence.MODE_FWD
+            atlas[i - 1] == EasySequence.MODE_BLN
+            and (
+                atlas[i] == EasySequence.MODE_FWD
+                or cfg.only_mode == EasySequence.MODE_FWD
+            )
         ):
             tmp_stylized_frames.pop(0)
+    no_skip_rev = False
 
     stylized_frames.extend(tmp_stylized_frames)
 
 
-save_seq(stylized_frames, "J:/AI/Ezsynth/output_21")
+save_seq(stylized_frames, "J:/AI/Ezsynth/output_29")
 
 gc.collect()
 torch.cuda.empty_cache()
