@@ -1,36 +1,3 @@
-class Sequence:
-    def __init__(
-        self,
-        begin_fr_idx: int,
-        end_fr_idx: int,
-        style_start_fr: str | None = None,
-        style_end_fr: str | None = None,
-        is_all=True,
-        is_blend=False,
-    ):
-        self.begin_fr_idx = begin_fr_idx
-        self.end_fr_idx = end_fr_idx
-
-        self.style_start_fr = style_start_fr
-        self.style_end_fr = style_end_fr
-
-        self.init_idx = begin_fr_idx
-        self.final_idx = end_fr_idx
-
-        self.miss_start_style = self.style_start_fr is None
-        self.miss_end_style = self.style_end_fr is None
-        self.is_all = is_all
-        self.is_blend = is_blend
-
-        if self.miss_start_style is None and self.miss_end_style:
-            raise ValueError("At least one style frame needed")
-
-    def __str__(self):
-        start_info = self.style_start_fr if not self.miss_start_style else "None"
-        end_info = self.style_end_fr if not self.miss_end_style else "None"
-        return f"Sequence: {self.begin_fr_idx} - {self.end_fr_idx} | Style Start: {start_info} - Style End: {end_info}"
-
-
 class EasySequence:
     MODE_FWD = "forward"
     MODE_REV = "reverse"

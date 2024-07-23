@@ -1,11 +1,11 @@
 # import os
 # import threading
-import time
+# import time
 # from concurrent.futures import ThreadPoolExecutor
 
-import cv2
+# import cv2
 import numpy as np
-import tqdm
+# import tqdm
 
 from ezsynth.aux_utils import (
     extract_indices,
@@ -14,13 +14,13 @@ from ezsynth.aux_utils import (
     validate_file_or_folder_to_lst,
 )
 
-from ._ebsynth import ebsynth
+# from ._ebsynth import ebsynth
 from .blend.blender import Blend
-from .flow_utils.warp import Warp
-from .guides.guides import GuideFactory
-from .sequences import EasySequence, Sequence, SequenceManager
+# from .flow_utils.warp import Warp
+# from .guides.guides import GuideFactory
+# from .sequences import EasySequence, Sequence, SequenceManager
 
-from .run import run_scratch, run_sequence
+# from .run import run_scratch, run_sequence
 
 """
 HELPER CLASSES CONTAINED WITHIN THIS FILE:
@@ -79,36 +79,36 @@ class Setup:
         self.num_style_frs = len(self.style_paths)
         self.style_frs = read_frames_from_paths(self.style_paths)
 
-        manager = SequenceManager(
-            self.begin_fr_idx,
-            self.end_fr_idx,
-            self.style_paths,
-            self.style_idxes,
-            self.img_idxes,
-        )
+        # manager = SequenceManager(
+        #     self.begin_fr_idx,
+        #     self.end_fr_idx,
+        #     self.style_paths,
+        #     self.style_idxes,
+        #     self.img_idxes,
+        # )
 
-        self.sequences = manager.create_sequences()
-        if process:
-            st = time.time()
-            self.guide_factory = GuideFactory(
-                img_frs_seq=self.img_frs_seq,
-                img_file_paths=self.img_file_paths,
-                edge_method=edge_method,
-                flow_method=flow_method,
-                model_name=model_name,
-            )
-            self.guides = self.guide_factory.create_all_guides(cal_flow_bwd)
-            print(f"Guiding took {time.time() - st:.4f} s")
+        # self.sequences = manager.create_sequences()
+        # if process:
+        #     st = time.time()
+        #     self.guide_factory = GuideFactory(
+        #         img_frs_seq=self.img_frs_seq,
+        #         img_file_paths=self.img_file_paths,
+        #         edge_method=edge_method,
+        #         flow_method=flow_method,
+        #         model_name=model_name,
+        #     )
+        #     self.guides = self.guide_factory.create_all_guides(cal_flow_bwd)
+        #     print(f"Guiding took {time.time() - st:.4f} s")
 
     def process_sequence(self):
         stylized_frames = []
         err_list = []
         flows = []
         poses = []
-        forward_skip_last = False
-        reverse_remove_last = False
-        num_seqs = len(self.sequences)
-        is_mid = False
+        # forward_skip_last = False
+        # reverse_remove_last = False
+        # num_seqs = len(self.sequences)
+        # is_mid = False
         for i, seq in enumerate(self.sequences):
             if i == 0:
                 continue
@@ -119,23 +119,23 @@ class Setup:
             #         reverse_remove_last = True
             # if i > 0 and i < num_seqs - 1:
             #     is_mid = True
-            tmp_style, tmp_err, tmp_fl, tmp_p = run_scratch(
-                seq,
-                self.img_frs_seq,
-                self.style_frs,
-                edge=self.guides["edge"],
-                # forward_skip_last = forward_skip_last,
-                # is_mid=is_mid
-            )
+            # tmp_style, tmp_err, tmp_fl, tmp_p = run_scratch(
+            #     seq,
+            #     self.img_frs_seq,
+            #     self.style_frs,
+            #     edge=self.guides["edge"],
+            #     # forward_skip_last = forward_skip_last,
+            #     # is_mid=is_mid
+            # )
             
-            if reverse_remove_last: # Remove the style frame itself
-                tmp_style = tmp_style[:-1]
-                tmp_err = tmp_err[:-1]
+            # if reverse_remove_last: # Remove the style frame itself
+            #     tmp_style = tmp_style[:-1]
+            #     tmp_err = tmp_err[:-1]
                     
-            stylized_frames.extend(tmp_style)
-            err_list.extend(tmp_err)
-            flows.extend(tmp_fl)
-            poses.extend(tmp_p)
+            # stylized_frames.extend(tmp_style)
+            # err_list.extend(tmp_err)
+            # flows.extend(tmp_fl)
+            # poses.extend(tmp_p)
             # forward_skip_last = False
             # reverse_remove_last = False
             print(len(stylized_frames))
@@ -168,91 +168,91 @@ class Setup:
         # return stylized_frames, err_list
 
 
-def process(
-    subseqs: list[Sequence],
-    img_frs_seq,
-    edge_maps,
-    flow_fwd,
-    flow_bwd,
-    pos_fwd,
-    pos_bwd,
-    forward_only: bool,
-):
-    """
-    Process sub-sequences using multiprocessing.
+# def process(
+#     subseqs: list[Sequence],
+#     img_frs_seq,
+#     edge_maps,
+#     flow_fwd,
+#     flow_bwd,
+#     pos_fwd,
+#     pos_bwd,
+#     forward_only: bool,
+# ):
+#     """
+#     Process sub-sequences using multiprocessing.
 
-    Parameters:
-    - subseq: List of sub-sequences to process.
-    - imgseq: The sequence of images.
-    - edge_maps: The edge maps.
-    - flow_fwd: Forward optical flow.
-    - flow_bwd: Backward optical flow.
-    - pos_fwd: Forward position.
-    - pos_bwd: Backward position.
+#     Parameters:
+#     - subseq: List of sub-sequences to process.
+#     - imgseq: The sequence of images.
+#     - edge_maps: The edge maps.
+#     - flow_fwd: Forward optical flow.
+#     - flow_bwd: Backward optical flow.
+#     - pos_fwd: Forward position.
+#     - pos_bwd: Backward position.
 
-    Returns:
-    - imgs: List of processed images.
-    """
-    # Initialize empty lists to store results
-    fwd_styles = []
-    bwd_styles = []
-    err_fwds = []
-    err_bwds = []
+#     Returns:
+#     - imgs: List of processed images.
+#     """
+#     # Initialize empty lists to store results
+#     fwd_styles = []
+#     bwd_styles = []
+#     err_fwds = []
+#     err_bwds = []
 
-    no_blend = []
+#     no_blend = []
 
-    params = {"img_frs_seq": img_frs_seq, "edge": edge_maps}
+#     params = {"img_frs_seq": img_frs_seq, "edge": edge_maps}
 
-    for seq in subseqs:
-        params["seq"] = seq
-        if seq.style_start_fr is not None and seq.style_end_fr is None:
-            params["flow"] = flow_fwd
-            params["pos"] = pos_fwd
-            params["reverse"] = False
+#     for seq in subseqs:
+#         params["seq"] = seq
+#         if seq.style_start_fr is not None and seq.style_end_fr is None:
+#             params["flow"] = flow_fwd
+#             params["pos"] = pos_fwd
+#             params["reverse"] = False
 
-            fwd_pass_imgs, err_fwd = run_sequences(**params)
-            if seq.is_all:
-                return fwd_pass_imgs
-            if seq.is_blend and not forward_only:
-                fwd_styles.extend(fwd_pass_imgs)
-                err_fwds.extend(err_fwd)
-            else:
-                no_blend.extend(fwd_pass_imgs)
-            continue
-        if seq.style_start_fr is None and seq.style_end_fr is not None:
-            params["flow"] = flow_bwd
-            params["pos"] = pos_bwd
-            params["reverse"] = True
-            bwd_pass_imgs, err_bwd = run_sequences(**params)
-            if seq.is_all:
-                return bwd_pass_imgs
-            bwd_styles.extend(bwd_pass_imgs)
-            err_bwds.extend(err_bwd)
-            continue
-        if seq.style_start_fr is not None and seq.style_end_fr is not None:
-            params["flow"] = flow_fwd
-            params["pos"] = pos_fwd
-            params["reverse"] = False
-            print("Running forward pass")
-            fwd_pass_imgs, err_fwd = run_sequences(**params)
-            fwd_styles.extend(fwd_pass_imgs)
-            err_fwds.extend(err_fwd)
-            if forward_only:
-                no_blend.extend(fwd_pass_imgs)
-                continue
+#             fwd_pass_imgs, err_fwd = run_sequences(**params)
+#             if seq.is_all:
+#                 return fwd_pass_imgs
+#             if seq.is_blend and not forward_only:
+#                 fwd_styles.extend(fwd_pass_imgs)
+#                 err_fwds.extend(err_fwd)
+#             else:
+#                 no_blend.extend(fwd_pass_imgs)
+#             continue
+#         if seq.style_start_fr is None and seq.style_end_fr is not None:
+#             params["flow"] = flow_bwd
+#             params["pos"] = pos_bwd
+#             params["reverse"] = True
+#             bwd_pass_imgs, err_bwd = run_sequences(**params)
+#             if seq.is_all:
+#                 return bwd_pass_imgs
+#             bwd_styles.extend(bwd_pass_imgs)
+#             err_bwds.extend(err_bwd)
+#             continue
+#         if seq.style_start_fr is not None and seq.style_end_fr is not None:
+#             params["flow"] = flow_fwd
+#             params["pos"] = pos_fwd
+#             params["reverse"] = False
+#             print("Running forward pass")
+#             fwd_pass_imgs, err_fwd = run_sequences(**params)
+#             fwd_styles.extend(fwd_pass_imgs)
+#             err_fwds.extend(err_fwd)
+#             if forward_only:
+#                 no_blend.extend(fwd_pass_imgs)
+#                 continue
 
-            params["flow"] = flow_bwd
-            params["pos"] = pos_bwd
-            params["reverse"] = True
-            print("Running backward pass")
-            bwd_pass_imgs, err_bwd = run_sequences(**params)
-            bwd_styles.extend(bwd_pass_imgs)
-            err_bwds.extend(err_bwd)
-            continue
-    if forward_only:
-        return no_blend
-    print("Blend mode awaits. Please don't save yet")
-    return fwd_styles, bwd_styles, err_fwds, err_bwds, flow_fwd, no_blend
+#             params["flow"] = flow_bwd
+#             params["pos"] = pos_bwd
+#             params["reverse"] = True
+#             print("Running backward pass")
+#             bwd_pass_imgs, err_bwd = run_sequences(**params)
+#             bwd_styles.extend(bwd_pass_imgs)
+#             err_bwds.extend(err_bwd)
+#             continue
+#     if forward_only:
+#         return no_blend
+#     print("Blend mode awaits. Please don't save yet")
+#     return fwd_styles, bwd_styles, err_fwds, err_bwds, flow_fwd, no_blend
 
 
 def run_blending(
@@ -281,77 +281,77 @@ def run_blending(
     return final_blends
 
 
-def run_sequences(
-    img_frs_seq: list[np.ndarray], edge, flow, pos, seq: Sequence, reverse=False
-):
-    """
-    Run the sequence for ebsynth based on the provided parameters.
-    Parameters:
-        # [Description of each parameter]
-    Returns:
-        stylized_frames: List of stylized images.
-        err_list: List of errors.
-    """
-    stylized_frames = []
-    err_list = []
-    # Initialize variables based on the 'reverse' flag.
-    if reverse:
-        start, step, style, init, final = (
-            seq.final_idx,
-            -1,
-            seq.style_end_fr,
-            seq.end_fr_idx,
-            seq.begin_fr_idx,
-        )
-    else:
-        start, step, style, init, final = (
-            seq.init_idx,
-            1,
-            seq.style_start_fr,
-            seq.begin_fr_idx,
-            seq.end_fr_idx,
-        )
+# def run_sequences(
+#     img_frs_seq: list[np.ndarray], edge, flow, pos, seq: Sequence, reverse=False
+# ):
+#     """
+#     Run the sequence for ebsynth based on the provided parameters.
+#     Parameters:
+#         # [Description of each parameter]
+#     Returns:
+#         stylized_frames: List of stylized images.
+#         err_list: List of errors.
+#     """
+#     stylized_frames = []
+#     err_list = []
+#     # Initialize variables based on the 'reverse' flag.
+#     if reverse:
+#         start, step, style, init, final = (
+#             seq.final_idx,
+#             -1,
+#             seq.style_end_fr,
+#             seq.end_fr_idx,
+#             seq.begin_fr_idx,
+#         )
+#     else:
+#         start, step, style, init, final = (
+#             seq.init_idx,
+#             1,
+#             seq.style_start_fr,
+#             seq.begin_fr_idx,
+#             seq.end_fr_idx,
+#         )
 
-    eb = ebsynth(style, guides=[])
-    warp = Warp(img_frs_seq[start])
-    ORIGINAL_SIZE = img_frs_seq[0].shape[1::-1]
-    # Loop through frames.
-    stylized_frames.append(eb.style)
-    print(start, step, init, final)
-    for i in tqdm.tqdm(range(init, final, step), desc="Generating: "):
-        eb.add_guide(edge[start], edge[i - 1] if reverse else edge[i + 1], 1.0)
-        eb.add_guide(
-            img_frs_seq[start],
-            img_frs_seq[i - 1] if reverse else img_frs_seq[i + 1],
-            6.0,
-        )
+#     eb = ebsynth(style, guides=[])
+#     warp = Warp(img_frs_seq[start])
+#     ORIGINAL_SIZE = img_frs_seq[0].shape[1::-1]
+#     # Loop through frames.
+#     stylized_frames.append(eb.style)
+#     print(start, step, init, final)
+#     for i in tqdm.tqdm(range(init, final, step), desc="Generating: "):
+#         eb.add_guide(edge[start], edge[i - 1] if reverse else edge[i + 1], 1.0)
+#         eb.add_guide(
+#             img_frs_seq[start],
+#             img_frs_seq[i - 1] if reverse else img_frs_seq[i + 1],
+#             6.0,
+#         )
 
-        # Commented out section: additional guide and warping
-        if i != start:
-            eb.add_guide(
-                pos[start - 1] if reverse else pos[start],
-                pos[i] if reverse else pos[i - 1],
-                2.0,
-            )
+#         # Commented out section: additional guide and warping
+#         if i != start:
+#             eb.add_guide(
+#                 pos[start - 1] if reverse else pos[start],
+#                 pos[i] if reverse else pos[i - 1],
+#                 2.0,
+#             )
 
-            stylized_img = (
-                stylized_frames[-1] / 255.0
-            )  # Assuming stylized_frames[-1] is already in BGR format
+#             stylized_img = (
+#                 stylized_frames[-1] / 255.0
+#             )  # Assuming stylized_frames[-1] is already in BGR format
 
-            warped_img = warp.run_warping(
-                stylized_img, flow[i] if reverse else flow[i - 1]
-            )  # Changed from run_warping_from_np to run_warping
+#             warped_img = warp.run_warping(
+#                 stylized_img, flow[i] if reverse else flow[i - 1]
+#             )  # Changed from run_warping_from_np to run_warping
 
-            warped_img = cv2.resize(warped_img, ORIGINAL_SIZE)
+#             warped_img = cv2.resize(warped_img, ORIGINAL_SIZE)
 
-            eb.add_guide(style, warped_img, 0.5)
+#             eb.add_guide(style, warped_img, 0.5)
 
-        stylized_img, err = eb.run()
-        stylized_frames.append(stylized_img)
-        err_list.append(err)
-        eb.clear_guide()
+#         stylized_img, err = eb.run()
+#         stylized_frames.append(stylized_img)
+#         err_list.append(err)
+#         eb.clear_guide()
 
-    print(
-        f"Final Length, Reverse = {reverse}: {len(stylized_frames)}. Error Length: {len(err_list)}"
-    )
-    return stylized_frames, err_list
+    # print(
+    #     f"Final Length, Reverse = {reverse}: {len(stylized_frames)}. Error Length: {len(err_list)}"
+    # )
+    # return stylized_frames, err_list

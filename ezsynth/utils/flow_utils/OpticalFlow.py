@@ -3,39 +3,10 @@ import os
 import cv2
 import numpy as np
 import torch
-# import torch.nn.functional as F
-
 import tqdm
 
 from .core.raft import RAFT
 from .core.utils.utils import InputPadder
-# from .warp import Warp
-
-
-class OpticalFlowProcessor:
-    valid_flow_methods = [
-        "RAFT",
-        #   "DeepFlow"
-    ]
-    valid_model_names = ["sintel", "kitti", "small"]
-
-    def __init__(self, model_name="sintel", flow_method="RAFT"):
-        self.flow_method = flow_method
-        self.model_name = model_name
-        self.optical_flow = []
-
-    def compute_flow(self, imgsequence: list[np.ndarray]):
-        if self.flow_method == "RAFT":
-            return self._compute_raft_flow(imgsequence)
-        # elif self.flow_method == "DeepFlow":
-        #     return self._compute_deepflow(imgsequence)
-        raise ValueError("Only RAFT is implemented")
-
-    def _compute_raft_flow(self, imgsequence: list[np.ndarray]):
-        self.flow = RAFT_flow(self.model_name)
-        self.optical_flow = self.flow.compute_flow(imgsequence)
-        return self.optical_flow
-
 
 class RAFT_flow:
     device = "cuda"
