@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from ezsynth.utils.flow_utils.warp import Warp
+from ezsynth.utils.sequences import EasySequence
 
 
 class RunConfig:
@@ -20,6 +21,7 @@ class RunConfig:
         use_lsqr=True,
         use_poisson_cupy=False,
         poisson_maxiter=None,
+        only_mode=EasySequence.MODE_NON
     ) -> None:
         # Weights
         self.edg_wgt = edg_wgt
@@ -40,6 +42,12 @@ class RunConfig:
         self.use_lsqr = use_lsqr
         self.use_poisson_cupy = use_poisson_cupy
         self.poisson_maxiter = poisson_maxiter
+        
+        # No blending mode
+        self.only_mode = only_mode
+        
+        # Skip adding last style frame if blending
+        self.skip_blend_style_last = False
 
     def get_ebsynth_cfg(self):
         return {

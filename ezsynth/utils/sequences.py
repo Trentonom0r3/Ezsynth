@@ -2,6 +2,7 @@ class EasySequence:
     MODE_FWD = "forward"
     MODE_REV = "reverse"
     MODE_BLN = "blend"
+    MODE_NON = "none"
 
     def __init__(
         self, fr_start_idx: int, fr_end_idx: int, mode: str, style_idxs: list[int]
@@ -24,8 +25,9 @@ class SequenceManager:
         self.img_idxs = img_idxs
         self.num_style_frs = len(style_paths)
 
-    def create_sequences(self) -> list[EasySequence]:
+    def create_sequences(self) -> tuple[list[EasySequence], list[str]]:
         sequences = []
+        atlas: list[str] = []
 
         # Handle sequence before the first style frame
         if self.begin_fr_idx < self.style_idxs[0]:
@@ -37,6 +39,7 @@ class SequenceManager:
                     style_idxs=[0],
                 )
             )
+            atlas.append(EasySequence.MODE_REV)
 
         # Handle sequences between style frames
         for i in range(len(self.style_idxs) - 1):
@@ -48,6 +51,7 @@ class SequenceManager:
                     style_idxs=[i, i + 1],
                 )
             )
+            atlas.append(EasySequence.MODE_BLN)
 
         # Handle sequence after the last style frame
         if self.end_fr_idx > self.style_idxs[-1]:
@@ -59,7 +63,8 @@ class SequenceManager:
                     style_idxs=[self.num_style_frs - 1],
                 )
             )
+            atlas.append(EasySequence.MODE_FWD)
 
         for seq in sequences:
             print(f"{seq}")
-        return sequences
+        return sequences, atlas

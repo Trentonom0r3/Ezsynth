@@ -4,15 +4,15 @@ import numpy as np
 import tqdm
 
 from ..flow_utils.warp import Warp
-from .histogram_blend import HistogramBlender
+from .histogram_blend import hist_blender
 from .reconstruction import reconstructor
 
 try:
     from .cupy_accelerated import hist_blend_cupy
 
     USE_GPU = True
-except ImportError:
-    print("Cupy is not installed. Revert to CPU")
+except ImportError as e:
+    print(f"Cupy is not installed. Revert to CPU. {e}")
     USE_GPU = False
 
 
@@ -38,9 +38,9 @@ class Blend:
         err_masks: list[np.ndarray],
     ):
         # use err_masks with flow to create final err_masks
-
         warped_masks = []
         warp = Warp(sample_fr)
+
         for i in tqdm.tqdm(range(len(err_masks)), desc="Warping masks"):
             if self.prev_mask is None:
                 self.prev_mask = np.zeros_like(err_masks[0])
@@ -71,7 +71,8 @@ class Blend:
             print(f"Shape mismatch: {err_forward.shape=} vs {err_backward.shape=}")
             return []
 
-        # Create a binary mask where the forward error metric is less than the backward error metric
+        # Create a binary mask where the forward error metric
+        # is less than the backward error metric
         selection_masks = np.where(err_forward < err_backward, 0, 1).astype(np.uint8)
 
         # Convert numpy array back to list
@@ -97,7 +98,7 @@ class Blend:
                     err_masks[i],
                 )
             else:
-                hist_blend = HistogramBlender().blend(
+                hist_blend = hist_blender(
                     style_fwd[i],
                     style_bwd[i],
                     err_masks[i],

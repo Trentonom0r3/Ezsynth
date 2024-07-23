@@ -1,0 +1,32 @@
+All results have borders problem
+
+Style 1
+    First frame only: Passed
+    Last frame only: Passed
+    Middle frame only: Passed
+
+Style 2 with Blend
+    First and Last: Passed
+    First and Mid: Passed
+    Mid and Last: Passed
+    Mid and Mid: Passed
+
+Style 2 without Blend - Forward only
+    First and Last: Passed
+    First and Mid: Passed
+    Mid and Last: Passed
+    Mid and Mid: Passed
+
+Style 2 without Blend - Reverse only
+    First and Last: Passed
+    First and Mid: Passed
+    Mid and Last: Passed
+    Mid and Mid: Passed
+
+Style 3:
+    Blend Mid Mid Mid: Passed
+    Blend First Mid Last:
+    Forward Mid Mid Mid:
+    Forward First Mid Last
+    Reverse Mid Mid Mid
+    Reverse First Mid Last

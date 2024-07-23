@@ -9,7 +9,7 @@ import scipy.sparse.linalg
 try:
     from .cupy_accelerated import construct_A_cupy, poisson_fusion_cupy
     USE_GPU = True
-    print("Using cupy")
+    print("Cupy is installed. Can do Cupy GPU accelerations")
 except ImportError:
     USE_GPU = False
     print("Cupy is not installed. Revert to CPU")
