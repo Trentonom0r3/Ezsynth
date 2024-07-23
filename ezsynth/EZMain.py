@@ -65,7 +65,7 @@ class Imagesynth:
     def __init__(
         self,
         style_img: str | np.ndarray,
-        guides: list[str] | list[np.ndarray] = [],
+        guides: list[str] | list[np.ndarray] = [], # type: ignore
         uniformity=3500.0,
         patchsize=5,
         pyramidlevels=6,

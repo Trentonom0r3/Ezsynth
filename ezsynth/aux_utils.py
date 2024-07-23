@@ -3,6 +3,7 @@ import re
 
 import cv2
 import numpy as np
+
 # import torch
 import tqdm
 
@@ -34,7 +35,9 @@ def read_frames_from_paths(lst: list[str]) -> list[np.ndarray]:
     err_frame = -1
     try:
         total = len(lst)
-        for err_frame, img_path in tqdm.tqdm(enumerate(lst), desc="Reading images: ", total=total):
+        for err_frame, img_path in tqdm.tqdm(
+            enumerate(lst), desc="Reading images: ", total=total
+        ):
             img_arr = validate_and_read_img(img_path)
             img_arr_seq.append(img_arr)
         else:
@@ -69,15 +72,43 @@ def get_sequence_indices(seq_folder_path: str) -> list[str]:
 def extract_indices(lst: list[str]):
     return sorted(int(img_path_pattern.findall(img_name)[-1][0]) for img_name in lst)
 
+
 def is_valid_file_path(input_path: str | list[str]) -> bool:
     return isinstance(input_path, str) and os.path.isfile(input_path)
 
-def validate_file_or_folder_to_lst(input_paths: str | list[str], type_name="") -> list[str]:
+
+def validate_file_or_folder_to_lst(
+    input_paths: str | list[str], type_name=""
+) -> list[str]:
     if is_valid_file_path(input_paths):
-        return [input_paths] # type: ignore
+        return [input_paths]  # type: ignore
     if isinstance(input_paths, list):
         valid_paths = [path for path in input_paths if is_valid_file_path(path)]
         if valid_paths:
             print(f"Received {len(valid_paths)} {type_name} files")
             return valid_paths
     raise FileNotFoundError(f"No valid {type_name} file(s) were found. {input_paths}")
+
+
+def setup_src_from_folder(
+    seq_folder_path: str,
+) -> tuple[list[str], list[int], list[np.ndarray]]:
+    img_file_paths = get_sequence_indices(seq_folder_path)
+    img_idxes = extract_indices(img_file_paths)
+    img_frs_seq = read_frames_from_paths(img_file_paths)
+    return img_file_paths, img_idxes, img_frs_seq
+
+
+def save_seq(results: list, output_folder, base_name="output", extension=".png"):
+    if not results:
+        print("Error: No results to save.")
+        return
+    for i in range(len(results)):
+        save_results(
+            output_folder,
+            f"{base_name}{i:03}{extension}",
+            results[i],
+        )
+    else:
+        print("All results saved successfully")
+    return

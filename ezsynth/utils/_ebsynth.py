@@ -15,7 +15,7 @@ class ebsynth:
 
     def __init__(
         self,
-        style,
+        # style,
         guides=[],
         uniformity=3500.0,
         patchsize=5,
@@ -40,17 +40,17 @@ class ebsynth:
         """
         # Handling the style image
 
-        if isinstance(style, (np.ndarray)):
-            self.style = style
-        elif isinstance(style, (str)):
-            self.style = cv2.imread(style)
-        elif style is None:
-            print(
-                "[INFO] No Style Image Provided. Remember to add a style image to the run() method."
-            )
-        else:
-            print(type(style))
-            raise ValueError("style should be either a file path or a numpy array.")
+        # if isinstance(style, (np.ndarray)):
+        #     self.style = style
+        # elif isinstance(style, (str)):
+        #     self.style = cv2.imread(style)
+        # elif style is None:
+        #     print(
+        #         "[INFO] No Style Image Provided. Remember to add a style image to the run() method."
+        #     )
+        # else:
+        #     print(type(style))
+        #     raise ValueError("style should be either a file path or a numpy array.")
 
         # Handling the guide images
         self.guides = []
@@ -74,62 +74,65 @@ class ebsynth:
         }
         self.backend = self.backends[backend]
 
-    def clear_guide(self):
-        """
-        Clear all the guides.
-        """
+    # def clear_guide(self):
+    #     """
+    #     Clear all the guides.
+    #     """
 
-        self.guides = []
+    #     self.guides = []
 
-    def add_guide(self, source, target, weight=None):
-        """
-        Add a new guide pair.
+    # def add_guide(self, source, target, weight=None):
+    #     """
+    #     Add a new guide pair.
 
-        :param source: Path to the source guide image or a numpy array.
-        :param target: Path to the target guide image or a numpy array.
-        :param weight: Weight for the guide pair. Defaults to 1.0.
-        """
+    #     :param source: Path to the source guide image or a numpy array.
+    #     :param target: Path to the target guide image or a numpy array.
+    #     :param weight: Weight for the guide pair. Defaults to 1.0.
+    #     """
 
-        if not isinstance(source, (str, np.ndarray)):
-            raise ValueError("source should be either a file path or a numpy array.")
-        if not isinstance(target, (str, np.ndarray)):
-            raise ValueError("target should be either a file path or a numpy array.")
-        if not isinstance(weight, (float, int)):
-            raise ValueError("weight should be a float or an integer.")
+    #     if not isinstance(source, (str, np.ndarray)):
+    #         raise ValueError("source should be either a file path or a numpy array.")
+    #     if not isinstance(target, (str, np.ndarray)):
+    #         raise ValueError("target should be either a file path or a numpy array.")
+    #     if not isinstance(weight, (float, int)):
+    #         raise ValueError("weight should be a float or an integer.")
 
-        weight = weight if weight is not None else 1.0
-        self.guides.append((source, target, weight))
+    #     weight = weight if weight is not None else 1.0
+    #     self.guides.append((source, target, weight))
 
-    def run(self):
+    def run(self, style: np.ndarray, guides: tuple[np.ndarray, np.ndarray, np.ndarray]):
         """
         Run the style transfer and return the result image.
 
         :return: styled image as a numpy array.
         """
+        
+        # self.runner.clear_buffers()
 
-        # with self.lock:
-        if isinstance(self.style, np.ndarray):
-            style = self.style
-        else:
-            style = cv2.imread(self.style)
+        # # with self.lock:
+        # if isinstance(self.style, np.ndarray):
+        #     style = self.style
+        # else:
+        #     style = cv2.imread(self.style)
 
         # Prepare the guides
-        guides_processed = []
-        for idx, (source, target, weight) in enumerate(self.guides):
-            if isinstance(source, np.ndarray):
-                source_img = source
-            else:
-                source_img = cv2.imread(source)
-            if isinstance(target, np.ndarray):
-                target_img = target
-            else:
-                target_img = cv2.imread(target)
-            guides_processed.append((source_img, target_img, weight))
+        # guides_processed = []
+        # for idx, (source, target, weight) in enumerate(self.guides):
+        #     if isinstance(source, np.ndarray):
+        #         source_img = source
+        #     else:
+        #         source_img = cv2.imread(source)
+        #     if isinstance(target, np.ndarray):
+        #         target_img = target
+        #     else:
+        #         target_img = cv2.imread(target)
+        #     guides_processed.append((source_img, target_img, weight))
 
         # Call the run function with the provided arguments
         img, err = self.runner.run(
             style,
-            guides_processed,
+            # guides_processed,
+            guides,
             patch_size=self.patchsize,
             num_pyramid_levels=self.pyramidlevels,
             num_search_vote_iters=self.searchvoteiters,

@@ -170,16 +170,13 @@ class GuideFactory:
 class EdgeGuide:
     def __init__(self, img_file_paths, method="PAGE"):
         self.edge_detector = EdgeDetector(method)
-        self.img_file_paths = img_file_paths
-
-        self._edge_maps = None  # Store edge_maps here when computed
 
     def run(self, img_frs_seq: list[np.ndarray]):
         edge_maps = []
         for img_fr in tqdm.tqdm(img_frs_seq, desc="Calculating edge maps"):
             edge_maps.append(self.edge_detector.compute_edge(img_fr))
-        self._edge_maps = edge_maps
-        return self._edge_maps
+            
+        return edge_maps
 
 
 class FlowGuide:
@@ -244,3 +241,4 @@ class PositionalGuide:
             self.flow, self.sample_fr.shape[1::-1]
         )
         return self.g_pos
+    

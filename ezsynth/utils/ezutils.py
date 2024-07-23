@@ -18,7 +18,7 @@ from ._ebsynth import ebsynth
 from .blend.blender import Blend
 from .flow_utils.warp import Warp
 from .guides.guides import GuideFactory
-from .sequences import Sequence, SequenceManager
+from .sequences import EasySequence, Sequence, SequenceManager
 
 from .run import run_scratch, run_sequence
 
@@ -101,13 +101,46 @@ class Setup:
             print(f"Guiding took {time.time() - st:.4f} s")
 
     def process_sequence(self):
-        return run_scratch(
-            self.sequences[0],
-            self.img_frs_seq,
-            self.style_frs,
-            edge=self.guides["edge"],
+        stylized_frames = []
+        err_list = []
+        flows = []
+        poses = []
+        forward_skip_last = False
+        reverse_remove_last = False
+        num_seqs = len(self.sequences)
+        is_mid = False
+        for i, seq in enumerate(self.sequences):
+            if i == 0:
+                continue
+            # if i == 0 and i < num_seqs - 1:
+            #     if seq.mode == EasySequence.MODE_FWD:
+            #         forward_skip_last = True
+            #     elif seq.mode == EasySequence.MODE_REV:
+            #         reverse_remove_last = True
+            # if i > 0 and i < num_seqs - 1:
+            #     is_mid = True
+            tmp_style, tmp_err, tmp_fl, tmp_p = run_scratch(
+                seq,
+                self.img_frs_seq,
+                self.style_frs,
+                edge=self.guides["edge"],
+                # forward_skip_last = forward_skip_last,
+                # is_mid=is_mid
+            )
             
-        )
+            if reverse_remove_last: # Remove the style frame itself
+                tmp_style = tmp_style[:-1]
+                tmp_err = tmp_err[:-1]
+                    
+            stylized_frames.extend(tmp_style)
+            err_list.extend(tmp_err)
+            flows.extend(tmp_fl)
+            poses.extend(tmp_p)
+            # forward_skip_last = False
+            # reverse_remove_last = False
+            print(len(stylized_frames))
+        
+        return stylized_frames, err_list, flows, poses
         # return process(
         #     subseqs=self.sequences,
         #     img_frs_seq=self.img_frs_seq,

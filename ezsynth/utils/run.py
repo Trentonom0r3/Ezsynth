@@ -11,6 +11,9 @@ from .flow_utils.warp import Warp
 from .sequences import EasySequence
 
 
+import torch
+import gc
+
 def run_scratch(
     seq: EasySequence,
     img_frs_seq: list[np.ndarray],
@@ -20,7 +23,11 @@ def run_scratch(
     img_wgt=6.0,
     pos_wgt=2.0,
     wrp_wgt=0.5,
+    forward_skip_last=False,
+    is_mid=False
 ):
+    # gc.collect()
+    # torch.cuda.empty_cache()
     stylized_frames: list[np.ndarray] = []
     err_list: list[np.ndarray] = []
     ORIGINAL_SIZE = img_frs_seq[0].shape[1::-1]
@@ -29,15 +36,12 @@ def run_scratch(
     style = style_frs[seq.style_idxs[0]]
     stylized_frames.append(style)
     eb = ebsynth(style)
-    print("Forward mode")
-    start = seq.fr_start_idx
-    end = seq.fr_end_idx
-    step = 1
-    is_forward = True
 
     start, end, step, is_forward = (
         get_forward(seq) if seq.mode == EasySequence.MODE_FWD else get_backward(seq)
     )
+    if forward_skip_last:
+        end -= 1
     print(f"{'Forward' if is_forward else 'Reverse'} mode")
 
     warp = Warp(img_frs_seq[start])
@@ -45,15 +49,16 @@ def run_scratch(
     flows = []
     poses = []
     rafter = RAFT_flow(model_name="sintel")
-
     for i in tqdm.tqdm(range(start, end, step), "Generating: "):
+        print("\n", start, i + step)
         eb.add_guide(edge[start], edge[i + step], edg_wgt)
         eb.add_guide(img_frs_seq[start], img_frs_seq[i + step], img_wgt)
         if is_forward:
-            flow_st_cr = rafter._compute_flow(img_frs_seq[i], img_frs_seq[i + step])
+            flow = rafter._compute_flow(img_frs_seq[i], img_frs_seq[i + step])
         else:
-            flow_st_cr = rafter._compute_flow(img_frs_seq[i + step], img_frs_seq[i])
-        poster = PositionalGuide(img_frs_seq[0], [flow_st_cr])._create()[0]
+            flow = rafter._compute_flow(img_frs_seq[i + step], img_frs_seq[i])
+        flows.append(flow)
+        poster = PositionalGuide(img_frs_seq[i], [flow])._create()[0]
         poses.append(poster)
         eb.add_guide(
             poses[0],
@@ -61,7 +66,8 @@ def run_scratch(
             pos_wgt,
         )
         stylized_img = stylized_frames[-1] / 255.0
-        warped_img = warp.run_warping(stylized_img, flow_st_cr * (- step))
+        warped_img = warp.run_warping(stylized_img, flow * (-step))
+        warped_img = cv2.resize(warped_img, ORIGINAL_SIZE)
         eb.add_guide(style, warped_img, wrp_wgt)
         stylized_img, err = eb.run()
         stylized_frames.append(stylized_img)
@@ -72,6 +78,8 @@ def run_scratch(
         err_list = err_list[::-1]
         flows = flows[::-1]
         poses = poses[::-1]
+    gc.collect()
+    torch.cuda.empty_cache()
     return stylized_frames, err_list, flows, poses
 
 

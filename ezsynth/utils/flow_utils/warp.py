@@ -7,8 +7,8 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 
 class Warp:
-    def __init__(self, img):
-        H, W, _ = img.shape
+    def __init__(self, sample_fr: np.ndarray):
+        H, W, _ = sample_fr.shape
         self.H = H
         self.W = W
         self.grid = self._create_grid(H, W)
