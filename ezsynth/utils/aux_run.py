@@ -56,7 +56,7 @@ def run_scratch(
 ):
     stylized_frames: list[np.ndarray] = []
     err_list: list[np.ndarray] = []
-    ORIGINAL_SIZE = img_frs_seq[0].shape[1::-1]
+    # ORIGINAL_SIZE = img_frs_seq[0].shape[1::-1]
 
     style = style_frs[seq.style_idxs[0]]
     stylized_frames.append(style)
@@ -66,16 +66,15 @@ def run_scratch(
         get_forward(seq) if seq.mode == EasySequence.MODE_FWD else get_backward(seq)
     )
 
-    warp = Warp(img_frs_seq[start])
+    # warp = Warp(img_frs_seq[start])
     print(start, end, step)
     flows = []
     poses = []
 
-    rafter = RAFT_flow(model_name="sintel")
+    # rafter = RAFT_flow(model_name="sintel")
 
     eb = ebsynth(**cfg.get_ebsynth_cfg())
     eb.runner.initialize_libebsynth()
-    # eb.runner.clear_buffers()
     
     for i in tqdm.tqdm(range(start, end, step), "Generating"):
         # eb.add_guide(edge[start], edge[i + step], cfg.edg_wgt)
@@ -101,17 +100,12 @@ def run_scratch(
         ])
         stylized_frames.append(stylized_img)
         err_list.append(err)
-        # eb.clear_guide()
     if not is_forward:
         stylized_frames = stylized_frames[::-1]
         err_list = err_list[::-1]
         flows = flows[::-1]
         poses = poses[::-1]
 
-    gc.collect()
-    torch.cuda.empty_cache()
-    
-    # eb.runner.reinitialize_libebsynth()
     
     return stylized_frames, err_list, flows, poses
 
