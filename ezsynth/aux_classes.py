@@ -72,7 +72,7 @@ class RunConfig:
 class PositionalGuide:
     def __init__(self) -> None:
         self.coord_map = None
-        self.coord_map_warped = None
+        # self.coord_map_warped = None
 
     def get_coord_maps(self, warp: Warp):
         h, w = warp.H, warp.W
@@ -85,28 +85,38 @@ class PositionalGuide:
         xx, yy = np.meshgrid(x, y)
 
         # Stack the coordinates into a single 3D array
-        coord_map = np.stack((xx, yy, np.zeros_like(xx)), axis=-1).astype(np.float32)
-
-        coord_map_warped = coord_map.copy()
-
-        self.coord_map = coord_map
-        self.coord_map_warped = coord_map_warped
+        self.coord_map = np.stack((xx, yy, np.zeros_like(xx)), axis=-1).astype(
+            np.float32
+        )
 
     def get_or_create_coord_maps(self, warp: Warp):
-        if self.coord_map is None or self.coord_map_warped is None:
+        if self.coord_map is None is None:
             self.get_coord_maps(warp)
-        return self.coord_map, self.coord_map_warped
+        return self.coord_map
 
     def create_from_flow(
         self, flow: np.ndarray, original_size: tuple[int, ...], warp: Warp
     ):
-        coord_map, coord_map_warped = self.get_or_create_coord_maps(warp)
+        coord_map = self.get_or_create_coord_maps(warp)
+
         coord_map_warped = warp.run_warping(coord_map, flow)
-        g_pos = cv2.resize(coord_map_warped, original_size)
-        g_pos = np.clip(g_pos, 0, 1)
-        g_pos = (g_pos * 255).astype(np.uint8)
-        self.coord_map = self.coord_map_warped.copy()
+
+        coord_map_warped[..., :2] = coord_map_warped[..., :2] % 1
+
+        # is this needed?
+        if coord_map_warped.shape[:2] != original_size:
+            coord_map_warped = cv2.resize(coord_map_warped, original_size, interpolation=cv2.INTER_LINEAR)
+
+        g_pos = (coord_map_warped * 255).astype(np.uint8)
+
         return g_pos
+        # coord_map, coord_map_warped = self.get_or_create_coord_maps(warp)
+        # coord_map_warped = warp.run_warping(coord_map, flow)
+        # g_pos = cv2.resize(coord_map_warped, original_size)
+        # g_pos = np.clip(g_pos, 0, 1)
+        # g_pos = (g_pos * 255).astype(np.uint8)
+        # self.coord_map = self.coord_map_warped.copy()
+        # return g_pos
 
 
 class EdgeConfig:
