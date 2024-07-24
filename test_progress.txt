@@ -1,27 +1,27 @@
 All results have borders problem
 
 Style 1
-    First frame only: Passed
-    Last frame only: Passed
-    Middle frame only: Passed
+    First frame only: Passed (Passed)
+    Last frame only: Passed (Passed)
+    Middle frame only: Passed (Passed)
 
 Style 2 with Blend
-    First and Last: Passed
-    First and Mid: Passed
-    Mid and Last: Passed
-    Mid and Mid: Passed
+    First and Last: Passed (Passed)
+    First and Mid: Passed (Passed)
+    Mid and Last: Passed (Passed)
+    Mid and Mid: Passed (Passed)
 
 Style 2 without Blend - Forward only
-    First and Last: Passed
-    First and Mid: Passed
-    Mid and Last: Passed
-    Mid and Mid: Passed
+    First and Last: Passed (Passed)
+    First and Mid: Passed (Passed)
+    Mid and Last: Passed (Passed)
+    Mid and Mid: Passed (Passed)
 
 Style 2 without Blend - Reverse only
-    First and Last: Passed
-    First and Mid: Passed
-    Mid and Last: Passed
-    Mid and Mid: Passed
+    First and Last: Passed (Passed)
+    First and Mid: Passed (Passed)
+    Mid and Last: Passed (Passed)
+    Mid and Mid: Passed (Passed)
 
 Style 3:
     Blend Mid Mid Mid: Passed 

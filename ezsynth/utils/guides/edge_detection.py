@@ -1,11 +1,13 @@
 # import torch
-from PIL import Image
-import numpy as np
-import os
-from phycv import PST_GPU, PAGE_GPU
+# from PIL import Image
 import cv2
-
+import numpy as np
 import torch
+
+# import os
+from phycv import PAGE_GPU, PST_GPU
+
+from ezsynth.aux_classes import EdgeConfig
 
 
 class EdgeDetector:
@@ -30,44 +32,17 @@ class EdgeDetector:
             self.kernel = self.create_gaussian_kernel(size, sigma)
 
     @staticmethod
-    def save_result(output_dir, base_file_name, result_array):
-        """
-        Save the numpy array result to the specified directory and return the file path.
-        """
-        os.makedirs(output_dir, exist_ok=True)
-
-        edge_result = Image.fromarray((result_array * 255).astype(np.uint8))
-
-        output_file_path = os.path.join(output_dir, base_file_name)
-
-        edge_result.save(output_file_path)
-
-        return output_file_path
-
-    @staticmethod
     def create_gaussian_kernel(size, sigma):
-        """
-        Create a Gaussian kernel.
-
-        """
-        kernel = np.fromfunction(
-            lambda x, y: (1 / (2 * np.pi * sigma**2))
-            * np.exp(
-                -((x - (size - 1) / 2) ** 2 + (y - (size - 1) / 2) ** 2)
-                / (2 * sigma**2)
-            ),
-            (size, size),
-        )
-
-        return kernel / np.sum(kernel)
+        x, y = np.mgrid[-size // 2 + 1 : size // 2 + 1, -size // 2 + 1 : size // 2 + 1]
+        g = np.exp(-((x**2 + y**2) / (2.0 * sigma**2)))
+        return g / g.sum()
 
     def classic_preprocess(self, img):
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         blurred = cv2.filter2D(gray, -1, self.kernel)
         edge_map = cv2.subtract(gray, blurred)
-        edge_map = cv2.add(edge_map, 0.5 * 255)
-        edge_map = np.clip(edge_map, 0, 255)
-        return edge_map.astype(np.uint8)
+        edge_map = np.clip(edge_map + 128, 0, 255)
+        return edge_map
 
     def pst_page_postprocess(self, edge_map: np.ndarray):
         edge_map = cv2.GaussianBlur(edge_map, (5, 5), 3)
@@ -118,22 +93,9 @@ class EdgeDetector:
         return edge_map
 
     def compute_edge(self, input_data: np.ndarray):
-        """
-        Compute the edge map.
-
-        :param input_data: Either a file path or a numpy array.
-
-        :return: Edge map as a numpy array.
-        """
         if self.method == "PST":
             edge_map = self.pst_run(
-                input_data,
-                S=0.3,
-                W=15,
-                sigma_LPF=0.15,
-                thresh_min=0.05,
-                thresh_max=0.9,
-                morph_flag=1,
+                input_data, **EdgeConfig.get_pst_default()
             )
             edge_map = self.pst_page_postprocess(edge_map)
             return edge_map
@@ -144,19 +106,9 @@ class EdgeDetector:
 
         if self.method == "PAGE":
             edge_map = self.page_run(
-                input_data,
-                mu_1=0,
-                mu_2=0.35,
-                sigma_1=0.05,
-                sigma_2=0.8,
-                S1=0.8,
-                S2=0.8,
-                sigma_LPF=0.1,
-                thresh_min=0.0,
-                thresh_max=0.9,
-                morph_flag=1,
+                input_data, **EdgeConfig.get_page_default()
             )
             edge_map = self.pst_page_postprocess(edge_map)
             return edge_map
-
         return edge_map
+

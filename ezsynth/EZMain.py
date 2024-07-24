@@ -3,7 +3,7 @@ import numpy as np
 
 from .aux_utils import save_results, validate_and_read_img
 from .utils._ebsynth import ebsynth
-from .utils.ezutils import Setup
+# from .utils.ezutils import Setup
 
 
 class Ezsynth:
@@ -24,9 +24,9 @@ class Ezsynth:
         process=False,
         cal_flow_bwd=False
     ):
-        self.setup = Setup(
-            style_paths, seq_folder_path, edge_method, flow_method, model, process, cal_flow_bwd
-        )
+        # self.setup = Setup(
+        #     style_paths, seq_folder_path, edge_method, flow_method, model, process, cal_flow_bwd
+        # )
         self.output_folder = output_folder
         self.results = None
 
@@ -105,31 +105,32 @@ class Imagesynth:
         """
         self.style_img = validate_and_read_img(style_img)
         self.device = "cuda"
-        self.eb = ebsynth(
-            style=style_img,
-            guides=[],
-            uniformity=uniformity,
-            patchsize=patchsize,
-            pyramidlevels=pyramidlevels,
-            searchvoteiters=searchvoteiters,
-            patchmatchiters=patchmatchiters,
-            extrapass3x3=extrapass3x3,
-            backend=backend,
-        )
+        # self.eb = ebsynth(
+        #     style=style_img,
+        #     guides=[],
+        #     uniformity=uniformity,
+        #     patchsize=patchsize,
+        #     pyramidlevels=pyramidlevels,
+        #     searchvoteiters=searchvoteiters,
+        #     patchmatchiters=patchmatchiters,
+        #     extrapass3x3=extrapass3x3,
+        #     backend=backend,
+        # )
 
     def add_guide(
         self, source: str | np.ndarray, target: str | np.ndarray, weight: float
     ):
         guide = [source, target, weight]
-        self.eb.add_guide(guide)
+        # self.eb.add_guide(guide)
 
     def clear_guides(self):
         self.eb.clear_guide()
 
     def run(self, output_path: str | None = None):
-        result, _ = self.eb.run()
+        # result, _ = self.eb.run()
 
-        if output_path:
-            cv2.imwrite(output_path, result)
+        # if output_path:
+        #     cv2.imwrite(output_path, result)
 
-        return result
+        # return result
+        pass

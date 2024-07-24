@@ -1,13 +1,14 @@
+import time
+
 import cv2
 import numpy as np
 import scipy.sparse
-import tqdm
-import time
 import scipy.sparse.linalg
-
+import tqdm
 
 try:
     from .cupy_accelerated import construct_A_cupy, poisson_fusion_cupy
+
     USE_GPU = True
     print("Cupy is installed. Can do Cupy GPU accelerations")
 except ImportError:
@@ -15,9 +16,7 @@ except ImportError:
     print("Cupy is not installed. Revert to CPU")
 
 
-
 class reconstructor:
-
     def __init__(
         self,
         hist_blends: list[np.ndarray],
@@ -27,7 +26,7 @@ class reconstructor:
         use_gpu=False,
         use_lsqr=True,
         use_poisson_cupy=False,
-        poisson_maxiter=None
+        poisson_maxiter=None,
     ):
         self.hist_blends = hist_blends
         self.style_fwd = style_fwd
@@ -45,7 +44,7 @@ class reconstructor:
         h, w, c = self.hist_blends[0].shape
         self.blends = np.zeros((num_blends, h, w, c))
 
-        a = construct_A(h, w, [2.5, 0.5, 0.5], self.use_gpu, self.use_poisson_cupy)            
+        a = construct_A(h, w, [2.5, 0.5, 0.5], self.use_gpu, self.use_poisson_cupy)
         for i in tqdm.tqdm(range(num_blends)):
             self.blends[i] = poisson_fusion(
                 self.hist_blends[i],
@@ -56,13 +55,15 @@ class reconstructor:
                 self.use_gpu,
                 self.use_lsqr,
                 self.use_poisson_cupy,
-                self.poisson_maxiter
+                self.poisson_maxiter,
             )
 
         return self.blends
 
 
-def construct_A(h: int, w: int, grad_weight: list[float], use_gpu=False, use_poisson_cupy=False):
+def construct_A(
+    h: int, w: int, grad_weight: list[float], use_gpu=False, use_poisson_cupy=False
+):
     if use_gpu:
         return construct_A_cupy(h, w, grad_weight, use_poisson_cupy)
     return construct_A_cpu(h, w, grad_weight)
@@ -77,12 +78,13 @@ def poisson_fusion(
     use_gpu=False,
     use_lsqr=True,
     use_poisson_cupy=False,
-    poisson_maxiter=None
+    poisson_maxiter=None,
 ):
     if use_gpu and use_poisson_cupy:
         return poisson_fusion_cupy(blendI, I1, I2, mask, As, poisson_maxiter)
-    # return poisson_fusion_cpu(blendI, I1, I2, mask, As, use_lsqr)
-    return poisson_fusion_cpu_optimized(blendI, I1, I2, mask, As, use_lsqr, poisson_maxiter)
+    return poisson_fusion_cpu_optimized(
+        blendI, I1, I2, mask, As, use_lsqr, poisson_maxiter
+    )
 
 
 def construct_A_cpu(h: int, w: int, grad_weight: list[float]):
@@ -202,7 +204,7 @@ def poisson_fusion_cpu_optimized(
     mask: np.ndarray,
     As: list[scipy.sparse._csc.csc_matrix],
     use_lsqr=True,
-    poisson_maxiter=None
+    poisson_maxiter=None,
 ):
     # grad_weight = [2.5, 0.5, 0.5]
     grad_weight = np.array([2.5, 0.5, 0.5])
@@ -238,7 +240,9 @@ def poisson_fusion_cpu_optimized(
         if use_lsqr:
             out_all[:, channel] = scipy.sparse.linalg.lsqr(A, b)[0]
         else:
-            out_all[:, channel] = scipy.sparse.linalg.lsmr(A, b, maxiter=poisson_maxiter)[0]
+            out_all[:, channel] = scipy.sparse.linalg.lsmr(
+                A, b, maxiter=poisson_maxiter
+            )[0]
 
     # Add back the mean and reshape
     final = (out_all + Iab_mean).reshape(h, w, c)

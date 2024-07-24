@@ -41,7 +41,7 @@ style_paths = [
 image_folder = "J:/AI/Ezsynth/examples/input"
 output_folder = "J:/AI/Ezsynth/output"
 
-# edge_method="Classic",
+# edge_method="Classic"
 edge_method = "PAGE"
 # edge_method="PST",
 flow_method = "RAFT"
@@ -73,7 +73,7 @@ rafter = RAFT_flow(model_name="sintel")
 cfg = RunConfig()
 
 # cfg.only_mode = EasySequence.MODE_FWD
-cfg.only_mode = EasySequence.MODE_REV
+# cfg.only_mode = EasySequence.MODE_REV
 
 eb = ebsynth(**cfg.get_ebsynth_cfg())
 eb.runner.initialize_libebsynth()
@@ -117,7 +117,7 @@ for i, seq in enumerate(sequences):
     stylized_frames.extend(tmp_stylized_frames)
 
 
-save_seq(stylized_frames, "J:/AI/Ezsynth/output_29")
+save_seq(stylized_frames, "J:/AI/Ezsynth/output_31")
 
 gc.collect()
 torch.cuda.empty_cache()
