@@ -15,6 +15,15 @@ class EasySequence:
     def __repr__(self) -> str:
         return f"[{self.fr_start_idx}, {self.fr_end_idx}] {self.mode} {self.style_idxs}"
 
+    @classmethod
+    def get_valid_modes(cls) -> tuple[str, str, str, str]:
+        return (
+            cls.MODE_FWD,
+            cls.MODE_REV,
+            cls.MODE_BLN,
+            cls.MODE_NON,
+        )
+
 
 class SequenceManager:
     def __init__(self, begin_fr_idx, end_fr_idx, style_paths, style_idxs, img_idxs):

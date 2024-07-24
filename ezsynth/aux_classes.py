@@ -8,28 +8,22 @@ from ezsynth.utils.sequences import EasySequence
 class RunConfig:
     def __init__(
         self,
-        edg_wgt=1.0,
-        img_wgt=6.0,
-        pos_wgt=2.0,
-        wrp_wgt=0.5,
         uniformity=3500.0,
         patchsize=7,
         pyramidlevels=6,
         searchvoteiters=12,
         patchmatchiters=6,
         extrapass3x3=True,
+        edg_wgt=1.0,
+        img_wgt=6.0,
+        pos_wgt=2.0,
+        wrp_wgt=0.5,
         use_gpu=False,
         use_lsqr=True,
         use_poisson_cupy=False,
         poisson_maxiter=None,
         only_mode=EasySequence.MODE_NON,
     ) -> None:
-        # Weights
-        self.edg_wgt = edg_wgt
-        self.img_wgt = img_wgt
-        self.pos_wgt = pos_wgt
-        self.wrp_wgt = wrp_wgt
-
         # Ebsynth gen params
         self.uniformity = uniformity
         self.patchsize = patchsize
@@ -37,6 +31,12 @@ class RunConfig:
         self.searchvoteiters = searchvoteiters
         self.patchmatchiters = patchmatchiters
         self.extrapass3x3 = extrapass3x3
+
+        # Weights
+        self.edg_wgt = edg_wgt
+        self.img_wgt = img_wgt
+        self.pos_wgt = pos_wgt
+        self.wrp_wgt = wrp_wgt
 
         # Blend params
         self.use_gpu = use_gpu
