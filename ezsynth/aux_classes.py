@@ -72,7 +72,6 @@ class RunConfig:
 class PositionalGuide:
     def __init__(self) -> None:
         self.coord_map = None
-        # self.coord_map_warped = None
 
     def get_coord_maps(self, warp: Warp):
         h, w = warp.H, warp.W
@@ -96,27 +95,19 @@ class PositionalGuide:
 
     def create_from_flow(
         self, flow: np.ndarray, original_size: tuple[int, ...], warp: Warp
-    ):
+    ):       
         coord_map = self.get_or_create_coord_maps(warp)
-
         coord_map_warped = warp.run_warping(coord_map, flow)
-
+        
         coord_map_warped[..., :2] = coord_map_warped[..., :2] % 1
 
-        # is this needed?
         if coord_map_warped.shape[:2] != original_size:
             coord_map_warped = cv2.resize(coord_map_warped, original_size, interpolation=cv2.INTER_LINEAR)
 
         g_pos = (coord_map_warped * 255).astype(np.uint8)
-
+        self.coord_map = coord_map_warped.copy()
+        
         return g_pos
-        # coord_map, coord_map_warped = self.get_or_create_coord_maps(warp)
-        # coord_map_warped = warp.run_warping(coord_map, flow)
-        # g_pos = cv2.resize(coord_map_warped, original_size)
-        # g_pos = np.clip(g_pos, 0, 1)
-        # g_pos = (g_pos * 255).astype(np.uint8)
-        # self.coord_map = self.coord_map_warped.copy()
-        # return g_pos
 
 
 class EdgeConfig:
