@@ -5,6 +5,7 @@ import torch
 from phycv import PAGE_GPU, PST_GPU
 
 from ezsynth.aux_classes import EdgeConfig
+from ezsynth.aux_utils import replace_zeros_tensor
 
 
 class EdgeDetector:
@@ -54,7 +55,7 @@ class EdgeDetector:
         blurred = cv2.filter2D(gray, -1, self.kernel)
         edge_map = cv2.subtract(gray, blurred)
         edge_map = np.clip(edge_map + 128, 0, 255)
-        return edge_map
+        return edge_map.astype(np.uint8)
 
     def pst_page_postprocess(self, edge_map: np.ndarray):
         edge_map = cv2.GaussianBlur(edge_map, (5, 5), 3)
@@ -79,6 +80,8 @@ class EdgeDetector:
         self.pst_gpu.w = padded_img.shape[1]
 
         self.pst_gpu.img = torch.from_numpy(padded_img).to(self.pst_gpu.device)
+        self.pst_gpu.img = replace_zeros_tensor(self.pst_gpu.img, 1)
+        
         self.pst_gpu.init_kernel(S, W)
         self.pst_gpu.apply_kernel(sigma_LPF, thresh_min, thresh_max, morph_flag)
 
@@ -108,13 +111,14 @@ class EdgeDetector:
         self.page_gpu.w = padded_img.shape[1]
 
         self.page_gpu.img = torch.from_numpy(padded_img).to(self.page_gpu.device)
+        self.page_gpu.img = replace_zeros_tensor(self.page_gpu.img, 1)
+        
         self.page_gpu.init_kernel(mu_1, mu_2, sigma_1, sigma_2, S1, S2)
         self.page_gpu.apply_kernel(sigma_LPF, thresh_min, thresh_max, morph_flag)
         self.page_gpu.create_page_edge()
 
         edge_map = self.page_gpu.page_edge.cpu().numpy()
         edge_map = self.unpad_image(edge_map)
-
         return edge_map
 
     def compute_edge(self, input_data: np.ndarray):
@@ -133,3 +137,4 @@ class EdgeDetector:
             edge_map = self.pst_page_postprocess(edge_map)
             return edge_map
         return edge_map
+

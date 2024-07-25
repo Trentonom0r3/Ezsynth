@@ -23,6 +23,10 @@ class RunConfig:
         use_poisson_cupy=False,
         poisson_maxiter=None,
         only_mode=EasySequence.MODE_NON,
+        do_mask=False,
+        pre_mask=False,
+        feather=0,
+        return_masked_only=False
     ) -> None:
         # Ebsynth gen params
         self.uniformity = uniformity
@@ -49,6 +53,12 @@ class RunConfig:
 
         # Skip adding last style frame if blending
         self.skip_blend_style_last = False
+        
+        # Masking mode
+        self.do_mask = do_mask
+        self.pre_mask = pre_mask
+        self.return_masked_only = return_masked_only
+        self.feather = feather
 
     def get_ebsynth_cfg(self):
         return {

@@ -5,8 +5,10 @@ import time
 
 import torch
 
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+from ezsynth.utils.sequences import EasySequence
 from ezsynth.aux_classes import RunConfig
 from ezsynth.aux_utils import save_seq
 from ezsynth.main_ez import Ezsynth
@@ -24,6 +26,7 @@ style_paths = [
 ]
 
 image_folder = "J:/AI/Ezsynth/examples/input"
+mask_folder = "J:/AI/Ezsynth/examples/mask/mask_feather"
 output_folder = "J:/AI/Ezsynth/output"
 
 # edge_method="Classic"
@@ -34,19 +37,23 @@ model = "sintel"
 ezrunner = Ezsynth(
     style_paths=style_paths,
     image_folder=image_folder,
-    cfg=RunConfig(),
+    cfg=RunConfig(pre_mask=False, feather=5, return_masked_only=False),
     edge_method=edge_method,
     raft_flow_model_name=model,
+    mask_folder=mask_folder,
+    do_mask=True,
+    # do_mask=False,
 )
 
 
-# only_mode = EasySequence.MODE_FWD
+only_mode = EasySequence.MODE_FWD
 # only_mode = EasySequence.MODE_REV
-only_mode = None
+# only_mode = None
 
 stylized_frames = ezrunner.run_sequences(only_mode)
 
-save_seq(stylized_frames, "J:/AI/Ezsynth/output_31")
+save_seq(stylized_frames, "J:/AI/Ezsynth/output_44")
+# save_seq(ezrunner.edge_guides, "J:/AI/Ezsynth/edge_mask")
 
 gc.collect()
 torch.cuda.empty_cache()

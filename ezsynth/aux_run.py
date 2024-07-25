@@ -34,36 +34,54 @@ def run_a_pass(
     pos_guider = PositionalGuide()
 
     for i in tqdm.tqdm(range(start, end, step), "Generating"):
-        if is_forward:
-            flow = rafter._compute_flow(img_frs_seq[i], img_frs_seq[i + step])
-        else:
-            flow = rafter._compute_flow(img_frs_seq[i + step], img_frs_seq[i])
+        flow = get_flow(img_frs_seq, rafter, step, is_forward, i)
         flows.append(flow)
 
         poster = pos_guider.create_from_flow(flow, ORIGINAL_SIZE, warp)
         poses.append(poster)
-
-        stylized_img = stylized_frames[-1] / 255.0
-        warped_img = warp.run_warping(stylized_img, flow * (-step))
-        warped_img = cv2.resize(warped_img, ORIGINAL_SIZE)
+        warped_img = get_warped_img(stylized_frames, ORIGINAL_SIZE, step, warp, flow)
 
         stylized_img, err = eb.run(
             style,
             guides=[
-                (edge[start], edge[i + step], cfg.edg_wgt),
+                (edge[start], edge[i + step], cfg.edg_wgt),  # Slower with premask
                 (img_frs_seq[start], img_frs_seq[i + step], cfg.img_wgt),
                 (poses[0], poster, cfg.pos_wgt),
-                (style, warped_img, cfg.wrp_wgt),
+                (style, warped_img, cfg.wrp_wgt),  # Slower with premask
             ],
         )
         stylized_frames.append(stylized_img)
         err_list.append(err)
+
     if not is_forward:
         stylized_frames = stylized_frames[::-1]
         err_list = err_list[::-1]
         flows = flows[::-1]
 
     return stylized_frames, err_list, flows
+
+
+def get_warped_img(
+    stylized_frames: list[np.ndarray], ORIGINAL_SIZE, step: int, warp: Warp, flow
+):
+    stylized_img = stylized_frames[-1] / 255.0
+    warped_img = warp.run_warping(stylized_img, flow * (-step))
+    warped_img = cv2.resize(warped_img, ORIGINAL_SIZE)
+    return warped_img
+
+
+def get_flow(
+    img_frs_seq: list[np.ndarray],
+    rafter: RAFT_flow,
+    step: int,
+    is_forward: bool,
+    i: int,
+):
+    if is_forward:
+        flow = rafter._compute_flow(img_frs_seq[i], img_frs_seq[i + step])
+    else:
+        flow = rafter._compute_flow(img_frs_seq[i + step], img_frs_seq[i])
+    return flow
 
 
 def run_scratch(

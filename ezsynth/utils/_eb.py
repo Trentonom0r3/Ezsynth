@@ -1,5 +1,4 @@
 import sys
-
 from ctypes import (
     CDLL,
     POINTER,

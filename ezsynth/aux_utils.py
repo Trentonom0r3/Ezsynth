@@ -3,7 +3,12 @@ import re
 
 import cv2
 import numpy as np
+import torch
 import tqdm
+
+
+def validate_option(option, values, default):
+    return option if option in values else default
 
 
 def save_results(
@@ -43,6 +48,24 @@ def read_frames_from_paths(lst: list[str]) -> list[np.ndarray]:
             return img_arr_seq
     except Exception as e:
         raise ValueError(f"Error reading frame {err_frame}: {e}")
+
+
+def read_masks_from_paths(lst: list[str]) -> list[np.ndarray]:
+    msk_arr_seq: list[np.ndarray] = []
+    err_frame = -1
+    try:
+        total = len(lst)
+        for err_frame, img_path in tqdm.tqdm(
+            enumerate(lst), desc="Reading masks: ", total=total
+        ):
+            msk = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+            _, msk = cv2.threshold(msk, 1, 255, cv2.THRESH_BINARY)
+            msk_arr_seq.append(msk)
+        else:
+            print(f"Read {len(msk_arr_seq)} frames successfully")
+            return msk_arr_seq
+    except Exception as e:
+        raise ValueError(f"Error reading mask frame {err_frame}: {e}")
 
 
 img_extensions = (".png", ".jpg", ".jpeg")
@@ -97,6 +120,20 @@ def setup_src_from_folder(
     return img_file_paths, img_idxes, img_frs_seq
 
 
+def setup_masks_from_folder(mask_folder_path: str):
+    msk_file_paths = get_sequence_indices(mask_folder_path)
+    msk_idxes = extract_indices(msk_file_paths)
+    msk_frs_seq = read_masks_from_paths(msk_file_paths)
+    return msk_file_paths, msk_idxes, msk_frs_seq
+
+
+def setup_src_from_lst(paths: list[str], type_name=""):
+    val_paths = validate_file_or_folder_to_lst(paths, type_name)
+    val_idxes = extract_indices(val_paths)
+    frs_seq = read_frames_from_paths(val_paths)
+    return val_paths, val_idxes, frs_seq
+
+
 def save_seq(results: list, output_folder, base_name="output", extension=".png"):
     if not results:
         print("Error: No results to save.")
@@ -110,3 +147,15 @@ def save_seq(results: list, output_folder, base_name="output", extension=".png")
     else:
         print("All results saved successfully")
     return
+
+
+def replace_zeros_tensor(image: torch.Tensor, replace_value: int = 1) -> torch.Tensor:
+    zero_mask = image == 0
+    replace_tensor = torch.full_like(image, replace_value)
+    return torch.where(zero_mask, replace_tensor, image)
+
+
+def replace_zeros_np(image: np.ndarray, replace_value: int = 1) -> np.ndarray:
+    zero_mask = image == 0
+    replace_array = np.full_like(image, replace_value)
+    return np.where(zero_mask, replace_array, image)
