@@ -4,8 +4,70 @@ import numpy as np
 from ezsynth.utils.flow_utils.warp import Warp
 from ezsynth.utils.sequences import EasySequence
 
-
 class RunConfig:
+    """
+    ### Ebsynth gen params
+        `uniformity (float)`: Uniformity weight for the style transfer. 
+        Reasonable values are between `500-15000`.
+        Defaults to `3500.0`.
+            
+        `patchsize (int)`: Size of the patches [NxN]. Must be an odd number `>= 3`. 
+        Defaults to `7`.
+            
+        `pyramidlevels (int)`: Number of pyramid levels. Larger values useful for things like color transfer. 
+        Defaults to `6`.
+            
+        `searchvoteiters (int)`: Number of search/vote iterations. Defaults to `12`.
+        `patchmatchiters (int)`: Number of Patch-Match iterations. The larger, the longer it takes. 
+        Defaults to `6`.
+            
+        `extrapass3x3 (bool)`: Perform additional polishing pass with 3x3 patches at the finest level. 
+        Defaults to `True`.
+                             
+    ### Ebsynth guide weights params                         
+        `edg_wgt (float)`: Edge detect weights. Defaults to `1.0`.
+        `img_wgt (float)`: Original image weights. Defaults to `6.0`.
+        `pos_wgt (float)`: Flow position warping weights. Defaults to `2.0`.
+        `wrp_wgt (float)`: Warped style image weight. Defaults to `0.5`.
+    
+    ### Blending params
+        `use_gpu (bool)`: Use GPU for Histogram Blending (Only affect Blend mode). Faster than CPU.
+        Defaults to `False`.
+            
+        `use_lsqr (bool)`: Use LSQR (Least-squares solver) instead of LSMR (Iterative solver for least-squares)
+        for Poisson blending step. LSQR often yield better results. May change to LSMR for speed (depends). 
+        Defaults to `True`.
+            
+        `use_poisson_cupy (bool)`: Use Cupy GPU acceleration for Poisson blending step.
+        Uses LSMR (overrides `use_lsqr`). May not yield better speed.
+        Defaults to `False`.
+            
+        `poisson_maxiter (int | None)`: Max iteration to calculate Poisson Least-squares (only affect LSMR mode).
+        Expect positive integers.
+        Defaults to `None`.
+            
+        `only_mode (str)`: Skip blending, only run one pass per sequence.
+            Valid values:
+                `MODE_FWD = "forward"` (Will only run forward mode if `sequence.mode` is blend)
+                
+                `MODE_REV = "reverse"` (Will only run reverse mode if `sequence.mode` is blend)
+                
+            Defaults to `MODE_NON = "none"`.
+    
+    ### Masking params
+        `do_mask (bool)`: Whether to apply mask. Defaults to `False`.
+        
+        `pre_mask (bool)`: Whether to mask the inputs and styles before `RUN` or after.
+        Pre-mask takes ~2x time to run per frame. Could be due to Ebsynth.dll implementation.
+        Defaults to `False`.            
+        
+        `return_masked_only (bool)`: Whether to return the styled results without applying it back to the original image.
+        Defaults to `False`.            
+        
+        `feather (int)`: Feather Gaussian radius to apply on the mask results. Only affect if `return_masked_only == False`.
+        Expects integers. Defaults to `0`.
+    """
+
     def __init__(
         self,
         uniformity=3500.0,
@@ -21,44 +83,114 @@ class RunConfig:
         use_gpu=False,
         use_lsqr=True,
         use_poisson_cupy=False,
-        poisson_maxiter=None,
+        poisson_maxiter: int | None = None,
         only_mode=EasySequence.MODE_NON,
         do_mask=False,
         pre_mask=False,
+        return_masked_only=False,
         feather=0,
-        return_masked_only=False
     ) -> None:
         # Ebsynth gen params
         self.uniformity = uniformity
+        """Uniformity weight for the style transfer.
+        Reasonable values are between `500-15000`.
+
+        Defaults to `3500.0`."""
         self.patchsize = patchsize
+        """Size of the patches [`NxN`]. Must be an odd number `>= 3`.
+        Defaults to `7`"""
+
         self.pyramidlevels = pyramidlevels
+        """Number of pyramid levels.
+        Larger values useful for things like color transfer.
+
+        Defaults to 6."""
+
         self.searchvoteiters = searchvoteiters
+        """Number of search/vote iterations.
+        Defaults to `12`"""
+
         self.patchmatchiters = patchmatchiters
+        """Number of Patch-Match iterations. The larger, the longer it takes.
+        Defaults to `6`"""
+
         self.extrapass3x3 = extrapass3x3
+        """Perform additional polishing pass with 3x3 patches at the finest level.
+        Defaults to `True`"""
 
         # Weights
         self.edg_wgt = edg_wgt
+        """Edge detect weights. Defaults to `1.0`"""
+
         self.img_wgt = img_wgt
+        """Original image weights. Defaults to `6.0`"""
+
         self.pos_wgt = pos_wgt
+        """Flow position warping weights. Defaults to `2.0`"""
+
         self.wrp_wgt = wrp_wgt
+        """Warped style image weight. Defaults to `0.5`"""
 
         # Blend params
         self.use_gpu = use_gpu
+        """Use GPU for Histogram Blending (Only affect Blend mode). Faster than CPU.
+        Defaults to `False`"""
+
         self.use_lsqr = use_lsqr
+        """Use LSQR (Least-squares solver) instead of LSMR (Iterative solver for least-squares)
+        for Poisson blending step. LSQR often yield better results.
+
+        May change to LSMR for speed (depends).
+        Defaults to `True`"""
+
         self.use_poisson_cupy = use_poisson_cupy
+        """Use Cupy GPU acceleration for Poisson blending step.
+        Uses LSMR (overrides `use_lsqr`). May not yield better speed.
+
+        Defaults to `False`"""
+
         self.poisson_maxiter = poisson_maxiter
+        """Max iteration to calculate Poisson Least-squares (only affect LSMR mode). Expect positive integers.
+
+        Defaults to `None`"""
 
         # No blending mode
         self.only_mode = only_mode
+        """Skip blending, only run one pass per sequence.
+
+        Valid values:
+            `MODE_FWD = "forward"` (Will only run forward mode if `sequence.mode` is blend)
+
+            `MODE_REV = "reverse"` (Will only run reverse mode if `sequence.mode` is blend)
+
+        Defaults to `MODE_NON = "none"`
+        """
 
         # Skip adding last style frame if blending
         self.skip_blend_style_last = False
-        
+        """Skip adding last style frame if blending. Internal variable"""
+
         # Masking mode
         self.do_mask = do_mask
+        """Whether to apply mask. Defaults to `False`"""
+
         self.pre_mask = pre_mask
+        """Whether to mask the inputs and styles before `RUN` or after.
+
+        Pre-mask takes ~2x time to run per frame. Could be due to Ebsynth.dll implementation.
+
+        Defaults to `False`"""
+
         self.return_masked_only = return_masked_only
+        """Whether to return the styled results without applying it back to the original image.
+
+        Defaults to `False`"""
+
         self.feather = feather
+        """Feather Gaussian radius to apply on the mask results. Only affect if `return_masked_only == False`.
+
+        Expects integers. Defaults to `0`"""
+
 
     def get_ebsynth_cfg(self):
         return {
@@ -105,18 +237,20 @@ class PositionalGuide:
 
     def create_from_flow(
         self, flow: np.ndarray, original_size: tuple[int, ...], warp: Warp
-    ):       
+    ):
         coord_map = self.get_or_create_coord_maps(warp)
         coord_map_warped = warp.run_warping(coord_map, flow)
-        
+
         coord_map_warped[..., :2] = coord_map_warped[..., :2] % 1
 
         if coord_map_warped.shape[:2] != original_size:
-            coord_map_warped = cv2.resize(coord_map_warped, original_size, interpolation=cv2.INTER_LINEAR)
+            coord_map_warped = cv2.resize(
+                coord_map_warped, original_size, interpolation=cv2.INTER_LINEAR
+            )
 
         g_pos = (coord_map_warped * 255).astype(np.uint8)
         self.coord_map = coord_map_warped.copy()
-        
+
         return g_pos
 
 
