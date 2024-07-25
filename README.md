@@ -2,7 +2,8 @@
 
 Reworked version of [Trentonom0r3/Ezsynth](https://github.com/Trentonom0r3/Ezsynth), with masking support and some visual bug fixes. Aims to be easy to use and maintain. 
 
-To get started, see `test_redux.py` for an example of generating a full video.
+* To get started, see `test_redux.py` for an example of generating a full video.
+* To generate image style transfer, see `test_imgsynth.py` for all examples from the original `Ebsynth`.
 
 1. git clone the repo
 2. Place the `Ezsynth/ezsynth/utils/ebsynth.dll` file
