@@ -1,22 +1,35 @@
 # Ezsynth - Ebsynth Python Library
 
-Perform things like style transfer, color transfer, inpainting, superimposition, video stylization and more!
+Reworked version of [Trentonom0r3/Ezsynth](https://github.com/Trentonom0r3/Ezsynth), with masking support and some visual bug fixes. Aims to be easy to use and maintain. 
 
-This implementation makes use of advanced physics based edge detection and RAFT optical flow,
-which leads to more accurate results during synthesis.
+To get started, see `test_redux.py` for an example of generating a full video.
 
-Ezsynth uses [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) - library version of Ebsynth.
+> Perform things like style transfer, color transfer, inpainting, superimposition, video stylization and more!
+This implementation makes use of advanced physics based edge detection and RAFT optical flow, which leads to more accurate results during synthesis.
+
+> Ezsynth uses [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) - library version of Ebsynth.
+
+This expects `Ezsynth/ezsynth/utils/ebsynth.dll`, which can be found by compiling from source, or `pip install` the original repository. 
+
+Currently only tested on `Windows 10 - Python 3.11 - GPU`
 
 # Table of Contents
 
-- [Installation](#installation)
-- [API](#api)
-- [Usage](#usage)
-- [FAQ](#faq)
-- [TODO](#todo)
-- [Contributing](#contributing)
-- [Changelog](#changelog)
-- [Examples](#examples)
+- [Ezsynth - Ebsynth Python Library](#ezsynth---ebsynth-python-library)
+- [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+    - [Build from source](#build-from-source)
+      - [Windows](#windows)
+      - [macOS \& Linux](#macos--linux)
+  - [API](#api)
+  - [Usage](#usage)
+    - [Imagesynth](#imagesynth)
+    - [Ezsynth](#ezsynth)
+  - [FAQ](#faq)
+  - [TODO](#todo)
+  - [Contributing](#contributing)
+  - [Changelog](#changelog)
+  - [Examples](#examples)
 
 ## Installation
 
