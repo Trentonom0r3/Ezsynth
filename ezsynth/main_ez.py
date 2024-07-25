@@ -1,5 +1,7 @@
 import time
 
+import numpy as np
+
 from ezsynth.aux_classes import RunConfig
 from ezsynth.aux_computations import precompute_edge_guides
 from ezsynth.aux_masker import (
@@ -12,6 +14,7 @@ from ezsynth.aux_utils import (
     setup_masks_from_folder,
     setup_src_from_folder,
     setup_src_from_lst,
+    validate_and_read_img,
     validate_option,
 )
 from ezsynth.utils._ebsynth import ebsynth
@@ -184,3 +187,26 @@ class Ezsynth:
             ):
                 return True
         return False
+
+
+class ImageSynth:
+    def __init__(
+        self,
+        style_path: str,
+        src_path: str,
+        tgt_path: str,
+        cfg: RunConfig = RunConfig(),
+    ) -> None:
+        self.style_img = validate_and_read_img(style_path)
+        self.src_img = validate_and_read_img(src_path)
+        self.tgt_img = validate_and_read_img(tgt_path)
+        self.cfg = cfg
+
+        self.eb = ebsynth(**cfg.get_ebsynth_cfg())
+        self.eb.runner.initialize_libebsynth()
+    
+    
+
+    def run(self, guides: list[tuple[np.ndarray, np.ndarray, float]] = []):
+        guides.append((self.src_img, self.tgt_img, self.cfg.img_wgt))
+        return self.eb.run(self.style_img, guides=guides)

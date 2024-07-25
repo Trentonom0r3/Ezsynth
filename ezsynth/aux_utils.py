@@ -11,7 +11,7 @@ def validate_option(option, values, default):
     return option if option in values else default
 
 
-def save_results(
+def save_to_folder(
     output_folder: str, base_file_name: str, result_array: np.ndarray
 ) -> str:
     os.makedirs(output_folder, exist_ok=True)
@@ -31,6 +31,12 @@ def validate_and_read_img(img: str | np.ndarray) -> np.ndarray:
         if img.shape[-1] == 3:
             return img
         raise ValueError(f"Expected 3 channels image. Style shape is {img.shape}")
+
+
+def load_guide(src_path: str, tgt_path: str, weight=1.0):
+    src_img = validate_and_read_img(src_path)
+    tgt_img = validate_and_read_img(tgt_path)
+    return (src_img, tgt_img, weight)
 
 
 def read_frames_from_paths(lst: list[str]) -> list[np.ndarray]:
@@ -139,7 +145,7 @@ def save_seq(results: list, output_folder, base_name="output", extension=".png")
         print("Error: No results to save.")
         return
     for i in range(len(results)):
-        save_results(
+        save_to_folder(
             output_folder,
             f"{base_name}{i:03}{extension}",
             results[i],
