@@ -175,7 +175,7 @@ class SparseFlowAugmentor:
 
     def resize_sparse_flow_map(self, flow, valid, fx=1.0, fy=1.0):
         ht, wd = flow.shape[:2]
-        coords = np.meshgrid(np.arange(wd), np.arange(ht))
+        coords = np.meshgrid(np.arange(wd), np.arange(ht), indexing="xy")
         coords = np.stack(coords, axis=-1)
 
         coords = coords.reshape(-1, 2).astype(np.float32)

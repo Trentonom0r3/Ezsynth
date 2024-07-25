@@ -8,37 +8,25 @@ import tqdm
 from .core.raft import RAFT
 from .core.utils.utils import InputPadder
 
+
 class RAFT_flow:
-    device = "cuda"
-
     def __init__(self, model_name="sintel"):
-        """
+        self.DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        Parameters
-        ----------
-        model_name : str, optional
-            DESCRIPTION. The default is 'Sintel'.
-
-        Example
-        -------
-            flow = RAFT_flow()
-            flow.compute_flow(img1, img2)
-        For an imgsequence, use the compute_optical_flow method.
-
-            flow = RAFT_flow()
-            flow.compute_optical_flow(imgsequence)
-        """
         model_name = f"raft-{model_name}.pth"
-        self.model = torch.nn.DataParallel(
-            RAFT(args=self._instantiate_raft_model(model_name))
-        )
         model_path = os.path.join(os.path.dirname(__file__), "models", model_name)
+
         if not os.path.exists(model_path):
             raise ValueError(f"[ERROR] Model file '{model_path}' not found.")
 
-        self.model.load_state_dict(torch.load(model_path, map_location=self.device))
-        self.model = self.model.module
-        self.model.to(self.device)
+        self.model = torch.nn.DataParallel(
+            RAFT(args=self._instantiate_raft_model(model_name))
+        )
+
+        state_dict = torch.load(model_path, map_location=self.DEVICE)
+        self.model.load_state_dict(state_dict)
+
+        self.model.to(self.DEVICE)
         self.model.eval()
 
     def _instantiate_raft_model(self, model_name):
@@ -56,7 +44,7 @@ class RAFT_flow:
                 torch.tensor(np_array, dtype=torch.float32)
                 .permute(2, 0, 1)
                 .unsqueeze(0)
-                .to(self.device)
+                .to(self.DEVICE)
             )
             return tensor
         except Exception as e:

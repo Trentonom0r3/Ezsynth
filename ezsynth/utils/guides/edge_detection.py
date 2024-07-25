@@ -1,10 +1,7 @@
-# import torch
-# from PIL import Image
 import cv2
 import numpy as np
 import torch
 
-# import os
 from phycv import PAGE_GPU, PST_GPU
 
 from ezsynth.aux_classes import EdgeConfig
@@ -16,10 +13,11 @@ class EdgeDetector:
         Initialize the edge detector.
 
         :param method: Edge detection method. Choose from 'PST', 'Classic', or 'PAGE'.
-        :PST: Phase Stretch Transform (PST) edge detector. - Good overall structure, but not very detailed.
+        :PST: Phase Stretch Transform (PST) edge detector. - Good overall structure, 
+        but not very detailed.
         :Classic: Classic edge detector. - A good balance between structure and detail.
-        :PAGE: Phase and Gradient Estimation (PAGE) edge detector. - Great detail, great structure, but slow.
-        :return: None.
+        :PAGE: Phase and Gradient Estimation (PAGE) edge detector. - 
+        Great detail, great structure, but slow.
         """
         self.method = method
         self.device = "cuda"
@@ -120,6 +118,7 @@ class EdgeDetector:
         return edge_map
 
     def compute_edge(self, input_data: np.ndarray):
+        edge_map = None
         if self.method == "PST":
             edge_map = self.pst_run(input_data, **EdgeConfig.get_pst_default())
             edge_map = self.pst_page_postprocess(edge_map)

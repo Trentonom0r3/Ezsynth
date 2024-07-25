@@ -1,9 +1,9 @@
-import warnings
+# import warnings
 
 import cv2
 import numpy as np
 
-warnings.filterwarnings("ignore", category=UserWarning)
+# warnings.filterwarnings("ignore", category=UserWarning)
 
 
 class Warp:
@@ -14,7 +14,7 @@ class Warp:
         self.grid = self._create_grid(H, W)
 
     def _create_grid(self, H: int, W: int):
-        x, y = np.meshgrid(np.arange(W), np.arange(H))
+        x, y = np.meshgrid(np.arange(W), np.arange(H), indexing="xy")
         return np.stack((x, y), axis=-1).astype(np.float32)
 
     def _warp(self, img: np.ndarray, flo: np.ndarray):
