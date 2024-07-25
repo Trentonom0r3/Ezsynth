@@ -4,14 +4,21 @@ Reworked version of [Trentonom0r3/Ezsynth](https://github.com/Trentonom0r3/Ezsyn
 
 To get started, see `test_redux.py` for an example of generating a full video.
 
+1. git clone the repo
+2. Place the `Ezsynth/ezsynth/utils/ebsynth.dll` file
+3. Run script from your Python environment
+
+This is not intended to be used as an installable module.
+
+`ebsynth.dll` can be found by compiling from source, or `pip install` as instructed in the original repository.
+
+Currently only tested on `Windows 10 - Python 3.11 - GPU`
+
 > Perform things like style transfer, color transfer, inpainting, superimposition, video stylization and more!
 This implementation makes use of advanced physics based edge detection and RAFT optical flow, which leads to more accurate results during synthesis.
 
 > Ezsynth uses [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) - library version of Ebsynth.
 
-This expects `Ezsynth/ezsynth/utils/ebsynth.dll`, which can be found by compiling from source, or `pip install` the original repository. 
-
-Currently only tested on `Windows 10 - Python 3.11 - GPU`
 
 # Table of Contents
 
