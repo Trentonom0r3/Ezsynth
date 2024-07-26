@@ -28,34 +28,32 @@ from ezsynth.utils.flow_utils.OpticalFlow import RAFT_flow
 from ezsynth.utils.sequences import EasySequence, SequenceManager
 
 
-class Ezsynth:
+class EzsynthBase:
     def __init__(
         self,
-        style_paths: list[str],
-        image_folder: str,
+        style_frs: list[np.ndarray],
+        style_idxes: list[int],
+        img_frs_seq: list[np.ndarray],
         cfg: RunConfig = RunConfig(),
         edge_method="Classic",
         raft_flow_model_name="sintel",
-        mask_folder: str | None = None,
         do_mask=False,
+        msk_frs_seq: list[np.ndarray] | None = None,
     ) -> None:
         st = time.time()
 
-        self.img_file_paths, self.img_idxes, self.img_frs_seq = setup_src_from_folder(
-            image_folder
-        )
+        self.style_frs = style_frs
+        self.style_idxes = style_idxes
+        self.img_frs_seq = img_frs_seq
+        self.msk_frs_seq = msk_frs_seq or []
 
-        if mask_folder is not None:
-            self.mask_file_paths, self.mask_idxes, self.mask_frs_seq = (
-                setup_masks_from_folder(mask_folder)
-            )
-            if do_mask and len(self.mask_idxes) != len(self.img_idxes):
-                raise ValueError(
-                    f"Missing frames: Masks={len(self.mask_idxes)}, Expected {len(self.img_idxes)}"
-                )
+        self.len_img = len(self.img_frs_seq)
+        self.len_msk = len(self.msk_frs_seq)
+        self.len_stl = len(self.style_idxes)
 
-        _, self.style_idxes, self.style_frs = setup_src_from_lst(style_paths, "style")
+        self.msk_frs_seq = self.msk_frs_seq[: self.len_img]
 
+        self.cfg = cfg
         self.edge_method = validate_option(
             edge_method, EDGE_METHODS, DEFAULT_EDGE_METHOD
         )
@@ -63,24 +61,27 @@ class Ezsynth:
             raft_flow_model_name, FLOW_MODELS, DEFAULT_FLOW_MODEL
         )
 
-        self.cfg = cfg
-        self.cfg.do_mask = do_mask and mask_folder is not None
+        self.cfg.do_mask = do_mask and self.len_msk > 0
         print(f"Masking mode: {self.cfg.do_mask}")
 
-        self.masked_frs_seq = []
+        if self.cfg.do_mask and len(self.msk_frs_seq) != len(self.img_frs_seq):
+            raise ValueError(
+                f"Missing frames: Masks={self.len_msk}, Expected {self.len_img}"
+            )
+
         self.style_masked_frs = None
         if self.cfg.do_mask and self.cfg.pre_mask:
-            self.masked_frs_seq = apply_masks(self.img_frs_seq, self.mask_frs_seq)
+            self.masked_frs_seq = apply_masks(self.img_frs_seq, self.msk_frs_seq)
             self.style_masked_frs = apply_masks_idxes(
-                self.style_frs, self.mask_frs_seq, self.style_idxes
+                self.style_frs, self.msk_frs_seq, self.style_idxes
             )
 
         manager = SequenceManager(
-            self.img_idxes[0],
-            self.img_idxes[-1],
-            len(self.style_idxes),
+            0,
+            self.len_img - 1,
+            self.len_stl - 1,
             self.style_idxes,
-            self.img_idxes,
+            list(range(0, self.len_img)),
         )
 
         self.sequences, self.atlas = manager.create_sequences()
@@ -154,7 +155,7 @@ class Ezsynth:
 
         if self.cfg.do_mask and not self.cfg.return_masked_only:
             stylized_frames = apply_masked_back_seq(
-                self.img_frs_seq, stylized_frames, self.mask_frs_seq, self.cfg.feather
+                self.img_frs_seq, stylized_frames, self.msk_frs_seq, self.cfg.feather
             )
 
         return stylized_frames
@@ -194,6 +195,33 @@ class Ezsynth:
             ):
                 return True
         return False
+
+
+class Ezsynth(EzsynthBase):
+    def __init__(
+        self,
+        style_paths: list[str],
+        image_folder: str,
+        cfg: RunConfig = RunConfig(),
+        edge_method="Classic",
+        raft_flow_model_name="sintel",
+        mask_folder: str | None = None,
+        do_mask=False,
+    ) -> None:
+        _, _, img_frs_seq = setup_src_from_folder(image_folder)
+        _, style_idxes, style_frs = setup_src_from_lst(style_paths, "style")
+        msk_frs_seq = setup_masks_from_folder(mask_folder)[2] if do_mask else None
+
+        super().__init__(
+            style_frs=style_frs,
+            style_idxes=style_idxes,
+            img_frs_seq=img_frs_seq,
+            cfg=cfg,
+            edge_method=edge_method,
+            raft_flow_model_name=raft_flow_model_name,
+            do_mask=do_mask,
+            msk_frs_seq=msk_frs_seq,
+        )
 
 
 class ImageSynth:
