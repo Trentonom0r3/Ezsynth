@@ -17,15 +17,15 @@ from ezsynth.aux_utils import (
     validate_and_read_img,
     validate_option,
 )
+from ezsynth.constants import (
+    DEFAULT_EDGE_METHOD,
+    DEFAULT_FLOW_MODEL,
+    EDGE_METHODS,
+    FLOW_MODELS,
+)
 from ezsynth.utils._ebsynth import ebsynth
 from ezsynth.utils.flow_utils.OpticalFlow import RAFT_flow
 from ezsynth.utils.sequences import EasySequence, SequenceManager
-
-EDGE_METHODS = ["PAGE", "PST", "Classic"]
-DEFAULT_EDGE_METHOD = "Classic"
-
-FLOW_MODELS = ["sintel", "kitti"]
-DEFAULT_FLOW_MODEL = "sintel"
 
 
 class Ezsynth:
@@ -49,6 +49,10 @@ class Ezsynth:
             self.mask_file_paths, self.mask_idxes, self.mask_frs_seq = (
                 setup_masks_from_folder(mask_folder)
             )
+            if do_mask and len(self.mask_idxes) != len(self.img_idxes):
+                raise ValueError(
+                    f"Missing frames: Masks={len(self.mask_idxes)}, Expected {len(self.img_idxes)}"
+                )
 
         _, self.style_idxes, self.style_frs = setup_src_from_lst(style_paths, "style")
 
@@ -74,7 +78,7 @@ class Ezsynth:
         manager = SequenceManager(
             self.img_idxes[0],
             self.img_idxes[-1],
-            style_paths,
+            len(self.style_idxes),
             self.style_idxes,
             self.img_idxes,
         )
@@ -181,8 +185,11 @@ class Ezsynth:
             if (self.atlas[i - 1] == EasySequence.MODE_REV) or (
                 self.atlas[i - 1] == EasySequence.MODE_BLN
                 and (
-                    self.atlas[i] == EasySequence.MODE_FWD
-                    or self.cfg.only_mode == EasySequence.MODE_FWD
+                    self.cfg.only_mode == EasySequence.MODE_FWD
+                    or (
+                        self.cfg.only_mode == EasySequence.MODE_REV
+                        and self.atlas[i] == EasySequence.MODE_FWD
+                    )
                 )
             ):
                 return True
@@ -204,8 +211,6 @@ class ImageSynth:
 
         self.eb = ebsynth(**cfg.get_ebsynth_cfg())
         self.eb.runner.initialize_libebsynth()
-    
-    
 
     def run(self, guides: list[tuple[np.ndarray, np.ndarray, float]] = []):
         guides.append((self.src_img, self.tgt_img, self.cfg.img_wgt))

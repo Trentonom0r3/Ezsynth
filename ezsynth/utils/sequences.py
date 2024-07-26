@@ -26,13 +26,12 @@ class EasySequence:
 
 
 class SequenceManager:
-    def __init__(self, begin_fr_idx, end_fr_idx, style_paths, style_idxs, img_idxs):
+    def __init__(self, begin_fr_idx, end_fr_idx, num_style_frs, style_idxs, img_idxs):
         self.begin_fr_idx = begin_fr_idx
         self.end_fr_idx = end_fr_idx
-        self.style_paths = style_paths
         self.style_idxs = style_idxs
         self.img_idxs = img_idxs
-        self.num_style_frs = len(style_paths)
+        self.num_style_frs = num_style_frs
 
     def create_sequences(self) -> tuple[list[EasySequence], list[str]]:
         sequences = []

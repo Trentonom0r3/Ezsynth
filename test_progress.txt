@@ -1,32 +1,30 @@
 Style 1
-    First frame only: Passed (Passed)
-    Last frame only: Passed (Passed)
-    Middle frame only: Passed (Passed)
+    First frame only: Passed (Passed) (Passed)
+    Last frame only: Passed (Passed) (Passed)
+    Middle frame only: Passed (Passed) (Passed)
 
-Style 2 with Blend
-    First and Last: Passed (Passed)
-    First and Mid: Passed (Passed)
-    Mid and Last: Passed (Passed)
-    Mid and Mid: Passed (Passed)
+Style 2 with Blend (Regression - Fixed)
+    First and Last: Passed (Passed) (Passed)
+    First and Mid: Passed (Passed) (Passed)
+    Mid and Last: Passed (Passed) (Passed)
+    Mid and Mid: Passed (Passed) (Passed)
 
 Style 2 without Blend - Forward only
-    First and Last: Passed (Passed)
-    First and Mid: Passed (Passed)
-    Mid and Last: Passed (Passed)
-    Mid and Mid: Passed (Passed)
+    First and Last: Passed (Passed) (Passed)
+    First and Mid: Passed (Passed) (Passed)
+    Mid and Last: Passed (Passed) (Passed)
+    Mid and Mid: Passed (Passed) (Passed)
 
-Style 2 without Blend - Reverse only
-    First and Last: Passed (Passed)
-    First and Mid: Passed (Passed)
-    Mid and Last: Passed (Passed)
-    Mid and Mid: Passed (Passed)
+Style 2 without Blend - Reverse only (Regression - Fixed)
+    First and Last: Passed (Passed) (Passed)
+    First and Mid: Passed (Passed) (Passed)
+    Mid and Last: Passed (Passed) (Passed)
+    Mid and Mid: Passed (Passed) (Passed)
 
 Style 3:
-    Blend Mid Mid Mid: Passed 
-    Blend First Mid Last: Passed
-    Forward Mid Mid Mid: Passed
-    Forward First Mid Last: Passed
-    Reverse Mid Mid Mid: Passed
-    Reverse First Mid Last: Passed
-
-Retest the twos
+    Blend Mid Mid Mid: Passed (Passed)
+    Blend First Mid Last: Passed (Passed)
+    Forward Mid Mid Mid: Passed (Passed)
+    Forward First Mid Last: Passed (Passed)
+    Reverse Mid Mid Mid: Passed (Passed)
+    Reverse First Mid Last: Passed (Passed)

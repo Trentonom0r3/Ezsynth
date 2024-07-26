@@ -19,7 +19,7 @@ style_paths = [
     "J:/AI/Ezsynth/examples/styles/style000.png",
     # "J:/AI/Ezsynth/examples/styles/style002.png",
     # "J:/AI/Ezsynth/examples/styles/style003.png",
-    # "J:/AI/Ezsynth/examples/styles/style006.png",
+    "J:/AI/Ezsynth/examples/styles/style006.png",
     # "J:/AI/Ezsynth/examples/styles/style014.png",
     # "J:/AI/Ezsynth/examples/styles/style019.png",
     # "J:/AI/Ezsynth/examples/styles/style099.jpg",
@@ -46,13 +46,13 @@ ezrunner = Ezsynth(
 )
 
 
-only_mode = EasySequence.MODE_FWD
+# only_mode = EasySequence.MODE_FWD
 # only_mode = EasySequence.MODE_REV
-# only_mode = None
+only_mode = None
 
 stylized_frames = ezrunner.run_sequences(only_mode)
 
-save_seq(stylized_frames, "J:/AI/Ezsynth/output_44")
+save_seq(stylized_frames, "J:/AI/Ezsynth/output_48")
 # save_seq(ezrunner.edge_guides, "J:/AI/Ezsynth/edge_mask")
 
 gc.collect()
