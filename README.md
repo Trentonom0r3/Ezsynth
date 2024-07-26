@@ -37,6 +37,11 @@ A pre-compiled `ebsynth.dll` is included in the repository. VirusTotal results: 
 | <img src="output_synth/facestyle_out.png" height="250"> | <img src="output_synth/stylit_out.png" height="250"> | <img src="output_synth/retarget_out.png" height="250"> |
 
 
+
+https://github.com/user-attachments/assets/aa3cd191-4eb2-4dc0-8213-2c763f1b3316
+
+
+
 ## API Overview
 
 ### ImageSynth
