@@ -7,7 +7,7 @@ from ezsynth.utils._ebsynth import ebsynth
 from ezsynth.utils.blend.blender import Blend
 from ezsynth.utils.flow_utils.OpticalFlow import RAFT_flow
 from ezsynth.utils.flow_utils.warp import Warp
-from ezsynth.utils.sequences import EasySequence
+from ezsynth.sequences import EasySequence
 
 
 def run_a_pass(

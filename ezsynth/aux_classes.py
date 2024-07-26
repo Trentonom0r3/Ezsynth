@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 from ezsynth.utils.flow_utils.warp import Warp
-from ezsynth.utils.sequences import EasySequence
+from ezsynth.sequences import EasySequence
 
 class RunConfig:
     """

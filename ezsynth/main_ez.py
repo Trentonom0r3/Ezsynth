@@ -25,7 +25,7 @@ from ezsynth.constants import (
 )
 from ezsynth.utils._ebsynth import ebsynth
 from ezsynth.utils.flow_utils.OpticalFlow import RAFT_flow
-from ezsynth.utils.sequences import EasySequence, SequenceManager
+from ezsynth.sequences import EasySequence, SequenceManager
 
 
 class EzsynthBase:

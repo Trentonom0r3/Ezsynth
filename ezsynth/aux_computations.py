@@ -1,6 +1,6 @@
 import tqdm
 import numpy as np
-from ezsynth.utils.guides.edge_detection import EdgeDetector
+from ezsynth.edge_detection import EdgeDetector
 
 
 def precompute_edge_guides(

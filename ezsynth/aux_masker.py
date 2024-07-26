@@ -3,9 +3,6 @@ import numpy as np
 import tqdm
 
 
-
-
-
 def apply_mask(image: np.ndarray, mask: np.ndarray):
     masked_image = cv2.bitwise_and(image, image, mask=mask)
     return masked_image.astype(np.uint8)
