@@ -1,7 +1,3 @@
-#Don't commit these files to git
-#The Main Library
-*.dll
-
 #The Zipped Library
 *.zip
 
@@ -17,3 +13,4 @@
 
 ##
 __pycache__
+.mypy_cache
