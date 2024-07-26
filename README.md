@@ -28,7 +28,14 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 3. Run the `.bat` inside `ebsynth/`
 4. Copy `bin/ebsynth.dll` to `Ezsynth/ezsynth/utils/ebsynth.dll`
 
-A pre-compiled `ebsynth.dll` is included in the repository
+A pre-compiled `ebsynth.dll` is included in the repository. VirusTotal results: https://www.virustotal.com/gui/file/cc58f41d0e43a6050849b02d36ccc2e29a4f17dfbbcacbd92fdd26cb3780c0ee/detection
+
+## Example outputs
+
+| Face style | Stylit | Retarget |
+|:-:|:-:|:-:|
+| <img src="output_synth/facestyle_out.png" height="250"> | <img src="output_synth/stylit_out.png" height="250"> | <img src="output_synth/retarget_out.png" height="250"> |
+
 
 ## API Overview
 
@@ -148,4 +155,21 @@ class EzsynthBase:
 * `return_masked_only (bool)`: Whether to return the styled results without applying it back to the original image. Defaults to `False`.     
  
 * `feather (int)`: Feather Gaussian radius to apply on the mask results. Only affect if `return_masked_only == False`. Expects integers. Defaults to `0`.
+
+## Credits
+
+jamriska - https://github.com/jamriska/ebsynth
+
+```
+@misc{Jamriska2018,
+  author = {Jamriska, Ondrej},
+  title = {Ebsynth: Fast Example-based Image Synthesis and Style Transfer},
+  year = {2018},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/jamriska/ebsynth}},
+}
+```
+
+Trentonom0r3 - https://github.com/Trentonom0r3/Ezsynth
 

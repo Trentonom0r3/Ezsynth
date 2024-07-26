@@ -16,12 +16,12 @@ from ezsynth.main_ez import Ezsynth
 st = time.time()
 
 style_paths = [
-    "J:/AI/Ezsynth/examples/styles/style000.png",
+    "J:/AI/Ezsynth/examples/styles/style000.jpg",
     # "J:/AI/Ezsynth/examples/styles/style002.png",
     # "J:/AI/Ezsynth/examples/styles/style003.png",
-    "J:/AI/Ezsynth/examples/styles/style006.png",
+    # "J:/AI/Ezsynth/examples/styles/style006.png",
     # "J:/AI/Ezsynth/examples/styles/style014.png",
-    # "J:/AI/Ezsynth/examples/styles/style019.png",
+    "J:/AI/Ezsynth/examples/styles/style019.png",
     # "J:/AI/Ezsynth/examples/styles/style099.jpg",
 ]
 
@@ -37,7 +37,7 @@ model = "sintel"
 ezrunner = Ezsynth(
     style_paths=style_paths,
     image_folder=image_folder,
-    cfg=RunConfig(pre_mask=True, feather=5, return_masked_only=False),
+    cfg=RunConfig(pre_mask=False, feather=5, return_masked_only=False),
     edge_method=edge_method,
     raft_flow_model_name=model,
     mask_folder=mask_folder,
@@ -46,9 +46,9 @@ ezrunner = Ezsynth(
 )
 
 
-only_mode = EasySequence.MODE_FWD
+# only_mode = EasySequence.MODE_FWD
 # only_mode = EasySequence.MODE_REV
-# only_mode = None
+only_mode = None
 
 stylized_frames = ezrunner.run_sequences(only_mode)
 
