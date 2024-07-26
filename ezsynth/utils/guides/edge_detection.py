@@ -80,6 +80,7 @@ class EdgeDetector:
         self.pst_gpu.w = padded_img.shape[1]
 
         self.pst_gpu.img = torch.from_numpy(padded_img).to(self.pst_gpu.device)
+        # If input has too many zeros the model returns NaNs for some reason
         self.pst_gpu.img = replace_zeros_tensor(self.pst_gpu.img, 1)
         
         self.pst_gpu.init_kernel(S, W)
@@ -111,6 +112,7 @@ class EdgeDetector:
         self.page_gpu.w = padded_img.shape[1]
 
         self.page_gpu.img = torch.from_numpy(padded_img).to(self.page_gpu.device)
+        # If input has too many zeros the model returns NaNs for some reason
         self.page_gpu.img = replace_zeros_tensor(self.page_gpu.img, 1)
         
         self.page_gpu.init_kernel(mu_1, mu_2, sigma_1, sigma_2, S1, S2)
