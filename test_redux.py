@@ -20,8 +20,9 @@ style_paths = [
     # "J:/AI/Ezsynth/examples/styles/style002.png",
     # "J:/AI/Ezsynth/examples/styles/style003.png",
     # "J:/AI/Ezsynth/examples/styles/style006.png",
+    "J:/AI/Ezsynth/examples/styles/style010.png",
     # "J:/AI/Ezsynth/examples/styles/style014.png",
-    "J:/AI/Ezsynth/examples/styles/style019.png",
+    # "J:/AI/Ezsynth/examples/styles/style019.png",
     # "J:/AI/Ezsynth/examples/styles/style099.jpg",
 ]
 
@@ -41,8 +42,8 @@ ezrunner = Ezsynth(
     edge_method=edge_method,
     raft_flow_model_name=model,
     mask_folder=mask_folder,
-    do_mask=True,
-    # do_mask=False,
+    # do_mask=True,
+    do_mask=False,
 )
 
 
@@ -50,10 +51,10 @@ ezrunner = Ezsynth(
 # only_mode = EasySequence.MODE_REV
 only_mode = None
 
-stylized_frames = ezrunner.run_sequences(only_mode)
+stylized_frames, err_frames = ezrunner.run_sequences(only_mode)
 
 save_seq(stylized_frames, "J:/AI/Ezsynth/output_51")
-# save_seq(ezrunner.edge_guides, "J:/AI/Ezsynth/edge_mask")
+# save_seq(err_frames, "J:/AI/Ezsynth/output_51err")
 
 gc.collect()
 torch.cuda.empty_cache()

@@ -23,12 +23,12 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 
 ## Building ebsynth.dll (Windows)
 
-1. Git clone [jamriska/ebsynth](https://github.com/jamriska/ebsynth)
+1. Git clone [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth)
 2. Copy `new_build-win64-cpu+cuda.bat` to `ebsynth`
 3. Run the `.bat` inside `ebsynth/`
 4. Copy `bin/ebsynth.dll` to `Ezsynth/ezsynth/utils/ebsynth.dll`
 
-A pre-compiled `ebsynth.dll` is included in the repository. VirusTotal results: https://www.virustotal.com/gui/file/cc58f41d0e43a6050849b02d36ccc2e29a4f17dfbbcacbd92fdd26cb3780c0ee/detection
+A pre-compiled `ebsynth.dll` is included in the repository. VirusTotal results: https://www.virustotal.com/gui/file/e3cfad210d445fcbfa6c7dcd2f9bdaaf36d550746c108c79a94d2d1ecce41369/detection
 
 ## Example outputs
 
@@ -36,11 +36,18 @@ A pre-compiled `ebsynth.dll` is included in the repository. VirusTotal results: 
 |:-:|:-:|:-:|
 | <img src="output_synth/facestyle_out.png" height="250"> | <img src="output_synth/stylit_out.png" height="250"> | <img src="output_synth/retarget_out.png" height="250"> |
 
-
-
 https://github.com/user-attachments/assets/aa3cd191-4eb2-4dc0-8213-2c763f1b3316
 
+## Notable things
 
+**Changes:**
+1. Flow is calculated on a frame by frame basis, with correct time orientation, instead of pre-computing only a forward-flow.
+2. Padding is applied to Edge detection and Warping to remove border visual distortion.
+
+
+**Observations:**
+1. Edge detection models return NaN if input tensor has too many zeros(?).
+2. Pre-masked inputs take twice as long to run Ebsynth
 
 ## API Overview
 
