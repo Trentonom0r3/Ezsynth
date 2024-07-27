@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 import tqdm
 
-from ezsynth.aux_classes import PositionalGuide, RunConfig
-from ezsynth.utils._ebsynth import ebsynth
-from ezsynth.utils.blend.blender import Blend
-from ezsynth.utils.flow_utils.OpticalFlow import RAFT_flow
-from ezsynth.utils.flow_utils.warp import Warp
-from ezsynth.sequences import EasySequence
+from .aux_classes import PositionalGuide, RunConfig
+from .utils._ebsynth import ebsynth
+from .utils.blend.blender import Blend
+from .utils.flow_utils.OpticalFlow import RAFT_flow
+from .utils.flow_utils.warp import Warp
+from .sequences import EasySequence
 
 
 def run_a_pass(

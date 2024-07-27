@@ -2,30 +2,30 @@ import time
 
 import numpy as np
 
-from ezsynth.aux_classes import RunConfig
-from ezsynth.aux_computations import precompute_edge_guides
-from ezsynth.aux_masker import (
+from .aux_classes import RunConfig
+from .aux_computations import precompute_edge_guides
+from .aux_masker import (
     apply_masked_back_seq,
     apply_masks,
     apply_masks_idxes,
 )
-from ezsynth.aux_run import run_scratch
-from ezsynth.aux_utils import (
+from .aux_run import run_scratch
+from .aux_utils import (
     setup_masks_from_folder,
     setup_src_from_folder,
     setup_src_from_lst,
     validate_and_read_img,
     validate_option,
 )
-from ezsynth.constants import (
+from .constants import (
     DEFAULT_EDGE_METHOD,
     DEFAULT_FLOW_MODEL,
     EDGE_METHODS,
     FLOW_MODELS,
 )
-from ezsynth.utils._ebsynth import ebsynth
-from ezsynth.utils.flow_utils.OpticalFlow import RAFT_flow
-from ezsynth.sequences import EasySequence, SequenceManager
+from .utils._ebsynth import ebsynth
+from .utils.flow_utils.OpticalFlow import RAFT_flow
+from .sequences import EasySequence, SequenceManager
 
 
 class EzsynthBase:

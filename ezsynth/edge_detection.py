@@ -4,8 +4,8 @@ import torch
 
 from phycv import PAGE_GPU, PST_GPU
 
-from ezsynth.aux_classes import EdgeConfig
-from ezsynth.aux_utils import replace_zeros_tensor
+from .aux_classes import EdgeConfig
+from .aux_utils import replace_zeros_tensor
 
 
 class EdgeDetector:
