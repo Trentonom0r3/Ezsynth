@@ -24,7 +24,7 @@ This implementation makes use of advanced physics based edge detection and RAFT 
 ## Building ebsynth.dll (Windows)
 
 1. Git clone [jamriska/ebsynth](https://github.com/jamriska/ebsynth)
-2. Copy `new_build-win65-cpu+cuda.bat` to `ebsynth`
+2. Copy `new_build-win64-cpu+cuda.bat` to `ebsynth`
 3. Run the `.bat` inside `ebsynth/`
 4. Copy `bin/ebsynth.dll` to `Ezsynth/ezsynth/utils/ebsynth.dll`
 
