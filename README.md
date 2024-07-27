@@ -1,6 +1,6 @@
 # Ezsynth - Ebsynth Python Library
 
-Reworked version of [Trentonom0r3/Ezsynth](https://github.com/Trentonom0r3/Ezsynth), with masking support and some visual bug fixes. Aims to be easy to use and maintain. 
+Reworked version, courtesy of [FuouM](https://github.com/FuouM), with masking support and some visual bug fixes. Aims to be easy to use and maintain. 
 
 **Examples:**
 * To get started, see `test_redux.py` for an example of generating a full video.
@@ -182,6 +182,11 @@ jamriska - https://github.com/jamriska/ebsynth
   howpublished = {\url{https://github.com/jamriska/ebsynth}},
 }
 ```
+```
+Ondřej Jamriška, Šárka Sochorová, Ondřej Texler, Michal Lukáč, Jakub Fišer, Jingwan Lu, Eli Shechtman, and Daniel Sýkora. 2019. Stylizing Video by Example. ACM Trans. Graph. 38, 4, Article 107 (July 2019), 11 pages. https://doi.org/10.1145/3306346.3323006
+```
 
-Trentonom0r3 - https://github.com/Trentonom0r3/Ezsynth
+FuouM - https://github.com/FuouM
+pravdomil - https://github.com/pravdomil
+xy-gao - https://github.com/xy-gao
 
