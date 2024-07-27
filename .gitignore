@@ -1,7 +1,3 @@
-#Don't commit these files to git
-#The Main Library
-*.dll
-
 #The Zipped Library
 *.zip
 
@@ -14,3 +10,7 @@
 /ezsynth.egg-info/
 
 /.vscode/
+
+##
+__pycache__
+.mypy_cache
