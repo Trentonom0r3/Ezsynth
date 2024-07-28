@@ -13,6 +13,8 @@ Reworked version of [Trentonom0r3/Ezsynth](https://github.com/Trentonom0r3/Ezsyn
 3. Place the `Ezsynth/ezsynth/utils/ebsynth.dll` file
 4. Run script from your Python environment
 
+You may also install Cupy and Cupyx to use GPU for some other operations.
+
 **Note: This is not intended to be used as an installable module.**
 
 Currently only tested on `Windows 10 - Python 3.11 - RTX3060`
