@@ -38,12 +38,12 @@ model = "sintel"
 ezrunner = Ezsynth(
     style_paths=style_paths,
     image_folder=image_folder,
-    cfg=RunConfig(pre_mask=False, feather=5, return_masked_only=False),
+    cfg=RunConfig(pre_mask=False, feather=5),
     edge_method=edge_method,
     raft_flow_model_name=model,
     mask_folder=mask_folder,
-    # do_mask=True,
-    do_mask=False,
+    do_mask=True,
+    # do_mask=False,
 )
 
 
