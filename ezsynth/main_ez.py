@@ -79,7 +79,7 @@ class EzsynthBase:
         manager = SequenceManager(
             0,
             self.len_img - 1,
-            self.len_stl - 1,
+            self.len_stl,
             self.style_idxes,
             list(range(0, self.len_img)),
         )
