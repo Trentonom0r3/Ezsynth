@@ -51,9 +51,14 @@ def apply_masked_back(
         result = result.astype(np.uint8)
 
     else:
-        mask_inv = cv2.bitwise_not(mask)
-        background = cv2.bitwise_and(original, original, mask=mask_inv)  # type: ignore
-        result = cv2.add(background, processed)  # type: ignore
+        mask = mask.astype(np.float32) / 255.0
+        mask_inv = 1.0 - mask
+        mask_expanded = np.expand_dims(mask, axis=-1)
+        mask_inv_expanded = np.expand_dims(mask_inv, axis=-1)
+        background = original * mask_inv_expanded
+        foreground = processed * mask_expanded
+        result = background + foreground
+        result = result.astype(np.uint8)
 
     return result
 
