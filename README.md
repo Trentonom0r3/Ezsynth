@@ -83,7 +83,14 @@ save_to_folder(output_folder, "stylit_err.png", result[1]) # Error image
 
 ### Ezsynth
 
-video stylization. Via file paths: `test_redux.py`
+**edge_method**
+
+Edge detection method. Choose from 'PST', 'Classic', or 'PAGE'.
+* PST (Phase Stretch Transform): Good overall structure, but not very detailed.
+* Classic: A good balance between structure and detail.
+* PAGE (Phase and Gradient Estimation): Great detail, great structure, but slow.
+
+**video stylization**. Via file paths: `test_redux.py`
 
 ```python
 style_paths = [
