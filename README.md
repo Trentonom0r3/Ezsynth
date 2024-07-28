@@ -102,7 +102,7 @@ ezrunner = Ezsynth(
 )
 
 only_mode = None
-stylized_frames = ezrunner.run_sequences(only_mode)
+stylized_frames, err_frames  = ezrunner.run_sequences(only_mode)
 
 save_seq(stylized_frames, "output")
 ```
@@ -164,9 +164,7 @@ class EzsynthBase:
 * `do_mask (bool)`: Whether to apply mask. Defaults to `False`.
  
 * `pre_mask (bool)`: Whether to mask the inputs and styles before `RUN` or after. Pre-mask takes ~2x time to run per frame. Could be due to Ebsynth.dll implementation. Defaults to `False`.     
- 
-* `return_masked_only (bool)`: Whether to return the styled results without applying it back to the original image. Defaults to `False`.     
- 
+  
 * `feather (int)`: Feather Gaussian radius to apply on the mask results. Only affect if `return_masked_only == False`. Expects integers. Defaults to `0`.
 
 ## Credits
