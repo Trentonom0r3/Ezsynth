@@ -9,8 +9,9 @@ Reworked version of [Trentonom0r3/Ezsynth](https://github.com/Trentonom0r3/Ezsyn
 **Get started:**
 
 1. git clone the repo
-2. Place the `Ezsynth/ezsynth/utils/ebsynth.dll` file
-3. Run script from your Python environment
+2. Install dependencies `pip install -r requirements`
+3. Place the `Ezsynth/ezsynth/utils/ebsynth.dll` file
+4. Run script from your Python environment
 
 **Note: This is not intended to be used as an installable module.**
 
