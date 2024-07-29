@@ -18,7 +18,7 @@ Ubuntu 24 - Python 3.12 - RTX4070(Laptop)
 ### Windows
 ```cmd
 rem Clone this repo
-git clone https://github.com/FuouM/Ezsynth.git 
+git clone https://github.com/Trentonom0r3/Ezsynth.git 
 cd Ezsynth
 
 rem (Optional) create and activate venv
@@ -48,7 +48,7 @@ cd .. && rmdir /s /q .\ebsynth
 ### Linux
 ```bash
 # clone this repo
-git clone https://github.com/FuouM/Ezsynth.git 
+git clone https://github.com/Trentonom0r3/Ezsynth.git 
 cd Ezsynth
 
 # (optional) create and activate venv
