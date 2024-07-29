@@ -2,33 +2,83 @@
 
 Reworked version, courtesy of [FuouM](https://github.com/FuouM), with masking support and some visual bug fixes. Aims to be easy to use and maintain. 
 
-**Examples:**
-* To get started, see `test_redux.py` for an example of generating a full video.
-* To generate image style transfer, see `test_imgsynth.py` for all examples from the original `Ebsynth`.
-
-**Get started:**
-
-1. git clone the repo
-2. Place the `Ezsynth/ezsynth/utils/ebsynth.dll` file
-3. Run script from your Python environment
-
-**Note: This is not intended to be used as an installable module.**
-
-Currently only tested on `Windows 10 - Python 3.11 - RTX3060`
-
-> Perform things like style transfer, color transfer, inpainting, superimposition, video stylization and more!
+Perform things like style transfer, color transfer, inpainting, superimposition, video stylization and more!
 This implementation makes use of advanced physics based edge detection and RAFT optical flow, which leads to more accurate results during synthesis.
 
-> Ezsynth uses [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth) - library version of Ebsynth.
+:warning: **This is not intended to be used as an installable module.**
 
-## Building ebsynth.dll (Windows)
+Currently tested on:
+```
+Windows 10 - Python 3.11 - RTX3060
+Ubuntu 24 - Python 3.12 - RTX4070(Laptop)
+```
 
-1. Git clone [Trentonom0r3/ebsynth](https://github.com/Trentonom0r3/ebsynth)
-2. Copy `new_build-win64-cpu+cuda.bat` to `ebsynth`
-3. Run the `.bat` inside `ebsynth/`
-4. Copy `bin/ebsynth.dll` to `Ezsynth/ezsynth/utils/ebsynth.dll`
+## Get started
 
-A pre-compiled `ebsynth.dll` is included in the repository. VirusTotal results: https://www.virustotal.com/gui/file/e3cfad210d445fcbfa6c7dcd2f9bdaaf36d550746c108c79a94d2d1ecce41369/detection
+### Windows
+```cmd
+rem Clone this repo
+git clone https://github.com/FuouM/Ezsynth.git 
+cd Ezsynth
+
+rem (Optional) create and activate venv
+python -m venv venv
+venv\Scripts\activate.bat
+
+rem Install requirements
+pip install -r requirements.txt
+
+rem A precompiled ebsynth.dll is included. 
+rem If don't want to rebuild, you are ready to go and can skip the following steps.  
+
+rem Clone ebsynth
+git clone https://github.com/Trentonom0r3/ebsynth.git
+
+rem build ebsynth as lib
+copy .\build_ebs-win64-cpu+cuda.bat .\ebsynth
+cd ebsynth && .\build_ebs-win64-cpu+cuda.bat
+
+rem copy lib
+cp .\bin\ebsynth.so ..\ezsynth\utils\ebsynth.so
+
+rem cleanup
+cd .. && rmdir /s /q .\ebsynth
+```
+
+### Linux
+```bash
+# clone this repo
+git clone https://github.com/FuouM/Ezsynth.git 
+cd Ezsynth
+
+# (optional) create and activate venv
+python -m venv venv
+source ./venv/bin/activate
+
+# install requirements
+pip install -r requirements.txt
+
+# clone ebsynth
+git clone https://github.com/Trentonom0r3/ebsynth.git
+
+# build ebsynth as lib
+cp ./build_ebs-linux-cpu+cuda.sh ./ebsynth
+cd ebsynth && ./build_ebs-linux-cpu+cuda.sh
+
+# copy lib
+cp ./bin/ebsynth.so ../ezsynth/utils/ebsynth.so
+
+# cleanup
+cd .. && rm -rf ./ebsynth
+```
+
+### All
+You may also install Cupy and Cupyx to use GPU for some other operations.
+
+## Examples
+
+* To get started, see `test_redux.py` for an example of generating a full video.
+* To generate image style transfer, see `test_imgsynth.py` for all examples from the original `Ebsynth`.
 
 ## Example outputs
 
@@ -82,7 +132,16 @@ save_to_folder(output_folder, "stylit_err.png", result[1]) # Error image
 
 ### Ezsynth
 
-video stylization. Via file paths: `test_redux.py`
+**edge_method**
+
+Edge detection method. Choose from `PST`, `Classic`, or `PAGE`.
+* `PST` (Phase Stretch Transform): Good overall structure, but not very detailed.
+* `Classic`: A good balance between structure and detail.
+* `PAGE` (Phase and Gradient Estimation): Great detail, great structure, but slow.
+
+**video stylization**
+
+Via file paths (see `test_redux.py`):
 
 ```python
 style_paths = [
@@ -101,12 +160,12 @@ ezrunner = Ezsynth(
 )
 
 only_mode = None
-stylized_frames = ezrunner.run_sequences(only_mode)
+stylized_frames, err_frames  = ezrunner.run_sequences(only_mode)
 
 save_seq(stylized_frames, "output")
 ```
 
-Via Numpy ndarrays
+Via Numpy ndarrays:
 
 ```python
 class EzsynthBase:
@@ -163,9 +222,7 @@ class EzsynthBase:
 * `do_mask (bool)`: Whether to apply mask. Defaults to `False`.
  
 * `pre_mask (bool)`: Whether to mask the inputs and styles before `RUN` or after. Pre-mask takes ~2x time to run per frame. Could be due to Ebsynth.dll implementation. Defaults to `False`.     
- 
-* `return_masked_only (bool)`: Whether to return the styled results without applying it back to the original image. Defaults to `False`.     
- 
+  
 * `feather (int)`: Feather Gaussian radius to apply on the mask results. Only affect if `return_masked_only == False`. Expects integers. Defaults to `0`.
 
 ## Credits

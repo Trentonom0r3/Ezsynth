@@ -79,7 +79,7 @@ class EzsynthBase:
         manager = SequenceManager(
             0,
             self.len_img - 1,
-            self.len_stl - 1,
+            self.len_stl,
             self.style_idxes,
             list(range(0, self.len_img)),
         )
@@ -156,7 +156,7 @@ class EzsynthBase:
 
         print(f"Run took: {time.time() - st:.4f} s")
 
-        if self.cfg.do_mask and not self.cfg.return_masked_only:
+        if self.cfg.do_mask:
             stylized_frames = apply_masked_back_seq(
                 self.img_frs_seq, stylized_frames, self.msk_frs_seq, self.cfg.feather
             )
@@ -251,6 +251,7 @@ class ImageSynthBase:
         guides.append((self.src_img, self.tgt_img, self.cfg.img_wgt))
         return self.eb.run(self.style_img, guides=guides)
 
+
 class ImageSynth(ImageSynthBase):
     def __init__(
         self,
@@ -262,5 +263,5 @@ class ImageSynth(ImageSynthBase):
         style_img = validate_and_read_img(style_path)
         src_img = validate_and_read_img(src_path)
         tgt_img = validate_and_read_img(tgt_path)
-        
+
         super().__init__(style_img, src_img, tgt_img, cfg)
