@@ -42,8 +42,8 @@ ezrunner = Ezsynth(
     edge_method=edge_method,
     raft_flow_model_name=model,
     mask_folder=mask_folder,
-    do_mask=True,
-    # do_mask=False,
+    # do_mask=True,
+    do_mask=False,
 )
 
 
