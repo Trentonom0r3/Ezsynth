@@ -59,7 +59,8 @@ class RAFT_flow:
             padder = InputPadder(img1_tensor.shape)
             images = padder.pad(img1_tensor, img2_tensor)
             _, flow_up = self.model(images[0], images[1], iters=20, test_mode=True)
-            flow_np = flow_up[0].permute(1, 2, 0).cpu().numpy()
+            # flow_np = flow_up[0].permute(1, 2, 0).cpu().numpy()
+            flow_np = padder.unpad(flow_up[0]).permute(1, 2, 0).cpu().numpy()
             cv2.resize(flow_np, original_size)
             return flow_np
 
