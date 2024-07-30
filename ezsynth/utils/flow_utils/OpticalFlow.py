@@ -5,23 +5,51 @@ import numpy as np
 import torch
 import tqdm
 
-from .core.raft import RAFT
 from .core.utils.utils import InputPadder
 
-
 class RAFT_flow:
-    def __init__(self, model_name="sintel"):
+    def __init__(self, model_name="sintel", arch="RAFT"):
         self.DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        model_name = f"raft-{model_name}.pth"
-        model_path = os.path.join(os.path.dirname(__file__), "models", model_name)
+        self.arch = arch
+        
+        if self.arch == "RAFT":
+            from .core.raft import RAFT
+            model_name = f"raft-{model_name}.pth"
+            model_path = os.path.join(os.path.dirname(__file__), "models", model_name)
 
-        if not os.path.exists(model_path):
-            raise ValueError(f"[ERROR] Model file '{model_path}' not found.")
+            if not os.path.exists(model_path):
+                raise ValueError(f"[ERROR] Model file '{model_path}' not found.")
 
-        self.model = torch.nn.DataParallel(
-            RAFT(args=self._instantiate_raft_model(model_name))
-        )
+            self.model = torch.nn.DataParallel(
+                RAFT(args=self._instantiate_raft_model(model_name))
+            )
+        
+        elif self.arch == "EF_RAFT":
+            from .core.ef_raft import EF_RAFT
+            model_name = f"{model_name}.pth"
+            model_path = os.path.join(
+                os.path.dirname(__file__), "ef_raft_models", model_name
+            )
+            if not os.path.exists(model_path):
+                raise ValueError(f"[ERROR] Model file '{model_path}' not found.")
+            self.model = torch.nn.DataParallel(
+                EF_RAFT(args=self._instantiate_raft_model(model_name))
+            )
+        
+        elif self.arch == "FLOW_DIFF":
+            try:
+                from .flow_diff.flow_diffusion import FlowDiffuser
+            except ImportError as e:
+                raise ImportError(f"Could not import FlowDiffuser. {e}")
+            model_name = "FlowDiffuser-things.pth"
+            model_path = os.path.join(os.path.dirname(__file__), "flow_diffusion_models", model_name)
+            if not os.path.exists(model_path):
+                raise ValueError(f"[ERROR] Model file '{model_path}' not found.")
+            self.model = torch.nn.DataParallel(
+                FlowDiffuser(args=self._instantiate_raft_model(model_name))
+            )
+        
 
         state_dict = torch.load(model_path, map_location=self.DEVICE)
         self.model.load_state_dict(state_dict)
