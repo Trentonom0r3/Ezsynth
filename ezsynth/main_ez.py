@@ -211,9 +211,12 @@ class Ezsynth(EzsynthBase):
         mask_folder: str | None = None,
         do_mask=False,
     ) -> None:
-        _, _, img_frs_seq = setup_src_from_folder(image_folder)
+        _, img_idxes, img_frs_seq = setup_src_from_folder(image_folder)
         _, style_idxes, style_frs = setup_src_from_lst(style_paths, "style")
         msk_frs_seq = setup_masks_from_folder(mask_folder)[2] if do_mask else None
+        
+        if img_idxes[0] != 0:
+            style_idxes = [idx - img_idxes[0] for idx in style_idxes]
 
         super().__init__(
             style_frs=style_frs,
@@ -223,7 +226,7 @@ class Ezsynth(EzsynthBase):
             edge_method=edge_method,
             raft_flow_model_name=raft_flow_model_name,
             do_mask=do_mask,
-            msk_frs_seq=msk_frs_seq,
+            msk_frs_seq=msk_frs_seq
         )
 
 
