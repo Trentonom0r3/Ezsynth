@@ -39,7 +39,7 @@ class RAFT_flow:
         
         elif self.arch == "FLOW_DIFF":
             try:
-                from .flow_diff.flow_diffusion import FlowDiffuser
+                from .core.flow_diffusion import FlowDiffuser
             except ImportError as e:
                 raise ImportError(f"Could not import FlowDiffuser. {e}")
             model_name = "FlowDiffuser-things.pth"
