@@ -17,3 +17,7 @@ __pycache__
 
 /venv/
 *.so
+
+# Extra model files
+/ezsynth/utils/flow_utils/flow_diffusion_models/*.pth
+/ezsynth/utils/flow_utils/ef_raft_models/*.pth
