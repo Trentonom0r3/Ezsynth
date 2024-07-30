@@ -95,7 +95,7 @@ def run_scratch(
 ):
     if seq.mode == EasySequence.MODE_BLN and cfg.only_mode != EasySequence.MODE_NON:
         print(f"{cfg.only_mode} Only")
-        stylized_frames, err_list, _ = run_a_pass(
+        stylized_frames, err_list, flow = run_a_pass(
             seq,
             cfg.only_mode,
             img_frs_seq,
@@ -107,10 +107,10 @@ def run_scratch(
             rafter,
             eb,
         )
-        return stylized_frames, err_list
+        return stylized_frames, err_list, flow
 
     if seq.mode != EasySequence.MODE_BLN:
-        stylized_frames, err_list, _ = run_a_pass(
+        stylized_frames, err_list, flow = run_a_pass(
             seq,
             seq.mode,
             img_frs_seq,
@@ -120,7 +120,7 @@ def run_scratch(
             rafter,
             eb,
         )
-        return stylized_frames, err_list
+        return stylized_frames, err_list, flow
 
     print("Blending mode")
 
@@ -171,7 +171,7 @@ def run_blend(
     if not cfg.skip_blend_style_last:
         blends.append(style_bwd[-1])
 
-    return blends, warped_masks
+    return blends, warped_masks, flow_fwd
 
 
 def get_forward(seq: EasySequence):

@@ -90,6 +90,33 @@ https://github.com/user-attachments/assets/aa3cd191-4eb2-4dc0-8213-2c763f1b3316
 
 ## Notable things
 
+**Updates:**
+1. [Ef-RAFT](https://github.com/n3slami/Ef-RAFT) is added 
+   
+   To use, download models from [the original repo](https://github.com/n3slami/Ef-RAFT/tree/master/models) and place them in `/ezsynth/utils/flow_utils/ef_raft_models`
+   ```
+   .gitkeep
+   25000_ours-sintel.pth
+   ours-things.pth
+   ours_sintel.pth
+   ```
+
+2. [FlowDiffuser](https://github.com/LA30/FlowDiffuser) is added. 
+
+   To use, download the model from [the original repo](https://github.com/LA30/FlowDiffuser?tab=readme-ov-file#usage) and place it in `/ezsynth/utils/flow_utils/flow_diffusion_models/FlowDiffuser-things.pth`. 
+
+   You will also need to install PyTorch Image Models to run it: `pip install timm`.   On first run, it will download 2 models ~470MB `twins_svt_large (378 MB)` and `twins_svt_small (92 MB)`.
+   
+   This increases the VRAM usage significantly when run along with `EbSynth Run` (~15GB, but may not OOM. Tested on 12GB VRAM).
+
+   In that case, It will throw `CUDNN_BACKEND_EXECUTION_PLAN_DESCRIPTOR` error, but shouldn't be fatal, and instead takes ~3x as long to run.
+
+https://github.com/user-attachments/assets/7f43630f-c7c9-40d0-8745-58d1f7c84d4f
+
+Comparison of Optical Flow models
+
+Optical Flow directly affects Flow position warping and Style image warping, controlled by `pos_wgt` and `wrp_wgt` respectively.
+
 **Changes:**
 1. Flow is calculated on a frame by frame basis, with correct time orientation, instead of pre-computing only a forward-flow.
 2. Padding is applied to Edge detection and Warping to remove border visual distortion.
@@ -242,3 +269,35 @@ jamriska - https://github.com/jamriska/ebsynth
 
 Trentonom0r3 - https://github.com/Trentonom0r3/Ezsynth
 
+https://github.com/princeton-vl/RAFT
+
+```
+RAFT: Recurrent All Pairs Field Transforms for Optical Flow
+ECCV 2020
+Zachary Teed and Jia Deng
+```
+
+https://github.com/n3slami/Ef-RAFT
+
+```
+@inproceedings{eslami2024rethinking,
+  title={Rethinking RAFT for efficient optical flow},
+  author={Eslami, Navid and Arefi, Farnoosh and Mansourian, Amir M and Kasaei, Shohreh},
+  booktitle={2024 13th Iranian/3rd International Machine Vision and Image Processing Conference (MVIP)},
+  pages={1--7},
+  year={2024},
+  organization={IEEE}
+}
+```
+
+https://github.com/LA30/FlowDiffuser
+
+```
+@inproceedings{luo2024flowdiffuser,
+  title={FlowDiffuser: Advancing Optical Flow Estimation with Diffusion Models},
+  author={Luo, Ao and Li, Xin and Yang, Fan and Liu, Jiangyu and Fan, Haoqiang and Liu, Shuaicheng},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={19167--19176},
+  year={2024}
+}
+```

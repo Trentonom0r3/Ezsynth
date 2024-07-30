@@ -133,7 +133,7 @@ class BasicUpdateBlock(nn.Module):
         super(BasicUpdateBlock, self).__init__()
         self.args = args
         self.encoder = BasicMotionEncoder(args)
-        self.gru = SepConvGRU(hidden_dim=hidden_dim, input_dim=128 + hidden_dim)
+        self.gru = SepConvGRU(hidden_dim=hidden_dim, input_dim=input_dim+hidden_dim)
         self.flow_head = FlowHead(hidden_dim, hidden_dim=256)
 
         self.mask = nn.Sequential(
