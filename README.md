@@ -88,6 +88,10 @@ You may also install Cupy and Cupyx to use GPU for some other operations.
 
 https://github.com/user-attachments/assets/aa3cd191-4eb2-4dc0-8213-2c763f1b3316
 
+https://github.com/user-attachments/assets/63e50272-aa5c-42a1-a5ec-46178cdf2981
+
+Comparison of Edge methods
+
 ## Notable things
 
 **Updates:**
