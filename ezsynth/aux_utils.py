@@ -65,7 +65,6 @@ def read_masks_from_paths(lst: list[str]) -> list[np.ndarray]:
             enumerate(lst), desc="Reading masks: ", total=total
         ):
             msk = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-            _, msk = cv2.threshold(msk, 1, 255, cv2.THRESH_BINARY)
             msk_arr_seq.append(msk)
         else:
             print(f"Read {len(msk_arr_seq)} frames successfully")

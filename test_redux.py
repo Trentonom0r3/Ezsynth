@@ -33,17 +33,27 @@ output_folder = "J:/AI/Ezsynth/output"
 # edge_method="Classic"
 edge_method = "PAGE"
 # edge_method="PST"
-model = "sintel"
+
+# flow_arch = "RAFT"
+# flow_model = "sintel"
+
+flow_arch = "EF_RAFT"
+flow_model = "25000_ours-sintel"
+
+# flow_arch = "FLOW_DIFF"
+# flow_model = "FlowDiffuser-things"
+
 
 ezrunner = Ezsynth(
     style_paths=style_paths,
     image_folder=image_folder,
     cfg=RunConfig(pre_mask=False, feather=5),
     edge_method=edge_method,
-    raft_flow_model_name=model,
+    raft_flow_model_name=flow_model,
     mask_folder=mask_folder,
     # do_mask=True,
     do_mask=False,
+    flow_arch=flow_arch
 )
 
 
@@ -51,9 +61,13 @@ ezrunner = Ezsynth(
 # only_mode = EasySequence.MODE_REV
 only_mode = None
 
-stylized_frames, err_frames = ezrunner.run_sequences(only_mode)
+stylized_frames, err_frames, flow_frames = ezrunner.run_sequences_full(
+    only_mode, return_flow=True
+)
+# stylized_frames, err_frames = ezrunner.run_sequences(only_mode)
 
-save_seq(stylized_frames, "J:/AI/Ezsynth/output_51")
+save_seq(stylized_frames, "J:/AI/Ezsynth/output_57_efraft")
+save_seq(flow_frames, "J:/AI/Ezsynth/flow_output_57_efraft")
 # save_seq(err_frames, "J:/AI/Ezsynth/output_51err")
 
 gc.collect()

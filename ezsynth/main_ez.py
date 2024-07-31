@@ -1,6 +1,9 @@
 import time
 
 import numpy as np
+import tqdm
+
+from .aux_flow_viz import flow_to_image
 
 from .aux_classes import RunConfig
 from .aux_computations import precompute_edge_guides
@@ -19,8 +22,13 @@ from .aux_utils import (
 )
 from .constants import (
     DEFAULT_EDGE_METHOD,
+    DEFAULT_EF_RAFT_MODEL,
+    DEFAULT_FLOW_ARCH,
     DEFAULT_FLOW_MODEL,
     EDGE_METHODS,
+    EF_RAFT_MODELS,
+    FLOW_ARCHS,
+    FLOW_DIFF_MODEL,
     FLOW_MODELS,
 )
 from .utils._ebsynth import ebsynth
@@ -39,6 +47,8 @@ class EzsynthBase:
         raft_flow_model_name="sintel",
         do_mask=False,
         msk_frs_seq: list[np.ndarray] | None = None,
+        flow_arch="RAFT",
+        do_compute_edge=True,
     ) -> None:
         st = time.time()
 
@@ -60,6 +70,19 @@ class EzsynthBase:
         self.flow_model = validate_option(
             raft_flow_model_name, FLOW_MODELS, DEFAULT_FLOW_MODEL
         )
+
+        self.flow_arch = validate_option(flow_arch, FLOW_ARCHS, DEFAULT_FLOW_ARCH)
+
+        if self.flow_arch == "RAFT":
+            self.flow_model = validate_option(
+                raft_flow_model_name, FLOW_MODELS, DEFAULT_FLOW_MODEL
+            )
+        elif self.flow_arch == "EF_RAFT":
+            self.flow_model = validate_option(
+                raft_flow_model_name, EF_RAFT_MODELS, DEFAULT_EF_RAFT_MODEL
+            )
+        elif self.flow_arch == "FLOW_DIFF":
+            self.flow_model = FLOW_DIFF_MODEL
 
         self.cfg.do_mask = do_mask and self.len_msk > 0
         print(f"Masking mode: {self.cfg.do_mask}")
@@ -87,13 +110,15 @@ class EzsynthBase:
         self.sequences, self.atlas = manager.create_sequences()
         self.num_seqs = len(self.sequences)
 
-        self.edge_guides = precompute_edge_guides(
-            self.masked_frs_seq
-            if (self.cfg.do_mask and self.cfg.pre_mask)
-            else self.img_frs_seq,
-            self.edge_method,
-        )
-        self.rafter = RAFT_flow(model_name=self.flow_model)
+        self.edge_guides = []
+        if do_compute_edge:
+            self.edge_guides = precompute_edge_guides(
+                self.masked_frs_seq
+                if (self.cfg.do_mask and self.cfg.pre_mask)
+                else self.img_frs_seq,
+                self.edge_method,
+            )
+        self.rafter = RAFT_flow(model_name=self.flow_model, arch=self.flow_arch)
 
         self.eb = ebsynth(**cfg.get_ebsynth_cfg())
         self.eb.runner.initialize_libebsynth()
@@ -101,8 +126,21 @@ class EzsynthBase:
         print(f"Init Ezsynth took: {time.time() - st:.4f} s")
 
     def run_sequences(self, cfg_only_mode: str | None = None):
+        stylized_frames, err_frames, _ = self.run_sequences_full(
+            cfg_only_mode=cfg_only_mode, return_flow=False
+        )
+        return stylized_frames, err_frames
+
+    def run_sequences_full(self, cfg_only_mode: str | None = None, return_flow=False):
         st = time.time()
 
+        if len(self.edge_guides) == 0:
+            raise ValueError("Edge guides were not computed. ")
+        if len(self.edge_guides) != self.len_img:
+            raise ValueError(
+                f"Missing edge guides: Got {len(self.edge_guides)}, expected {self.len_img}"
+            )
+            
         if (
             cfg_only_mode is not None
             and cfg_only_mode in EasySequence.get_valid_modes()
@@ -113,6 +151,7 @@ class EzsynthBase:
 
         stylized_frames = []
         err_frames = []
+        flow_frames = []
 
         img_seq = (
             self.masked_frs_seq
@@ -135,7 +174,7 @@ class EzsynthBase:
                 seq.fr_start_idx += 1
                 no_skip_rev = True
 
-            tmp_stylized_frames, tmp_err_frames = run_scratch(
+            tmp_stylized_frames, tmp_err_frames, tmp_flow = run_scratch(
                 seq,
                 img_seq,
                 stl_seq,
@@ -148,11 +187,13 @@ class EzsynthBase:
             if self._should_remove_first_fr(i, no_skip_rev):
                 tmp_stylized_frames.pop(0)
                 tmp_err_frames.pop(0)
+                tmp_flow.pop(0)
 
             no_skip_rev = False
 
             stylized_frames.extend(tmp_stylized_frames)
             err_frames.extend(tmp_err_frames)
+            flow_frames.extend(tmp_flow)
 
         print(f"Run took: {time.time() - st:.4f} s")
 
@@ -161,7 +202,12 @@ class EzsynthBase:
                 self.img_frs_seq, stylized_frames, self.msk_frs_seq, self.cfg.feather
             )
 
-        return stylized_frames, err_frames
+        final_flows: list[np.ndarray] = []
+        if return_flow:
+            for flow in tqdm.tqdm(flow_frames, desc="Converting flows"):
+                final_flows.append(flow_to_image(flow, convert_to_bgr=True))
+
+        return stylized_frames, err_frames, final_flows
 
     def _should_skip_blend_style_last(self, i: int) -> bool:
         if (
@@ -210,10 +256,14 @@ class Ezsynth(EzsynthBase):
         raft_flow_model_name="sintel",
         mask_folder: str | None = None,
         do_mask=False,
+        flow_arch="RAFT",
     ) -> None:
-        _, _, img_frs_seq = setup_src_from_folder(image_folder)
+        _, img_idxes, img_frs_seq = setup_src_from_folder(image_folder)
         _, style_idxes, style_frs = setup_src_from_lst(style_paths, "style")
         msk_frs_seq = setup_masks_from_folder(mask_folder)[2] if do_mask else None
+
+        if img_idxes[0] != 0:
+            style_idxes = [idx - img_idxes[0] for idx in style_idxes]
 
         super().__init__(
             style_frs=style_frs,
@@ -224,6 +274,7 @@ class Ezsynth(EzsynthBase):
             raft_flow_model_name=raft_flow_model_name,
             do_mask=do_mask,
             msk_frs_seq=msk_frs_seq,
+            flow_arch=flow_arch,
         )
 
 
