@@ -48,6 +48,7 @@ class EzsynthBase:
         do_mask=False,
         msk_frs_seq: list[np.ndarray] | None = None,
         flow_arch="RAFT",
+        do_compute_edge=True,
     ) -> None:
         st = time.time()
 
@@ -109,12 +110,14 @@ class EzsynthBase:
         self.sequences, self.atlas = manager.create_sequences()
         self.num_seqs = len(self.sequences)
 
-        self.edge_guides = precompute_edge_guides(
-            self.masked_frs_seq
-            if (self.cfg.do_mask and self.cfg.pre_mask)
-            else self.img_frs_seq,
-            self.edge_method,
-        )
+        self.edge_guides = []
+        if do_compute_edge:
+            self.edge_guides = precompute_edge_guides(
+                self.masked_frs_seq
+                if (self.cfg.do_mask and self.cfg.pre_mask)
+                else self.img_frs_seq,
+                self.edge_method,
+            )
         self.rafter = RAFT_flow(model_name=self.flow_model, arch=self.flow_arch)
 
         self.eb = ebsynth(**cfg.get_ebsynth_cfg())
@@ -131,6 +134,13 @@ class EzsynthBase:
     def run_sequences_full(self, cfg_only_mode: str | None = None, return_flow=False):
         st = time.time()
 
+        if len(self.edge_guides) == 0:
+            raise ValueError("Edge guides were not computed. ")
+        if len(self.edge_guides) != self.len_img:
+            raise ValueError(
+                f"Missing edge guides: Got {len(self.edge_guides)}, expected {self.len_img}"
+            )
+            
         if (
             cfg_only_mode is not None
             and cfg_only_mode in EasySequence.get_valid_modes()
@@ -191,7 +201,7 @@ class EzsynthBase:
             stylized_frames = apply_masked_back_seq(
                 self.img_frs_seq, stylized_frames, self.msk_frs_seq, self.cfg.feather
             )
-        
+
         final_flows: list[np.ndarray] = []
         if return_flow:
             for flow in tqdm.tqdm(flow_frames, desc="Converting flows"):
@@ -246,7 +256,7 @@ class Ezsynth(EzsynthBase):
         raft_flow_model_name="sintel",
         mask_folder: str | None = None,
         do_mask=False,
-        flow_arch="RAFT"
+        flow_arch="RAFT",
     ) -> None:
         _, img_idxes, img_frs_seq = setup_src_from_folder(image_folder)
         _, style_idxes, style_frs = setup_src_from_lst(style_paths, "style")
@@ -264,7 +274,7 @@ class Ezsynth(EzsynthBase):
             raft_flow_model_name=raft_flow_model_name,
             do_mask=do_mask,
             msk_frs_seq=msk_frs_seq,
-            flow_arch=flow_arch
+            flow_arch=flow_arch,
         )
 
 
